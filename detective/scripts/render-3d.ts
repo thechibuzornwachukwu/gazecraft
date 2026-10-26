@@ -44,7 +44,7 @@ if (posesAt >= 0) {
   mkdirSync(dir, { recursive: true });
   const looks = only[posesAt + 1] ? [only[posesAt + 1]!] : ['trench', 'overcoat', 'noir'];
   // Spots along the bakery side picked clear of poles, the post box and the parked cars.
-  const shots = [['stand', 0, 470], ['walk', 35, 300], ['look', 90, 380], ['point', 150, 440], ['think', 330, 345], ['watch', 20, 250], ['map', 300, 410]] as const;
+  const shots = [['stand', 0, 470], ['walk', 35, 340], ['look', 90, 380], ['point', 150, 440], ['think', 330, 345], ['watch', 20, 250], ['map', 300, 410]] as const;
   await page.setViewportSize({ width: 420, height: 560 });
   // A list of poses after the look renders only those: npm run street3d:render -- poses trench think,watch
   const pick = only[posesAt + 2]?.split(',');
