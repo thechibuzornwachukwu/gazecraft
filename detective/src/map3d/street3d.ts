@@ -21,7 +21,7 @@ const EYE = 11;
 /** A storey, in units. */
 const STOREY = 22;
 
-export type View = 'plan' | 'iso' | 'front' | 'walk' | 'enter';
+export type View = 'plan' | 'iso' | 'front' | 'walk' | 'enter' | 'figure' | 'portrait' | 'pose';
 /**
  * The looks (BUILD_PLAN set 1-map). The chosen one is `village`: a model village, rounded and soft, warm, photographed
  * from above with a tilt-shift, lit as a real street is (sun, sky, soft shadows, ambient occlusion) and dressed in real
@@ -764,6 +764,21 @@ export function cameraFor(view: View, aspect: number, walkX: number): Camera {
     const d = 1600;
     c.position.set(centre.x + d * Math.cos(Math.PI / 4), d * Math.tan(Math.PI / 6), centre.z + d * Math.sin(Math.PI / 4));
     c.lookAt(centre);
+    return c;
+  }
+  // The detective on the bakery's pavement (src/map3d/figure.ts): full length from the road, and close at the face.
+  if (view === 'pose') {
+    // Close enough to read what the hands are doing, the whole figure in frame.
+    const c = new PerspectiveCamera(32, aspect, 0.3, 5000);
+    c.position.set(walkX + 5, 7.2, 452);
+    c.lookAt(walkX, 6.2, 422);
+    return c;
+  }
+  if (view === 'figure' || view === 'portrait') {
+    const close = view === 'portrait';
+    const c = new PerspectiveCamera(close ? 22 : 30, aspect, 0.3, 5000);
+    c.position.set(walkX + (close ? 4 : 10), close ? 10.6 : 7.5, close ? 446 : 478);
+    c.lookAt(walkX, close ? 10.4 : 6, 422);
     return c;
   }
   const c = new PerspectiveCamera(view === 'front' ? 40 : 62, aspect, 0.5, 5000);

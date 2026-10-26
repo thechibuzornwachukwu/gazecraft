@@ -11,7 +11,7 @@ import { SSAOPass } from 'three/examples/jsm/postprocessing/SSAOPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { HorizontalTiltShiftShader } from 'three/examples/jsm/shaders/HorizontalTiltShiftShader.js';
 import { VerticalTiltShiftShader } from 'three/examples/jsm/shaders/VerticalTiltShiftShader.js';
-import { ACESFilmicToneMapping, PCFSoftShadowMap, PMREMGenerator, SRGBColorSpace, Vector2, type Camera, type Scene, type WebGLRenderer } from 'three';
+import { ACESFilmicToneMapping, HalfFloatType, PCFSoftShadowMap, PMREMGenerator, SRGBColorSpace, Vector2, WebGLRenderTarget, type Camera, type Scene, type WebGLRenderer } from 'three';
 import type { Style, View } from './street3d';
 
 /** Soft shadows, filmic tone and the sRGB output every view of the street is drawn with. */
@@ -38,14 +38,17 @@ export function finish(renderer: WebGLRenderer, scene: Scene, camera: Camera, st
   const pmrem = new PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   scene.environmentIntensity = night ? 0.05 : 0.3;
-  const composer = new EffectComposer(renderer);
+  // Smoothed edges in the passes too: without samples, the finish drops the renderer's antialiasing and edges stair-step.
+  const pr = renderer.getPixelRatio();
+  const composer = new EffectComposer(renderer, new WebGLRenderTarget(w * pr, h * pr, { samples: 4, type: HalfFloatType }));
   composer.setSize(w, h);
   composer.addPass(new RenderPass(scene, camera));
   const ao = new SSAOPass(scene, camera, w, h);
   ao.kernelRadius = view === 'iso' || view === 'plan' ? 14 : 8;
   ao.minDistance = 0.0006;
   ao.maxDistance = 0.04;
-  composer.addPass(ao);
+  // Close to a person the occlusion pass rings their outline with a halo, so it is left off for the figure views.
+  if (view !== 'figure' && view !== 'portrait' && view !== 'pose') composer.addPass(ao);
   // A glow on the lamps and the lit windows only: from the street it stays tight, so the dark round them stays dark.
   const level = view === 'walk' || view === 'enter' || view === 'front';
   if (night) composer.addPass(new UnrealBloomPass(new Vector2(w, h), level ? 0.28 : 0.55, level ? 0.35 : 0.6, level ? 0.92 : 0.82));
