@@ -3,7 +3,7 @@
 // scaled to the street (1 unit 0.15 m), so the detective stands as tall as the doors and lamps say a person is.
 // 3 looks for the owner to choose from: `trench` (a woman), `overcoat` (a man with a moustache) and `noir`.
 
-import { BoxGeometry, CanvasTexture, CapsuleGeometry, CylinderGeometry, DoubleSide, Group, LatheGeometry, Mesh, MeshStandardMaterial, SphereGeometry, TorusGeometry, Vector2, type BufferGeometry } from 'three';
+import { BoxGeometry, CanvasTexture, CapsuleGeometry, CylinderGeometry, DoubleSide, Group, LatheGeometry, Mesh, MeshStandardMaterial, SphereGeometry, TorusGeometry, Vector2, Vector3, type BufferGeometry } from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 
 export type Look = 'trench' | 'overcoat' | 'noir';
@@ -98,7 +98,8 @@ export function detective(look: Look, pose: Pose = 'stand'): Group {
     foot.rotation.y = side * 0.12;
     leg.add(shin, foot);
     // Mid-stride: the right leg forward, the left back.
-    if (pose === 'walk') leg.rotation.x = side * -0.32;
+    // Kept short enough that the coat still covers the leg behind.
+    if (pose === 'walk') leg.rotation.x = side * -0.22;
     g.add(leg);
   }
 
@@ -151,6 +152,7 @@ export function detective(look: Look, pose: Pose = 'stand'): Group {
   const SHOULDER = 1.37;
   const ELBOW = 1.07;
   const at = ARMS[pose];
+  const palms: Mesh[] = [];
   for (const side of [-1, 1] as const) {
     const j = side === -1 ? at.right : at.left;
     const arm = new Group();
@@ -167,6 +169,7 @@ export function detective(look: Look, pose: Pose = 'stand'): Group {
     const palm = part(new SphereGeometry(0.048, 12, 10), hand, side * 0.29 * sh - ax - exx, 0.72 - ELBOW, 0.04);
     palm.scale.set(0.8, 1.15, 0.6);
     elbow.add(lower, palm);
+    palms.push(palm);
     if (pose === 'watch' && side === 1) {
       // A wristwatch on the left wrist: a brass case and a dark strap.
       const strapW = part(new TorusGeometry(0.05, 0.008, 6, 20), new MeshStandardMaterial({ color: '#2b1d14', roughness: 0.5 }), side * 0.288 * sh - ax - exx, 0.79 - ELBOW, 0.035);
@@ -183,9 +186,13 @@ export function detective(look: Look, pose: Pose = 'stand'): Group {
     g.add(arm);
   }
   if (pose === 'map') {
-    // A folded street map held open in both hands, tipped toward the face.
-    const map = part(new BoxGeometry(0.46, 0.003, 0.32), new MeshStandardMaterial({ map: mapPaper(), roughness: 0.8 }), 0, 1.13, 0.3);
-    map.rotation.x = -1.05;
+    // A folded street map held open in both hands: found where the hands are, a side resting in each palm, the
+    // thumbs over its lower edge, tipped up toward the face.
+    g.updateMatrixWorld(true);
+    const [r, l] = palms.map((m) => m.getWorldPosition(new Vector3()));
+    const width = r!.distanceTo(l!) + 0.05;
+    const map = part(new BoxGeometry(width, 0.003, 0.3), new MeshStandardMaterial({ map: mapPaper(), roughness: 0.8 }), (r!.x + l!.x) / 2, (r!.y + l!.y) / 2 + 0.035, (r!.z + l!.z) / 2 + 0.01);
+    map.rotation.x = -1.3;
     g.add(map);
   }
 
