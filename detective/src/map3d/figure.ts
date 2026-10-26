@@ -3,7 +3,7 @@
 // scaled to the street (1 unit 0.15 m), so the detective stands as tall as the doors and lamps say a person is.
 // 3 looks for the owner to choose from: `trench` (a woman), `overcoat` (a man with a moustache) and `noir`.
 
-import { BoxGeometry, CanvasTexture, CapsuleGeometry, CylinderGeometry, DoubleSide, Group, LatheGeometry, Mesh, MeshStandardMaterial, SphereGeometry, TorusGeometry, Vector2, Vector3, type BufferGeometry } from 'three';
+import { BoxGeometry, CanvasTexture, CapsuleGeometry, CatmullRomCurve3, CylinderGeometry, DoubleSide, Group, LatheGeometry, Mesh, MeshStandardMaterial, SphereGeometry, TorusGeometry, TubeGeometry, Vector2, Vector3, type BufferGeometry } from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 
 export type Look = 'trench' | 'overcoat' | 'noir';
@@ -104,22 +104,33 @@ export function detective(look: Look, pose: Pose = 'stand'): Group {
   }
 
   // The coat: hem at the knee, in at the waist, out over the chest, round the shoulders. Flattened front to back.
-  const body = part(
-    lathe([
-      [0.0, 0.47],
-      [0.27 * hp, 0.47],
-      [0.235 * hp, 0.7],
-      [0.2, 0.94],
-      [0.215, 1.12],
-      [0.225 * sh, 1.28],
-      [0.2 * sh, 1.4],
-      [0.12, 1.46],
-      [0.07, 1.48],
-      [0.0, 1.48],
-    ]),
-    coat,
-  );
-  body.scale.z = 0.66;
+  const profile: Array<[number, number]> = [
+    [0.0, 0.47],
+    [0.27 * hp, 0.47],
+    [0.235 * hp, 0.7],
+    [0.2, 0.94],
+    [0.215, 1.12],
+    [0.225 * sh, 1.28],
+    [0.2 * sh, 1.4],
+    [0.12, 1.46],
+    [0.07, 1.48],
+    [0.0, 1.48],
+  ];
+  const DEPTH = 0.66;
+  const body = part(lathe(profile), coat);
+  body.scale.z = DEPTH;
+  // A point on the coat at a height, a way across and on the front (+1) or back (-1), stood `off` clear of the cloth.
+  const onCoat = (x: number, y: number, face: 1 | -1, off: number): Vector3 => {
+    const pts = profile.slice(1, -1);
+    let r = pts[0]![0];
+    for (let i = 0; i + 1 < pts.length; i++) {
+      const [r0, y0] = pts[i]!;
+      const [r1, y1] = pts[i + 1]!;
+      if (y >= y0 && y <= y1) r = r0 + ((r1 - r0) * (y - y0)) / (y1 - y0);
+    }
+    const z = DEPTH * r * Math.sqrt(Math.max(0, 1 - (x / (r + off)) ** 2));
+    return new Vector3(x, y, face * (z + off));
+  };
   g.add(body);
   // The opening down the front, and the buttons on it.
   const edge = cloth(shade(k.coat, -0.25));
@@ -205,15 +216,21 @@ export function detective(look: Look, pose: Pose = 'stand'): Group {
   g.add(part(new RoundedBoxGeometry(0.205, 0.1, 0.012, 3, 0.006), flapM, bagX, 0.885, 0.2));
   const clasp = new MeshStandardMaterial({ color: '#b98a3c', roughness: 0.3, metalness: 0.8 });
   g.add(part(new RoundedBoxGeometry(0.03, 0.022, 0.01, 2, 0.004), clasp, bagX, 0.85, 0.208));
-  // The strap: from the left shoulder down to the bag's top corner, a finger's width off the coat.
-  const [sx, sy, ex, ey] = [-0.15 * sh, 1.41, bagX + 0.085, 0.92];
-  const len = Math.hypot(ex - sx, ey - sy);
-  const strap = part(new RoundedBoxGeometry(0.038, len, 0.014, 2, 0.006), leather, (sx + ex) / 2, (sy + ey) / 2, 0.172);
-  strap.rotation.z = Math.atan2(ex - sx, -(ey - sy));
+  // The strap lies on the body as a real one does: from the bag up across the chest, over the left shoulder, then
+  // down the back to the right hip and round to the bag again, a few millimetres off the coat all the way.
+  const route: Vector3[] = [];
+  const [bx, by] = [bagX + 0.07, 0.93];
+  const [shx, shy] = [-0.13 * sh, 1.42];
+  for (let i = 0; i <= 8; i++) route.push(onCoat(bx + ((shx - bx) * i) / 8, by + ((shy - by) * i) / 8, 1, 0.012));
+  route.push(new Vector3(shx * 1.05, shy + 0.05, 0.02), new Vector3(shx * 1.05, shy + 0.05, -0.03));
+  for (let i = 8; i >= 0; i--) route.push(onCoat(shx + ((0.22 * hp - shx) * (8 - i)) / 8, shy + ((0.98 - shy) * (8 - i)) / 8, -1, 0.012));
+  route.push(new Vector3(0.245 * hp, 0.93, 0.04), new Vector3(bagX + 0.1, 0.9, 0.14));
+  const curve = new CatmullRomCurve3(route);
+  const strap = part(new TubeGeometry(curve, 120, 0.011, 8, false), leather);
   g.add(strap);
   // A brass buckle on the strap at the chest.
-  const t = 0.3;
-  g.add(part(new TorusGeometry(0.016, 0.0035, 6, 4), clasp, sx + (ex - sx) * t, sy + (ey - sy) * t, 0.182));
+  const bk = curve.getPoint(0.2);
+  g.add(part(new TorusGeometry(0.017, 0.0035, 6, 4), clasp, bk.x, bk.y, bk.z + 0.004));
   // A small brass lantern hooked on the left of the belt.
   const brass = new MeshStandardMaterial({ color: '#b98a3c', roughness: 0.3, metalness: 0.8 });
   g.add(part(new CylinderGeometry(0.03, 0.035, 0.08, 10), brass, -0.2, 0.86, 0.11));
