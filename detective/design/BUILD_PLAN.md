@@ -26,7 +26,18 @@ In this order. Together they make case 1 something worth putting an ad on.
 
 - [ ] **Set 1a. The Ember award, to its end.** The story first (`the-ember-award.md`, its "Still to write"), then the chapter, a few steps at a time: the staff room, Mrs Okafor, who did it, the closer and the ending. When it closes, `writing` comes off and the engine holds it to the whole rules. Then case 2 the same way.
 - [ ] **Set 1b. Sit with them.** The second talk method (`CASE_WRITING.md` section 3): a real game or a meal, chess first, an endgame from a position they set, legal moves checked by a chess rules library chosen in this set for a licence that allows sale.
-- [ ] **Set 1c. The cast as figures.** `CHARACTERS.md`: the detective (overcoat, brimmed hat, lantern, satchel), the 14 suspects and the 4 working pets (bloodhound, parrot, capuchin, Agent 404) as realistic 3D figures in the 3D street. Then the board's photos, the empty states and `<Partner>` moods rendered from them, replacing `src/avatar` and `design/characters`. Free animation library and any models licence-checked for sale first.
+- [ ] **Set 1c. The cast as figures.** Built in code in the street's model-village look (`src/map3d/figure.ts`), not imported models. Today: 3 detective looks to choose from (`trench`, a woman; `overcoat`, a man with a moustache; `noir`, a man with his collar up), 7 postures (stand, walk, look, point, think, watch, map), each seen from any side in the lab (`/__street?view=pose&figure=<look>&pose=<pose>&yaw=<deg>`), the sheet at `design/characters/detective/check.png` (`npm run street3d:render -- poses`). Still to do: the owner picks a look; then the 14 suspects and the 4 pets on the same build. Edge cases, each checked on the sheet before it is shown:
+  - Clipping: arms through the satchel strap, hands into the hat brim, the map into the coat, the back leg through the hem at full stride.
+  - Moving: a walk cycle with no foot sliding, and a blend between postures.
+  - Sitting and riding: a seated pose for the bench and set 1-travel's bicycle, car and horse, hands on the handlebars or reins, the coat not through the seat.
+  - Ground: steps, kerbs, the road, cobbles and doorways, never floating or sunk (the pavement height is fixed today).
+  - Night and weather: a dark coat lost in the night street; rain, snow and fog; a wet coat or an umbrella.
+  - Size on the map: about 10 px tall from the Cases camera, so a simpler, bolder silhouette there.
+  - Every choice the player makes: skin, hair, hat and outfit in any mix (long hair under a wide brim, a moustache with a bob).
+  - Who it can be: older people, a headscarf or turban, a wheelchair, a left-handed mirror.
+  - Suspects: 14 distinct outlines from the same figure, and the culprit's disguise layer.
+  - Cost: about 40 parts and materials a figure; merge them before a street holds several, or phones slow.
+  - Rules: CLAUDE.md says the detective is never inside a scene, but travel shows them in the street; update it. Reduced motion needs a still version of travel.
 - [ ] **Set 1d. Answers stay on the server.** Today every chapter, culprit included, is bundled into the page. The Worker serves a step's playable part when it opens and the ending once earned, guests included.
 - [ ] **Set 1e. 5 people play it.** The Ember award, from brief to ending, on a phone, by 5 people who have never seen the game. What stops them is fixed.
 - [ ] **Set 1f. Search the scene.** More find methods, so not every case sweeps a room. No clock, and a tip-off points at a quarter of the room, never at the thing:
