@@ -56,6 +56,7 @@ Risks: leaked keys, faked scores, AI endpoint abuse, injected text in shared con
 - They are for the database alone: no role but the Worker's may call them, and it only through `own_streak`, `pair_streak`, `my_friend_streaks`, `claim_due_reminders` and `reminder_context`, whose grants are as they were.
 - Guest progress (`merge_guest_progress`): clues done before sign in move to the account as `unverified`.
 - Guest days (`merge_guest_days`): the run on the player's own screen only. No badge, reminder, board or shared run reads them.
+- Streak badges count checked days only (`checked_streak`). Merged guest dailies keep the run a player is told about (`own_streak`) and earn nothing.
 - Points count a clue's best checked score once.
 - Case badges (`cases_1`, `cases_5`, `cases_10`, `cases_25`) count checked plays of whole catalogue puzzles only.
 
