@@ -2,7 +2,8 @@
 // puzzles. Signed in, those are kept level with the account: what a guest did here goes up, what was done on
 // another device comes down, and neither side ever loses anything.
 
-import { fetchMyRecords, fetchProgress, mergeGuestProgress } from './api';
+import { fetchMyRecords, fetchProgress, mergeGuestDays, mergeGuestProgress } from './api';
+import { loadPlayDays } from './playDays';
 import { mergeRecords } from './records';
 import { loadFinished, markFinished } from './shelves';
 import { loadStars, recordStars, type Stars } from './starStore';
@@ -45,6 +46,8 @@ export function applyProgress(rows: ReadonlyArray<{ clue_id: unknown; stars: unk
  */
 export async function syncProgress(): Promise<boolean> {
   await mergeGuestProgress(localProgress()).catch(() => 0);
+  // The days the run is counted from, so a guest's run is on the account too (BUILD_PLAN set 11a).
+  await mergeGuestDays(loadPlayDays()).catch(() => 0);
   const rows = await fetchProgress().catch(() => []);
   const changed = applyProgress(rows);
   // Records from the account: the better of each is kept. A server without them yet answers nothing.
