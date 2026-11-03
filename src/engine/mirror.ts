@@ -8,7 +8,7 @@ import { toChars } from './text';
 
 /** A Mirror clue is worth sitting down to from this many words, the same floor as a passage. */
 export const MIRROR_MIN = 3;
-/** And lists no more than a passage does. */
+/** And prefers a text with no more than a passage lists. Every backward word in it is listed. */
 export const MIRROR_MAX = 5;
 /** Word lengths looked for. Under 4 letters a backwards word is an accident nobody would call hidden. */
 const SHORTEST = 4;
@@ -65,6 +65,7 @@ export function mirrorClue(puzzle: Pick<HiddenWordsPuzzle, 'text' | 'chars' | 'S
   const cut = passages(puzzle);
   if (cut.length < 2) return null;
   let best: { text: string; dict: string[]; letters: number } | null = null;
+  let over: typeof best = null;
   for (let i = 0; i < cut.length; i++) {
     for (let j = i; j < cut.length && j < i + WINDOW; j++) {
       const text = cut
@@ -74,9 +75,16 @@ export function mirrorClue(puzzle: Pick<HiddenWordsPuzzle, 'text' | 'chars' | 'S
       const S = toChars(text).S;
       const dict = mirrorWordsIn(S, words);
       if (dict.length < MIRROR_MIN) continue;
-      if (!best || S.length < best.letters) best = { text, dict: dict.slice(0, MIRROR_MAX), letters: S.length };
+      // Every word that reads backwards in the text is listed, or a true find would be marked wrong. A run with
+      // more than MIRROR_MAX is kept only when no run holds fewer, and then all of its words are listed.
+      if (dict.length > MIRROR_MAX) {
+        if (!over || S.length < over.letters) over = { text, dict, letters: S.length };
+        break;
+      }
+      if (!best || S.length < best.letters) best = { text, dict, letters: S.length };
       break;
     }
   }
-  return best && { text: best.text, dict: best.dict };
+  const pick = best ?? over;
+  return pick && { text: pick.text, dict: pick.dict };
 }

@@ -11,10 +11,14 @@ export type StarsInput = {
   byOthers?: boolean;
 };
 
-/** 1 for finishing, 2 for finding 80% or more, 3 for a clean read (all found, no hint, no wrong pick). */
+/**
+ * 1 for finding at least half, 2 for finding 80% or more, 3 for a clean read (all found, no hint, no wrong pick).
+ * A game given up with less than half found earns nothing: no stars, no finished puzzle, no day on the run.
+ */
 export function starsFor({ finished, found, total, hints, wrongs, byOthers = false }: StarsInput): 0 | 1 | 2 | 3 {
   if (!finished) return 0;
   if (total > 0 && found === total && hints === 0 && wrongs === 0 && !byOthers) return 3;
   if (total > 0 && found / total >= 0.8) return 2;
-  return 1;
+  if (total > 0 && found > 0 && found * 2 >= total) return 1;
+  return 0;
 }

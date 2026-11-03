@@ -649,8 +649,11 @@ async function plays(req: Request, deps: Deps) {
                 : replay(buildHiddenWords({ text: cut[game.clue - 1]!.text, dict: g.data.dict as string[] }), log, false);
     if (!c.ok) throw new HttpError(422, c.reason);
     const stars = starsFor({ finished: true, found: c.found, total: c.total, hints: c.hints, wrongs: c.wrongs });
-    const kept = await deps.db.rpc('record_clue', { p_user: user.id, p_game: gameId, p_clue: game.clue, p_stars: stars, p_score: c.score });
-    if (kept.error || !kept.data) throw new HttpError(500, 'save_failed');
+    // A clue given up with less than half found earns nothing and is not kept: no stars, no points, no day on the run.
+    if (stars > 0) {
+      const kept = await deps.db.rpc('record_clue', { p_user: user.id, p_game: gameId, p_clue: game.clue, p_stars: stars, p_score: c.score });
+      if (kept.error || !kept.data) throw new HttpError(500, 'save_failed');
+    }
     return json({ verified: true, clue: game.clue, found: c.found, total: c.total, hints: c.hints, secs: c.secs, score: c.score, stars });
   }
 

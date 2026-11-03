@@ -37,6 +37,20 @@ export function seriesIn(digits: readonly number[]): Array<[number, number]> {
   return out;
 }
 
+/**
+ * Whether every 3 digits in a row that step evenly sit inside one of `runs`. A run that shares a digit with the one
+ * before it (6 5 4 6 8: 4 6 8 after 6 5 4) is not found by `seriesIn`, so a row that holds one would mark a true
+ * run wrong. Such a row is never made.
+ */
+export function onlyTheseRuns(digits: readonly number[], runs: ReadonlyArray<readonly [number, number]>): boolean {
+  for (let a = 0; a + SERIES_MIN <= digits.length; a++) {
+    const step = digits[a + 1]! - digits[a]!;
+    if (step === 0 || Math.abs(step) > STEP_MAX || digits[a + 2]! - digits[a + 1]! !== step) continue;
+    if (!runs.some(([x, y]) => a >= x && a + SERIES_MIN - 1 <= y)) return false;
+  }
+  return true;
+}
+
 /** The step a run moves by: "+2", "-3". */
 const stepOf = (S: string, [a]: readonly [number, number]) => {
   const d = Number(S[a + 1]) - Number(S[a]);
@@ -61,7 +75,7 @@ export function seriesClue(seed: string, level = 0): HiddenWordsDef {
     if (digits.some((d) => d < 0 || d > 9)) continue;
     const runs = seriesIn(digits);
     const apart = runs.every((x, i) => i === 0 || x[0] > runs[i - 1]![1] + 1);
-    if (runs.length === want && apart) return { text: digits.join(' '), dict: [] };
+    if (runs.length === want && apart && onlyTheseRuns(digits, runs)) return { text: digits.join(' '), dict: [] };
   }
   // Never reached in practice: a plain counting run still plays.
   return { text: Array.from({ length: n }, (_, i) => (i < 3 ? i + 1 : 0)).join(' '), dict: [] };

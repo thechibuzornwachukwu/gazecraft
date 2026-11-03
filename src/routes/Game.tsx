@@ -320,9 +320,11 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
 
   // Pack shelves: a catalogue puzzle played to the end with at least 1 find is finished in this browser.
   const inCatalogue = !daily && !part && !!getGameDef(def.id);
+  // Played to the end means at least half found: a game given up with less is not finished (src/engine/stars.ts).
+  const earnedEnd = finished && starsFor({ finished, found: foundCount, total, hints: 0, wrongs: 0 }) > 0;
   useEffect(() => {
-    if (finished && inCatalogue && foundCount > 0) markFinished(def.id);
-  }, [finished, inCatalogue, foundCount, def.id]);
+    if (earnedEnd && inCatalogue) markFinished(def.id);
+  }, [earnedEnd, inCatalogue, def.id]);
 
   // The moment a game ends, once: stars for a catalogue puzzle played alone, then personal records.
   // Both live in this browser. A finished daily opened again does not come through here.
@@ -333,17 +335,17 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
   function onFinish(fs: Session) {
     // A guest's games are counted: 2, then they are asked to sign in.
     if (!signedIn) markGuestPlayed(playKey(def.id, dailyN, part?.n));
-    // The run counts a day on which a clue was finished.
-    if (dailyN == null) {
+    const mine = fs.found.filter((f) => !f.by);
+    const stars = starsFor({ finished: true, found: fs.found.length, total, hints: fs.hints, wrongs: fs.wrongs, byOthers: mine.length !== fs.found.length });
+    // The run counts a day on which a clue was finished, with at least half found. A game given up counts nothing.
+    if (dailyN == null && stars > 0) {
       markPlayedToday();
       countPuzzleToday();
     }
     // Counted for everyone, guests too: a game played to the end is one with at least 1 word found.
     if (fs.found.length > 0) countEvent(def.id, 'end');
     if (total > 0 && fs.found.length === total) countEvent(def.id, 'full');
-    const mine = fs.found.filter((f) => !f.by);
     const cleanRead = isCleanRead(fs, total);
-    const stars = starsFor({ finished: true, found: fs.found.length, total, hints: fs.hints, wrongs: fs.wrongs, byOthers: mine.length !== fs.found.length });
     const starsUp = starred && recordStars(gameKey, stars);
     const broke = recordPlay({
       pack: daily || inCatalogue ? def.category : null,
@@ -353,7 +355,7 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
       longest: wordy ? playFacts(puzzle, fs.found, fs.wrongs, fs.hints).longest : null,
     });
     // A clue done gets its moment: a popup with what was won and the way on.
-    if (part && !inRoom) setPopup(fs.startAt);
+    if (part && !inRoom && stars > 0) setPopup(fs.startAt);
     if (broke.length) recordSound();
     setEnd({ at: fs.startAt, starsUp, records: recordLines(broke, copy.pick) });
   }

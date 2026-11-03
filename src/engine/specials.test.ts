@@ -6,7 +6,7 @@ import { evalGroups, evalLiar, evalRelay, evalSums } from './evaluate';
 import { buildGroups, decodePick, encodePick, groupsClue, GROUPS_MIN_LETTERS, type GroupBoard } from './groups';
 import { buildLiar, liarClue, LIAR_SHOWN, type Statement } from './liar';
 import { buildRelay, chainsIn } from './relay';
-import { buildSeries, seriesClue, seriesIn, SERIES_LEVELS } from './series';
+import { buildSeries, onlyTheseRuns, seriesClue, seriesIn, SERIES_LEVELS } from './series';
 import { LIAR_N, RELAY_N, SERIES_N, specialClues } from './specials';
 import { toChars } from './text';
 
@@ -141,6 +141,42 @@ describe('groups', () => {
         // Every word is played as its picture, and the picture is in the build.
         for (const w of words) expect(existsSync(`public/icons/fluent/${icons[w]}.webp`), `${cat}: ${w}`).toBe(true);
       }
+    }
+  });
+});
+
+describe('series boards are fair', () => {
+  it('a run sharing a digit with the one before is caught', () => {
+    const d = [6, 5, 4, 6, 8, 0, 0];
+    expect(onlyTheseRuns(d, seriesIn(d))).toBe(false);
+    expect(onlyTheseRuns([1, 3, 5, 0, 0], seriesIn([1, 3, 5, 0, 0]))).toBe(true);
+  });
+
+  it('no made row holds an even run that is not an answer', () => {
+    for (let lv = 0; lv < SERIES_LEVELS.length; lv++) {
+      for (let i = 0; i < 400; i++) {
+        const p = buildSeries(seriesClue(`fair${i}~33`, lv));
+        const d = [...p.S].map(Number);
+        expect(onlyTheseRuns(d, p.answers.map((a) => a.spans[0]!)), p.S).toBe(true);
+        expect(p.answers).toHaveLength(SERIES_LEVELS[lv]!.runs);
+      }
+    }
+  });
+});
+
+describe('relay and mirror list every find in their text', () => {
+  it('no true chain or backward word is left off the list, in any pack', async () => {
+    const { RELAY_N, MIRROR_N } = await import('./specials');
+    const { mirrorWordsIn } = await import('./mirror');
+    const { toChars } = await import('./text');
+    for (const g of games) {
+      const p = getPuzzle(g.id);
+      if (!p) continue;
+      const sp = specialClues(p, g.id, g.category, SPECIAL_SOURCES);
+      const r = sp.get(RELAY_N);
+      if (r) expect(r.dict.length, g.id).toBe(chainsIn(toChars(r.text).S, SPECIAL_SOURCES.relayWords).length);
+      const m = sp.get(MIRROR_N);
+      if (m) expect(m.dict.length, g.id).toBe(mirrorWordsIn(toChars(m.text).S, SPECIAL_SOURCES.mirrorWords).length);
     }
   });
 });
