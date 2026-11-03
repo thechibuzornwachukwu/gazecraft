@@ -41,7 +41,9 @@ export function useStreak(tick: unknown = 0): Streak {
 
   return useMemo(() => {
     const today = dayNo();
-    const days = new Set([...localDailies(400).map((d) => d.day_no), ...loadPlayDays(), ...(signedIn ? server : [])]);
+    // A daily counts with at least 1 word found: ending it with nothing keeps no run (as on the server).
+    const dailies = localDailies(400).filter((d) => d.s.found.length > 0).map((d) => d.day_no);
+    const days = new Set([...dailies, ...loadPlayDays(), ...(signedIn ? server : [])]);
     const streak = runWithRest(days, today);
     return {
       streak,

@@ -83,6 +83,20 @@ export const evalGroups: Evaluate = (p, a, b, found) => {
   return away ? { kind: 'close' } : { kind: 'wrong' };
 };
 
+/**
+ * Games with few choices end after so many wrong picks, or tapping everything would find every answer. Liar: one
+ * wrong tap is forgiven, the second ends the clue. Groups: the fourth wrong set ends it, and "one away" is a wrong
+ * set too. The board and the server's replay both read this.
+ */
+export type Tries = { limit: number; closeCounts: boolean };
+export const TRIES: Partial<Record<keyof typeof EVALUATE, Tries>> = {
+  liar: { limit: 2, closeCounts: false },
+  groups: { limit: 4, closeCounts: true },
+};
+
+/** Whether this pick uses up a try. */
+export const spendsTry = (t: Tries | undefined, kind: Evaluation['kind']): boolean => !!t && (kind === 'wrong' || (t.closeCounts && kind === 'close'));
+
 export const EVALUATE = {
   'hidden-words': evalWords,
   mirror: evalMirror,
