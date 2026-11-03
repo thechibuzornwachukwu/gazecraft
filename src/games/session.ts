@@ -76,7 +76,10 @@ export function applyPick(s: Session, ev: Evaluation, ctx: Ctx): Session {
   const left = tries!.limit - used;
   // The last try gone ends the game, with what was found so far.
   if (left <= 0) return { ...next, tries: used, endAt: now, hintLi: -1, msg: copy.pick('outOfTries'), resultTitle: copy.resultTitle(next.found.length, total) };
-  return { ...next, tries: used, msg: `${next.msg} ${copy.pick('triesLeft', { n: left })}`.trim() };
+  // The wrong-pick lines end without a stop: one goes in, so the 2 sentences do not run together.
+  const said = next.msg.trim();
+  const lead = said && !/[.?]$/.test(said) ? `${said}.` : said;
+  return { ...next, tries: used, msg: `${lead} ${copy.pick('triesLeft', { n: left })}`.trim() };
 }
 
 function applyPickOnly(s: Session, ev: Evaluation, { now, total, daily, copy, sums = false, groups = false }: Ctx): Session {

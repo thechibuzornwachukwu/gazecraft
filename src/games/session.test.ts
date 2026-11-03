@@ -168,6 +168,8 @@ describe('a game with a limit on wrong picks (Liar, Groups)', () => {
   it('says what is left after a wrong pick, and ends the game on the last one', () => {
     const one = applyPick(newSession(0), wrong, ctx);
     expect(one.tries).toBe(1);
+    // The fake copy says "pick:wrong": a stop goes in before the line about what is left.
+    expect(one.msg).toBe('pick:wrong. pick:triesLeft');
     expect(one.endAt).toBeNull();
     const two = applyPick(one, wrong, { ...ctx, now: 2000 });
     expect(two.tries).toBe(2);
