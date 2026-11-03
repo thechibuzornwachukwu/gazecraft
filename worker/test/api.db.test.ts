@@ -272,12 +272,22 @@ describe('POST /api/plays for a clue of a case', () => {
   });
 
   it('a replay keeps the better result, and a part find earns fewer stars', async () => {
-    const first = (await (await send({ game: { type: 'game', id: 'bible', clue: 1 }, log: logOf(piece(1), 1) })).json()) as { score: number; stars: number };
+    // Half the words: the line for 1 star (src/engine/stars.ts).
+    const half = Math.ceil(piece(1).answers.length / 2);
+    expect(half / piece(1).answers.length).toBeLessThan(0.8);
+    const first = (await (await send({ game: { type: 'game', id: 'bible', clue: 1 }, log: logOf(piece(1), half) })).json()) as { score: number; stars: number };
     expect(first.stars).toBe(1);
     const second = (await (await send({ game: { type: 'game', id: 'bible', clue: 1 }, log: logOf(piece(1)) })).json()) as { score: number; stars: number };
     expect(second.stars).toBe(3);
-    await send({ game: { type: 'game', id: 'bible', clue: 1 }, log: logOf(piece(1), 1) });
+    await send({ game: { type: 'game', id: 'bible', clue: 1 }, log: logOf(piece(1), half) });
     expect(await clues()).toEqual([{ game_id: 'bible', clue: 1, stars: 3, score: Math.max(first.score, second.score), verified: true }]);
+  });
+
+  it('a clue given up with less than half found earns no stars and is not kept', async () => {
+    const r = await send({ game: { type: 'game', id: 'bible', clue: 2 }, log: { events: [], hints: [], finish: 5000 } });
+    expect(r.status).toBe(200);
+    expect(await r.json()).toMatchObject({ verified: true, clue: 2, found: 0, stars: 0 });
+    expect(await clues()).toEqual([]);
   });
 
   it('the log is checked against the passage, not the whole puzzle', async () => {

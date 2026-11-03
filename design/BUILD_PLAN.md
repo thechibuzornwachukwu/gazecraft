@@ -20,6 +20,9 @@ One set at a time. Each set is small, works on its own and leaves the live game 
 
 ### 10. New game types
 
+- [ ] **You** decide, then **Opus** (engine, replay, scoring) and **Sonnet** (screens). **Set 10d. Against the clock.** Proposed by the owner on 3 Nov 2026: now and then a Series or hidden words clue is played to a countdown, and the player finds as many as they can before it ends. Open questions: how long, how it is scored and starred when not everything can be found, and how the server checks the time (the play log already carries it).
+- [ ] **You** decide, then **Opus** and **Sonnet**. **Set 10e. Word jumble.** Proposed by the owner on 3 Nov 2026: a new game type, letters shuffled, make the word. Needs a word list checked for crude and rare words, like Relay's.
+
 - [ ] **Free model** drafts, **you** check, **Haiku** adds. **Set 10c. More boards.** Each category has 1 Groups board and 1 Liar bank today, so every pack in a category shows the same Groups board. 3 more Groups picture boards for General, Science and Health (`data/groups.json`, Fluent Emoji 3D icons only), and 10 more Liar statements for each category (`data/liar.json`).
 - [ ] **Opus.** Relay reaches 6 of 25 packs. Find more chains (a wider word list from SCOWL level 35, or 2-link chains on short packs) without letting in crude or rare words.
 - [ ] **Free model** drafts paragraphs, the engine keeps only those whose words truly hide, **Haiku** adds them to `data/games.json`. **Set 10b. More packs,** 5 at a time, on topics players ask Make for most.

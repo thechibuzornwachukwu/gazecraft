@@ -19,8 +19,15 @@ describe('starsFor', () => {
     expect(starsFor({ ...base, found: 7 })).toBe(1);
     expect(starsFor({ ...base, found: 4, total: 5 })).toBe(2);
   });
-  it('finishing with nothing found is 1, and an empty puzzle never gives 3', () => {
-    expect(starsFor({ ...base, found: 0 })).toBe(1);
-    expect(starsFor({ ...base, found: 0, total: 0 })).toBe(1);
+  it('half is the line for 1: a game given up with less earns nothing', () => {
+    expect(starsFor({ ...base, found: 5 })).toBe(1);
+    expect(starsFor({ ...base, found: 4 })).toBe(0);
+    expect(starsFor({ ...base, found: 1, total: 14 })).toBe(0);
+    expect(starsFor({ ...base, found: 1, total: 2 })).toBe(1);
+    expect(starsFor({ ...base, found: 1, total: 1, hints: 1 })).toBe(2);
+  });
+  it('nothing found is 0, and an empty puzzle never gives a star', () => {
+    expect(starsFor({ ...base, found: 0 })).toBe(0);
+    expect(starsFor({ ...base, found: 0, total: 0 })).toBe(0);
   });
 });

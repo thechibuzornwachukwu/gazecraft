@@ -100,7 +100,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     group: 'Playing',
     title: 'How do I get 3 stars?',
     answer: 'Find every word with no tip-off and no wrong pick. Your best stars on each puzzle are kept.',
-    facts: ['3 stars: every word, no tip-off, no wrong pick.', '2 stars: at least 8 in 10 of the words.', '1 star: any finished puzzle.'],
+    facts: ['3 stars: every word, no tip-off, no wrong pick.', '2 stars: at least 8 in 10 of the words.', '1 star: at least half the words.', 'Less than half: no stars, and the puzzle stays open to try again.'],
     related: ['tip-offs', 'points'],
   },
   {

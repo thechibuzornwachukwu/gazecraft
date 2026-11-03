@@ -9,7 +9,7 @@ import { toChars } from './text';
 
 /** A chain has at least this many links. */
 export const RELAY_LINKS = 3;
-/** A Relay clue hides at least this many chains, and lists no more than the most. */
+/** A Relay clue hides at least this many chains, and prefers a text with no more than the most. Every chain in it is listed. */
 export const RELAY_MIN = 2;
 export const RELAY_MAX = 4;
 /** A link is a word of this many letters or more: "a" and "an" would chain through anything. */
@@ -77,6 +77,7 @@ export function relayClue(puzzle: Pick<HiddenWordsPuzzle, 'text' | 'chars' | 'S'
   const cut = passages(puzzle);
   if (cut.length < 2) return null;
   let best: { text: string; dict: string[]; letters: number } | null = null;
+  let over: typeof best = null;
   for (let i = 0; i < cut.length; i++) {
     for (let j = i; j < cut.length && j < i + WINDOW; j++) {
       const text = cut
@@ -86,11 +87,19 @@ export function relayClue(puzzle: Pick<HiddenWordsPuzzle, 'text' | 'chars' | 'S'
       const S = toChars(text).S;
       const chains = chainsIn(S, words);
       if (chains.length < RELAY_MIN) continue;
-      if (!best || S.length < best.letters) best = { text, dict: chains.slice(0, RELAY_MAX).map((c) => c.links.join('+')), letters: S.length };
+      const dict = chains.map((c) => c.links.join('+'));
+      // Every chain in the text is listed, or a true find would be marked wrong. A run with more than RELAY_MAX
+      // is kept only when no run holds fewer, and then all of its chains are listed.
+      if (chains.length > RELAY_MAX) {
+        if (!over || S.length < over.letters) over = { text, dict, letters: S.length };
+        break;
+      }
+      if (!best || S.length < best.letters) best = { text, dict, letters: S.length };
       break;
     }
   }
-  return best && { text: best.text, dict: best.dict };
+  const pick = best ?? over;
+  return pick && { text: pick.text, dict: pick.dict };
 }
 
 /** A Relay puzzle: each chain of `dict` ("the+end+dog") is an answer wherever its letters run in the stream. */
