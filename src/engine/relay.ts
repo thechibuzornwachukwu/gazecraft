@@ -77,7 +77,7 @@ export function relayClue(puzzle: Pick<HiddenWordsPuzzle, 'text' | 'chars' | 'S'
   const cut = passages(puzzle);
   if (cut.length < 2) return null;
   let best: { text: string; dict: string[]; letters: number } | null = null;
-  let over: typeof best = null;
+  let over: { text: string; dict: string[]; letters: number } | null = null;
   for (let i = 0; i < cut.length; i++) {
     for (let j = i; j < cut.length && j < i + WINDOW; j++) {
       const text = cut

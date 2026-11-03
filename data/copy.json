@@ -371,5 +371,13 @@
   "sayClosedRobot": [
     "1 pack done. I wrote down how you did it.",
     "Every word read. 0 left in this pack."
+  ],
+  "triesLeft": [
+    "Wrong picks left: {n}.",
+    "Tries left: {n}."
+  ],
+  "outOfTries": [
+    "Out of tries. Here is what you found.",
+    "No tries left. The answers are below."
   ]
 }

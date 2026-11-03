@@ -159,3 +159,35 @@ describe('session transitions', () => {
     expect(mod.missed(bible, new Set(['amos']))).toHaveLength(total - 1);
   });
 });
+
+describe('a game with a limit on wrong picks (Liar, Groups)', () => {
+  const tries = { limit: 2, closeCounts: false };
+  const ctx = { now: 1000, total: 2, daily: false, copy, tries };
+  const wrong = { kind: 'wrong' } as const;
+
+  it('says what is left after a wrong pick, and ends the game on the last one', () => {
+    const one = applyPick(newSession(0), wrong, ctx);
+    expect(one.tries).toBe(1);
+    expect(one.endAt).toBeNull();
+    const two = applyPick(one, wrong, { ...ctx, now: 2000 });
+    expect(two.tries).toBe(2);
+    expect(two.endAt).toBe(2000);
+    expect(two.resultTitle).not.toBeNull();
+    // Nothing more lands once it has ended.
+    expect(applyPick(two, { kind: 'hit', key: 'x', label: 'X', span: [0, 1] }, ctx)).toBe(two);
+  });
+
+  it('a near miss uses a try only where it counts (Groups), and a find never does', () => {
+    const close = { kind: 'close' } as const;
+    expect(applyPick(newSession(0), close, ctx).tries ?? 0).toBe(0);
+    expect(applyPick(newSession(0), close, { ...ctx, tries: { limit: 4, closeCounts: true } }).tries).toBe(1);
+    expect(applyPick(newSession(0), { kind: 'hit', key: 'x', label: 'X', span: [0, 1] }, ctx).tries ?? 0).toBe(0);
+  });
+
+  it('a game with no limit never ends on wrong picks', () => {
+    let s = newSession(0);
+    for (let i = 0; i < 10; i++) s = applyPick(s, wrong, { ...ctx, tries: undefined });
+    expect(s.endAt).toBeNull();
+    expect(s.tries).toBeUndefined();
+  });
+});

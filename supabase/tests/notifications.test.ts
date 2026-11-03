@@ -136,3 +136,16 @@ describe('badges', () => {
     expect(await codes(ada)).not.toContain('streak_7');
   });
 });
+
+describe('a daily needs a word to count toward a run', () => {
+  it('a daily ended with nothing found is no day on the run', async () => {
+    const ada = await player('dnw');
+    const days = async () => ((await ada.u.client.rpc('my_play_days')).data as number[]).map(Number);
+    await play(ada, { game_id: await dailyGame(T - 1), day_no: T - 1, found: 0, total: 10, score: 0 });
+    expect(await days()).not.toContain(T - 1);
+    expect((await svc.rpc('own_streak', { p_user: ada.u.id })).data).toBe(0);
+    await play(ada, { game_id: await dailyGame(T), day_no: T, found: 1, total: 10 });
+    expect(await days()).toContain(T);
+    expect((await svc.rpc('own_streak', { p_user: ada.u.id })).data).toBe(1);
+  });
+});

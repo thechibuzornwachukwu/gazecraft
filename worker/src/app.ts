@@ -3,7 +3,7 @@
 import type { SupabaseClient, User } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { dayNo } from '../../src/engine/daily';
-import { EVALUATE } from '../../src/engine/evaluate';
+import { EVALUATE, TRIES } from '../../src/engine/evaluate';
 import { buildHiddenWords } from '../../src/engine/hiddenWords';
 import { caseOrder, clueKind, SUMS_FROM } from '../../src/engine/journey';
 import { checkDraft, crossesWords, MAKE, WORD_RE } from '../../src/engine/make';
@@ -643,9 +643,9 @@ async function plays(req: Request, deps: Deps) {
             : kind === 'series'
               ? replay(buildSeries(sp!), log, false, EVALUATE.series)
               : kind === 'liar'
-                ? replay(buildLiar(sp!), log, false, EVALUATE.liar)
+                ? replay(buildLiar(sp!), log, false, EVALUATE.liar, TRIES.liar)
                 : kind === 'groups'
-                  ? replay(buildGroups(sp!), log, false, EVALUATE.groups)
+                  ? replay(buildGroups(sp!), log, false, EVALUATE.groups, TRIES.groups)
                 : replay(buildHiddenWords({ text: cut[game.clue - 1]!.text, dict: g.data.dict as string[] }), log, false);
     if (!c.ok) throw new HttpError(422, c.reason);
     const stars = starsFor({ finished: true, found: c.found, total: c.total, hints: c.hints, wrongs: c.wrongs });

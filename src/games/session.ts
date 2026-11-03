@@ -3,6 +3,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import * as copyDefault from '../copy';
+import { spendsTry, type Tries } from '../engine/evaluate';
 import type { HintKind } from '../engine/hint';
 import { score } from '../engine/score';
 import { cleanReadOf } from '../engine/skill';
@@ -24,6 +25,8 @@ export type SavedSession = {
   misses: number;
   /** Wrong picks in any game. Never scored: a clean read has none. */
   wrongs: number;
+  /** Tries used, in a game that has a limit (src/engine/evaluate.ts TRIES). */
+  tries?: number;
   hintLi: number;
   streak: number;
   lastFindAt: number | null;
@@ -63,9 +66,20 @@ export const newSession = (now: number): Session => ({
 
 export const isFinished = (s: SavedSession) => s.endAt != null;
 
-type Ctx = { now: number; total: number; daily: boolean; copy: Copy; /** A number game: a wrong run is told in its own words. */ sums?: boolean; /** Groups: a near miss is one away. */ groups?: boolean; /** The unmasking: a wrong letter is a try gone. */ unmask?: boolean };
+type Ctx = { now: number; total: number; daily: boolean; copy: Copy; /** A number game: a wrong run is told in its own words. */ sums?: boolean; /** Groups: a near miss is one away. */ groups?: boolean; /** The unmasking: a wrong letter is a try gone. */ unmask?: boolean; /** A game that ends after so many wrong picks. */ tries?: Tries };
 
-export function applyPick(s: Session, ev: Evaluation, { now, total, daily, copy, sums = false, groups = false }: Ctx): Session {
+export function applyPick(s: Session, ev: Evaluation, ctx: Ctx): Session {
+  const next = applyPickOnly(s, ev, ctx);
+  const { tries, now, total, copy } = ctx;
+  if (next === s || !spendsTry(tries, ev.kind)) return next;
+  const used = (s.tries ?? 0) + 1;
+  const left = tries!.limit - used;
+  // The last try gone ends the game, with what was found so far.
+  if (left <= 0) return { ...next, tries: used, endAt: now, hintLi: -1, msg: copy.pick('outOfTries'), resultTitle: copy.resultTitle(next.found.length, total) };
+  return { ...next, tries: used, msg: `${next.msg} ${copy.pick('triesLeft', { n: left })}`.trim() };
+}
+
+function applyPickOnly(s: Session, ev: Evaluation, { now, total, daily, copy, sums = false, groups = false }: Ctx): Session {
   if (isFinished(s)) return s;
   switch (ev.kind) {
     case 'hit': {
@@ -303,7 +317,7 @@ export function useGameSession<P>({ mod, puzzle, dailyN, resumeId: resumeAs, sha
       chime();
     }
     const now = Date.now();
-    const picked = applyPick(cur, ev, { now, total, daily, copy, sums: mod.family === 'quantitative', groups: mod.oneAway === true });
+    const picked = applyPick(cur, ev, { now, total, daily, copy, sums: mod.family === 'quantitative', groups: mod.oneAway === true, tries: mod.tries });
     const logged = isLogged(ev)
       ? withLog(picked, cur, (l) => ({ ...l, events: [...l.events, { a, b, t: now - cur.startAt }] }))
       : picked;

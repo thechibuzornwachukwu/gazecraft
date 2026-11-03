@@ -77,7 +77,8 @@ export function cleanReadsOf(plays: readonly PlayRow[]): number {
 
 export function profileStats(plays: readonly PlayRow[], today: number): ProfileStats {
   const dailyPlays = plays.filter((p) => p.day_no != null && p.day_no >= 1 && p.day_no <= today);
-  const days = new Set(dailyPlays.map((p) => p.day_no!));
+  // A daily ended with nothing found is not a day played (supabase/migrations/20261103000300_daily_needs_a_word.sql).
+  const days = new Set(dailyPlays.filter((p) => p.found > 0).map((p) => p.day_no!));
   const { played, streak } = dailyStats(days, today);
   const byDay = new Map(dailyPlays.map((p) => [p.day_no!, p]));
   const last14: DayCell[] = Array.from({ length: 14 }, (_, i) => {

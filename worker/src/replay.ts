@@ -1,7 +1,7 @@
 // Replays a client play log with the shared engine and recomputes the result.
 // The client's own counts and score are never trusted.
 
-import { evalWords, type Evaluate } from '../../src/engine/evaluate';
+import { evalWords, spendsTry, type Evaluate, type Tries } from '../../src/engine/evaluate';
 import type { Answer } from '../../src/engine/hiddenWords';
 import { score } from '../../src/engine/score';
 
@@ -42,7 +42,7 @@ export type ReplayResult =
 const sorted = (xs: number[]) => xs.every((x, i) => i === 0 || x >= xs[i - 1]!);
 
 /** `evaluate` is the game type's own rule (`EVALUATE`): hidden words unless another is given. */
-export function replay(puzzle: { S: string; answers: readonly Answer[] }, log: PlayLog, daily: boolean, evaluate: Evaluate = evalWords): ReplayResult {
+export function replay(puzzle: { S: string; answers: readonly Answer[] }, log: PlayLog, daily: boolean, evaluate: Evaluate = evalWords, tries?: Tries): ReplayResult {
   const { events, hints, finish } = log;
   if (events.length + hints.length > MAX_LOG_EVENTS) return { ok: false, reason: 'log_too_long' };
   if (!sorted(events.map((e) => e.t)) || !sorted(hints)) return { ok: false, reason: 'out_of_order' };
@@ -54,10 +54,14 @@ export function replay(puzzle: { S: string; answers: readonly Answer[] }, log: P
   const finds: Array<{ k: string; t: number }> = [];
   let wrongs = 0;
   let lastFind = 0; // the clock starts at 0
+  let used = 0;
 
   for (const e of events) {
     if (e.a >= n || e.b >= n) return { ok: false, reason: 'index_out_of_range' };
+    // A game with a limit ended at its last try: picks after it count for nothing, as on the board.
+    if (tries && used >= tries.limit) break;
     const r = evaluate(puzzle, e.a, e.b, found);
+    if (spendsTry(tries, r.kind)) used++;
     if (r.kind === 'already') return { ok: false, reason: 'duplicate_find' };
     if (r.kind === 'hit') {
       if (e.t - lastFind < MIN_FIND_GAP_MS) return { ok: false, reason: 'too_fast' };

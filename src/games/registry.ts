@@ -3,7 +3,7 @@
 
 import type { ComponentType } from 'react';
 import { Puzzle, type PuzzleProps, type Span } from '../components/Puzzle';
-import { EVALUATE, type Evaluate, type Evaluation } from '../engine/evaluate';
+import { EVALUATE, TRIES, type Evaluate, type Evaluation, type Tries } from '../engine/evaluate';
 import { buildHiddenWords, norm, type HiddenWordsPuzzle } from '../engine/hiddenWords';
 import { hintAnswer, type HintKind } from '../engine/hint';
 import { buildMirror } from '../engine/mirror';
@@ -50,6 +50,8 @@ export type GameModule<P> = {
   Board: ComponentType<PuzzleProps>;
   /** Groups: a near miss is told as "one away". */
   oneAway?: boolean;
+  /** The game ends after this many wrong picks (src/engine/evaluate.ts TRIES). */
+  tries?: Tries;
 };
 
 type Built = HiddenWordsPuzzle<GameDef>;
@@ -121,11 +123,13 @@ export const registry: Record<GameType, GameModule<Built>> = {
         .map((a) => ({ key: a.key, label: a.label, span: a.spans[0]!, parts: [{ text: a.label, hit: false }] })),
     Board: GroupsBoard,
     oneAway: true,
+    tries: TRIES.groups,
   },
   liar: {
     ...spans({ family: 'verbal', build: (def) => buildLiar(def), evaluate: EVALUATE.liar, listOrder: byPlace }),
     // A statement is picked with one tap.
     boardProps: (p) => ({ chars: p.chars, letters: p.S.length, tapPicks: true }),
+    tries: TRIES.liar,
   },
 };
 

@@ -91,3 +91,19 @@ describe('replay: tampered logs are rejected', () => {
     expect(r).toEqual({ ok: false, reason: 'index_out_of_range' });
   });
 });
+
+describe('a game with a limit on wrong picks, on the server', () => {
+  it('counts nothing after the last try, as the board does', async () => {
+    const { EVALUATE, TRIES } = await import('../../src/engine/evaluate');
+    const { buildLiar } = await import('../../src/engine/liar');
+    const p = buildLiar({ text: 'Water is wet.\nFire is cold.\nGrass is green.', dict: ['Fire is cold.'] });
+    const lie = p.answers[0]!.spans[0]!;
+    // The first letter of a true statement.
+    const at = (k: number) => p.chars[p.text.indexOf(['Water', 'Grass'][k]!)]!.li;
+    const tapTrue = (k: number, t: number): PlayEvent => ({ a: at(k), b: at(k), t });
+    const late = replay(p, { events: [tapTrue(0, 1000), tapTrue(1, 2000), { a: lie[0], b: lie[0], t: 3000 }], hints: [], finish: 4000 }, false, EVALUATE.liar, TRIES.liar);
+    expect(late).toMatchObject({ ok: true, found: 0, wrongs: 2 });
+    const inTime = replay(p, { events: [tapTrue(0, 1000), { a: lie[0], b: lie[0], t: 2000 }], hints: [], finish: 3000 }, false, EVALUATE.liar, TRIES.liar);
+    expect(inTime).toMatchObject({ ok: true, found: 1, wrongs: 1 });
+  });
+});
