@@ -125,4 +125,14 @@ describe('badges', () => {
     for (let d = T - 6; d <= T; d++) await play(ada, { game_id: await dailyGame(d), day_no: d, found: d === T ? 10 : 3, total: 10 });
     expect((await codes(ada)).sort()).toEqual(['first_game', 'perfect_daily', 'streak_7']);
   });
+
+  it('a run made of merged guest dailies and days earns no streak badge', async () => {
+    const ada = await player('bgm');
+    const items = [];
+    for (let d = T - 6; d <= T - 1; d++) items.push({ day_no: d, found: 3, hints: 0, misses: 0, secs: 30 });
+    expect((await ada.u.client.rpc('merge_guest_plays', { items })).data).toBe(6);
+    await ada.u.client.rpc('merge_guest_days', { days: [T - 7, T - 8] });
+    await play(ada, { game_id: await dailyGame(T), day_no: T, found: 3, total: 10 });
+    expect(await codes(ada)).not.toContain('streak_7');
+  });
 });
