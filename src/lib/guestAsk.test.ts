@@ -1,12 +1,22 @@
 // @vitest-environment jsdom
 import { POOLS } from '../copy';
-import { guestAsk, markRunTold, PLACE_MIN_PLAYERS, RUN_ASK, runTold } from './guestAsk';
+import { guestAsk, guestKeepLabel, KEEP_RUN, markRunTold, PLACE_MIN_PLAYERS, RUN_ASK, runTold } from './guestAsk';
 
 const facts = { today: true, streak: 1, runTold: false, place: null };
 
 describe('guestAsk', () => {
-  it('says nothing special away from today’s daily', () => {
-    expect(guestAsk({ ...facts, today: false, streak: 9, place: { place: 2, players: 40 } })).toBeNull();
+  it('away from today’s daily: no place, but the run is said after any win (set 11a)', () => {
+    expect(guestAsk({ ...facts, today: false, streak: 1, place: { place: 2, players: 40 } })).toBeNull();
+    expect(guestAsk({ ...facts, today: false, streak: 9, runTold: true, place: { place: 2, players: 40 } })).toBeNull();
+    expect(guestAsk({ ...facts, today: false, streak: 9 })).toEqual({ pool: 'guestRun', vars: { n: 9 }, run: true });
+  });
+
+  it(`asks to keep the streak from ${KEEP_RUN} days, and the score before that`, () => {
+    expect(guestKeepLabel(0)).toBeUndefined();
+    expect(guestKeepLabel(KEEP_RUN - 1)).toBeUndefined();
+    expect(guestKeepLabel(KEEP_RUN)).toBe('Keep your streak');
+    expect(guestKeepLabel(40)).toBe('Keep your streak');
+    expect(guestKeepLabel(Number.NaN)).toBeUndefined();
   });
 
   it('says the place the score would take on today’s board', () => {

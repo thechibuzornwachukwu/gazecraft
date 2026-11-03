@@ -15,7 +15,7 @@ One set at a time. Each set is small, works on its own and leaves the live game 
 
 3 accounts, 1 active player: people play as guests, forget the game, and never sign up.
 
-- [ ] **Opus** (flow, server), **Sonnet** (screens). **Set 11a. Ask at the win.** The sign up ask at the moment a puzzle is won, as "keep your streak", not only at the guest wall. A guest's progress (stars, clues, streak) is carried into the new account.
+- [x] **Opus** (flow, server), **Sonnet** (screens). **Set 11a. Ask at the win.** The sign up ask at the moment a puzzle is won, as "keep your streak", not only at the guest wall. A guest's progress (stars, clues, streak) is carried into the new account. Built: the run line after any win, the link reads "Keep your streak" from a run of 2, and the guest's days move to the account (`merge_guest_days`, migration `20261103000100_guest_days.sql`). Deploy owed: `npx supabase db push`, then `npm run deploy:site`.
 - [ ] **Sonnet.** **Set 11b. Back on the home screen.** An install prompt (add to home screen) after the second win, and reminders offered to guests too, not only signed in players.
 
 ### 10. New game types

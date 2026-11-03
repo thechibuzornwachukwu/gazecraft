@@ -6,6 +6,7 @@ import { loadStars } from './starStore';
 const api = vi.hoisted(() => ({
   merged: [] as Array<Array<{ id: string; stars: number }>>,
   rows: [] as Array<{ clue_id: unknown; stars: unknown }>,
+  days: [] as number[][],
   failUp: false,
   failDown: false,
 }));
@@ -14,6 +15,11 @@ vi.mock('./api', () => ({
     if (api.failUp) throw new Error('offline');
     api.merged.push(items);
     return items.length;
+  },
+  mergeGuestDays: async (days: number[]) => {
+    if (api.failUp) throw new Error('offline');
+    api.days.push([...days]);
+    return days.length;
   },
   fetchMyRecords: async () => ({}),
   fetchProgress: async () => {
@@ -28,6 +34,7 @@ beforeEach(() => {
   localStorage.clear();
   api.merged = [];
   api.rows = [];
+  api.days = [];
   api.failUp = false;
   api.failDown = false;
 });
@@ -87,6 +94,12 @@ describe('syncProgress', () => {
     expect(api.merged).toEqual([[{ id: 'bible~3', stars: 1 }]]);
     expect(loadStars()).toEqual({ 'bible~1': 3, 'bible~2': 2, 'bible~3': 1 });
     expect(heard).toHaveBeenCalledTimes(1);
+  });
+
+  it('a guest’s run goes up with them: the days kept in this browser (set 11a)', async () => {
+    localStorage.setItem('gazecraft-days', JSON.stringify([300, 301, 302]));
+    await syncProgress();
+    expect(api.days).toEqual([[300, 301, 302]]);
   });
 
   it('nothing new: no event', async () => {

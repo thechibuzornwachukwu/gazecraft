@@ -476,6 +476,16 @@ export async function mergeGuestProgress(items: ReadonlyArray<{ id: string; star
   return data as number;
 }
 
+/** Days a guest finished something in this browser (`gazecraft-days`), so their run comes with them. Unverified:
+ * the run on their own screen counts them, badges and shared runs do not. Safe to send again. */
+export async function mergeGuestDays(days: ReadonlyArray<number>): Promise<number> {
+  const clean = [...new Set(days.filter((d) => Number.isInteger(d) && d > 0))].slice(-400);
+  if (!clean.length) return 0;
+  const { data, error } = await (await client()).rpc('merge_guest_days', { days: clean });
+  if (error) throw error;
+  return data as number;
+}
+
 /** Your clues done on any device: `bible~2` for a passage, `bible` for the whole puzzle, with the best stars. */
 export async function fetchProgress(): Promise<Array<{ clue_id: string; stars: number }>> {
   const { data, error } = await (await client()).rpc('my_progress');

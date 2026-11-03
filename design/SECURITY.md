@@ -30,6 +30,7 @@ Risks: leaked keys, faked scores, AI endpoint abuse, injected text in shared con
 | push_subs | own rows | own rows; endpoint must be a known push service |
 | friend_streaks, streak_links, game_invites, puzzle_ratings | through functions only | through functions only |
 | play_days (the days a checked clue was finished) | own days, through `my_play_days()` only | a trigger on checked clues only |
+| guest_days (the days a guest finished something before sign in, unverified) | own days, through `my_play_days()` and `export_my_data()` only | through `merge_guest_days()` only: signed in, whole days from the last 400 up to today, 400 at most; never read by `own_streak`, `checked_days` or anything that earns |
 | notifications | own, through `my_notifications()` | database triggers only; a client can only mark its own read |
 | badges | all, through `badges_of()` | database trigger on verified plays only |
 | puzzle_reports | none | Worker only, through `report_puzzle()` |
@@ -54,6 +55,7 @@ Risks: leaked keys, faked scores, AI endpoint abuse, injected text in shared con
 - A clue of a case (`/api/plays` with `clue`): the Worker cuts the catalogue puzzle into passages with the shared engine, replays the log against that passage alone, and works out the stars and the score itself.
 - They are for the database alone: no role but the Worker's may call them, and it only through `own_streak`, `pair_streak`, `my_friend_streaks`, `claim_due_reminders` and `reminder_context`, whose grants are as they were.
 - Guest progress (`merge_guest_progress`): clues done before sign in move to the account as `unverified`.
+- Guest days (`merge_guest_days`): the run on the player's own screen only. No badge, reminder, board or shared run reads them.
 - Points count a clue's best checked score once.
 - Case badges (`cases_1`, `cases_5`, `cases_10`, `cases_25`) count checked plays of whole catalogue puzzles only.
 

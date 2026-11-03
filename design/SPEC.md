@@ -306,7 +306,8 @@ An entry point appears when the player has done what it scores. The rules hide l
 **Results** (above puzzle, smooth scroll to top)
 One job: say what happened and lead on. In view: the title, one line ("Every answer found." or "The ones you missed are shaded below."), the Stars, a sponsor's "With NAME" line, and 2 buttons.
 - Where the score would stand: one `guestPlace` line, "That score is place 14 of 60 today." The place comes from the server (`daily_place`), from the guest's own score against the checked plays, with the guest counted as one more player.
-- Where the run lives: at a run of 3 days or more, one `guestRun` line, said once in this browser (`gazecraft-run-told`) and before the place: the run is kept in this browser only, and sign in keeps it anywhere.
+- Where the run lives: at a run of 3 days or more, one `guestRun` line after any win, not only the daily, said once in this browser (`gazecraft-run-told`) and before the place: the run is kept in this browser only, and sign in keeps it anywhere.
+- Keep your streak: from a run of 2 days, the sign in link under a guest's result reads "Keep your streak" in place of "Keep this score" (`guestKeepLabel`).
 - Who they are, first of all: until the first minute's character step has an answer, the strip says one `guestLook` line and its link reads "Choose your look".
 Nothing is locked for a guest and nothing is taken away. Play first stays.
 
@@ -547,6 +548,7 @@ Never for sale: hints, extra tries, time, or anything that touches a score; stre
 - A clue's popup shows in this browser at the finish only.
 - A following board shows your own row only when it is among its rows: your place among the people you follow is not worked out by the server.
 - A guest's clues move to the account on sign in with their stars but no points: only a clue played signed in is checked and scored.
+- A guest's run moves to the account on sign in: the dailies (`merge_guest_plays`) and the other days something was finished (`merge_guest_days`, into `guest_days`). The run on the player's own screen counts them; streak badges, reminders and shared runs count checked days only.
 - A guest's place on today's board is worked out from a score the browser sent, so it is a guide, never a rank.
 - An unfinished puzzle is kept in the browser it was played in, not on the account: a second device starts clean.
 - A deleted account leaves them and comes out of the signed in players.

@@ -370,6 +370,8 @@ describe('plays', () => {
       'handle',
       'hints',
       'id',
+      // Added on 20 Oct (20261020000100_plays_public_rare.sql), masked on today's daily like total and clean.
+      'rare_keys',
       'score',
       'secs',
       'total',
@@ -489,6 +491,52 @@ describe('guest merge', () => {
     expect((await g.client.rpc('merge_guest_plays', { items: { day_no: 1 } })).error).not.toBeNull();
     const many = Array.from({ length: 61 }, (_, i) => ({ day_no: i + 1, found: 0, hints: 0, misses: 0, secs: 0 }));
     expect((await g.client.rpc('merge_guest_plays', { items: many })).error).not.toBeNull();
+  });
+});
+
+describe('guest days (set 11a)', () => {
+  let g: TestUser;
+  beforeEach(async () => {
+    g = await makeUser('gd');
+  });
+  const days = async (u: TestUser) => ((await u.client.rpc('my_play_days')).data as number[]).map(Number).sort((x, y) => x - y);
+
+  it('anon cannot send days, and no client can read the table', async () => {
+    expect((await anon().rpc('merge_guest_days', { days: [T] })).error).not.toBeNull();
+    await g.client.rpc('merge_guest_days', { days: [T] });
+    expect((await g.client.from('guest_days').select('*')).data ?? []).toEqual([]);
+    expect((await anon().from('guest_days').select('*')).data ?? []).toEqual([]);
+  });
+
+  it('carries a guest’s days into the run on their own screen, once each', async () => {
+    const r = await g.client.rpc('merge_guest_days', { days: [T, T - 1, T - 1, T - 2] });
+    expect(r.error).toBeNull();
+    expect(r.data).toBe(3);
+    expect((await g.client.rpc('merge_guest_days', { days: [T, T - 2] })).data).toBe(0);
+    expect(await days(g)).toEqual([T - 2, T - 1, T]);
+  });
+
+  it('skips the future, the far past, and anything that is not a whole day', async () => {
+    const r = await g.client.rpc('merge_guest_days', { days: [T + 1, 0, -3, 1.5, T - 401, '5', null, { d: 1 }, 99999999] });
+    expect(r.error).toBeNull();
+    expect(r.data).toBe(0);
+    expect(await days(g)).toEqual([]);
+  });
+
+  it('rejects non-arrays and oversized batches', async () => {
+    expect((await g.client.rpc('merge_guest_days', { days: { d: T } })).error).not.toBeNull();
+    expect((await g.client.rpc('merge_guest_days', { days: Array.from({ length: 401 }, () => T) })).error).not.toBeNull();
+  });
+
+  it('stays the player’s own: no badge run, and nothing on another account', async () => {
+    const other = await makeUser('gd2');
+    await g.client.rpc('merge_guest_days', { days: Array.from({ length: 10 }, (_, i) => T - i) });
+    expect(await days(g)).toHaveLength(10);
+    expect(await days(other)).toEqual([]);
+    // own_streak drives streak badges and reminders: the browser's word does not reach it.
+    expect((await admin().rpc('own_streak', { p_user: g.id })).data).toBe(0);
+    const exp = (await g.client.rpc('export_my_data')).data as { guest_days: number[] };
+    expect(exp.guest_days).toHaveLength(10);
   });
 });
 
