@@ -143,6 +143,10 @@ export function Puzzle({
   const tapRef = useRef((li: number) => {
     flushRef.current();
     if (tapPicksRef.current) {
+      // One tap is the whole pick: the press that began it must not stay marked as a selection.
+      tapAnchor.current = null;
+      selRef.current = null;
+      setSel(null);
       pickRef.current(li, li);
       return;
     }
