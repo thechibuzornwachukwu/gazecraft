@@ -37,6 +37,12 @@ export function liarClue(statements: readonly Statement[], seed: string): Hidden
   return { text: picked.map((x) => x.s).join('\n'), dict: picked.filter((x) => !x.t).map((x) => x.s) };
 }
 
+/** Which statement (counted from 0, one a line) the letter `li` sits in. -1 when it is not a letter of the text. */
+export function statementOf(p: Pick<HiddenWordsPuzzle, 'chars'>, li: number): number {
+  const at = p.chars.findIndex((c) => c.li === li);
+  return at < 0 ? -1 : p.chars.slice(0, at).filter((c) => c.ch === '\n').length;
+}
+
 /** A Liar puzzle: each false statement of `dict` is an answer over its whole span of letters. */
 export function buildLiar<D extends HiddenWordsDef>(def: D): HiddenWordsPuzzle<D> {
   const { chars, S } = toChars(def.text);

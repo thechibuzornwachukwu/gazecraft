@@ -180,3 +180,13 @@ describe('relay and mirror list every find in their text', () => {
     }
   });
 });
+
+describe('counting a clue', () => {
+  it('says one in the singular', async () => {
+    const { countOf, SPECIAL_NOUN } = await import('./specials');
+    expect(countOf(1, SPECIAL_NOUN.liar)).toBe('1 false statement');
+    expect(countOf(2, SPECIAL_NOUN.liar)).toBe('2 false statements');
+    expect(countOf(1, 'Bible words')).toBe('1 Bible words');
+    expect(countOf(4, SPECIAL_NOUN.groups)).toBe('4 sets of 4');
+  });
+});

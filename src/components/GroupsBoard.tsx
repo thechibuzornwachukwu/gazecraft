@@ -71,7 +71,7 @@ export function GroupsBoard({ chars, found, missed, hintLi, disabled, onPick, de
           <button type="button" className={styles.clear} aria-label="Clear the picked words" disabled={sel.length === 0} onClick={() => setSel([])}>
             <Icon icon={X} size={18} />
           </button>
-          <button type="button" className={styles.check} aria-label={`Check these ${sel.length} words`} disabled={sel.length !== 4} onClick={check}>
+          <button type="button" className={styles.check} aria-label={sel.length === 4 ? 'Check these 4 words' : `Pick ${4 - sel.length} more to check`} disabled={sel.length !== 4} onClick={check}>
             <Icon icon={Check} size={20} />
           </button>
         </div>

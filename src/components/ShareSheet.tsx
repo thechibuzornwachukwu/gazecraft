@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Copy, X } from 'lucide-react';
 import { puzzleCards, resultCard, type Ratio } from '../engine/cards';
 import type { SpanAnswer } from '../engine/excerpt';
+import { countOf } from '../engine/specials';
 import { formatTime } from '../engine/time';
 import { cardToFile, copyText, deliver, shareUrl, shareUrlLabel } from '../lib/share';
 import { Button } from './Button';
@@ -110,7 +111,7 @@ export function ShareSheet({ open, onClose, game, result, player, onShared }: Pr
   const text =
     kind === 'result'
       ? `Gazecraft · ${game.title}\n${daily ? `${found} found` : `${found}/${total}`} · ${formatTime(result.secs)} · ${result.score.toLocaleString('en-US')}\nCan you beat it?`
-      : `${daily ? `How many ${game.noun} can you find?` : `Can you find ${total} ${game.noun}?`} Gazecraft`;
+      : `${daily ? `How many ${game.noun} can you find?` : `Can you find ${countOf(total, game.noun)}?`} Gazecraft`;
 
   const send = async () => {
     setBusy(true);

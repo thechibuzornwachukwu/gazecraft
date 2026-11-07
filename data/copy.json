@@ -379,5 +379,9 @@
   "outOfTries": [
     "Out of tries. Here is what you found.",
     "No tries left. The answers are below."
+  ],
+  "triedThat": [
+    "You tried that one.",
+    "Already tried. No try used."
   ]
 }

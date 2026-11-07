@@ -9,7 +9,7 @@ import { hintAnswer, type HintKind } from '../engine/hint';
 import { buildMirror } from '../engine/mirror';
 import { revealParts, type RevealPart } from '../engine/reveal';
 import { buildSums, sumsTarget } from '../engine/sums';
-import { buildLiar } from '../engine/liar';
+import { buildLiar, statementOf } from '../engine/liar';
 import { buildGroups, tilesOfAnswer } from '../engine/groups';
 import { GroupsBoard } from '../components/GroupsBoard';
 import { buildRelay } from '../engine/relay';
@@ -52,6 +52,8 @@ export type GameModule<P> = {
   oneAway?: boolean;
   /** The game ends after this many wrong picks (src/engine/evaluate.ts TRIES). */
   tries?: Tries;
+  /** What a pick is, whatever letter it was made on: the same wrong pick made again costs no second try. */
+  pickId?: (p: P, a: number, b: number) => string;
 };
 
 type Built = HiddenWordsPuzzle<GameDef>;
@@ -124,12 +126,16 @@ export const registry: Record<GameType, GameModule<Built>> = {
     Board: GroupsBoard,
     oneAway: true,
     tries: TRIES.groups,
+    // A pick is its 4 tiles, in any order: (a, b) is already the same for the same 4.
+    pickId: (_p, a, b) => `${a},${b}`,
   },
   liar: {
     ...spans({ family: 'verbal', build: (def) => buildLiar(def), evaluate: EVALUATE.liar, listOrder: byPlace }),
     // A statement is picked with one tap.
     boardProps: (p) => ({ chars: p.chars, letters: p.S.length, tapPicks: true }),
     tries: TRIES.liar,
+    // A tap anywhere in a statement picks that statement.
+    pickId: (p, a) => `s${statementOf(p, a)}`,
   },
 };
 

@@ -38,6 +38,21 @@ export const SPECIAL_NOUN: Record<SpecialType, string> = {
   groups: 'sets of 4',
 };
 
+/** The same, for one. A Liar clue often hides a single lie: "Find 1 false statement". */
+const SPECIAL_NOUN_ONE: Record<SpecialType, string> = {
+  mirror: 'word that reads right to left',
+  relay: 'word chain',
+  series: 'run that steps evenly',
+  liar: 'false statement',
+  groups: 'set of 4',
+};
+
+/** "2 false statements", "1 false statement". A pack's own noun ("Bible words") is never 1: a clue hides 3 or more. */
+export function countOf(n: number, noun: string): string {
+  const type = (Object.keys(SPECIAL_NOUN) as SpecialType[]).find((t) => SPECIAL_NOUN[t] === noun);
+  return `${n} ${n === 1 && type ? SPECIAL_NOUN_ONE[type] : noun}`;
+}
+
 /**
  * Each special clue a pack has, by number. A pack that is not cut (fewer than 2 passages) has none. Series is made
  * from the clue's own name, so every cut pack has one; the others need their source to hold enough.

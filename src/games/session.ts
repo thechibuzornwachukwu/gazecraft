@@ -27,6 +27,8 @@ export type SavedSession = {
   wrongs: number;
   /** Tries used, in a game that has a limit (src/engine/evaluate.ts TRIES). */
   tries?: number;
+  /** The wrong picks already made in such a game, by `pickId`. Made again, they cost nothing. */
+  tried?: string[];
   hintLi: number;
   streak: number;
   lastFindAt: number | null;
@@ -315,12 +317,19 @@ export function useGameSession<P>({ mod, puzzle, dailyN, resumeId: resumeAs, sha
     if (isFinished(cur)) return;
     const found = new Set(cur.found.map((f) => f.key));
     const ev = mod.check(puzzle, a, b, found);
+    // The same wrong pick again, in a game with few tries: said, never charged, never logged.
+    const id = mod.tries && mod.pickId ? mod.pickId(puzzle, a, b) : null;
+    if (id && ev.kind !== 'hit' && cur.tried?.includes(id)) {
+      commit({ ...cur, msg: copy.pick('triedThat') });
+      return;
+    }
     if (ev.kind === 'hit') {
       beforeHit?.(ev.key);
       chime();
     }
     const now = Date.now();
-    const picked = applyPick(cur, ev, { now, total, daily, copy, sums: mod.family === 'quantitative', groups: mod.oneAway === true, tries: mod.tries });
+    const applied = applyPick(cur, ev, { now, total, daily, copy, sums: mod.family === 'quantitative', groups: mod.oneAway === true, tries: mod.tries });
+    const picked = id && applied.tries !== cur.tries ? { ...applied, tried: [...(cur.tried ?? []), id] } : applied;
     const logged = isLogged(ev)
       ? withLog(picked, cur, (l) => ({ ...l, events: [...l.events, { a, b, t: now - cur.startAt }] }))
       : picked;

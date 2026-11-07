@@ -24,6 +24,7 @@ import { packHue } from '../lib/packHue';
 import { countPuzzleToday } from '../lib/goal';
 import { guestBlocked, markGuestPlayed, playKey } from '../lib/guestLimit';
 import { loadPartner } from '../lib/partner';
+import { countOf } from '../engine/specials';
 import { starsFor } from '../engine/stars';
 import { dayProfile } from '../engine/variableDay';
 import { countEvent, fetchCustomGame, fetchDailyPlace, fetchWordStats, mergeGuestDailies, submitPlay } from '../lib/api';
@@ -150,8 +151,8 @@ const HOW: Record<GameType, readonly [string, string]> = {
     'Each chain is words in a row, every one starting on the last letter of the one before. Drag across a whole chain.',
     'Each chain is words in a row, every one starting on the last letter of the one before. Swipe across a whole chain.',
   ],
-  liar: ['Some of these are false. Click each false statement.', 'Some of these are false. Tap each false statement.'],
-  groups: ['These 16 are 4 sets of 4. Pick 4 that belong together, then check them.', 'These 16 are 4 sets of 4. Tap 4 that belong together, then check them.'],
+  liar: ['Some of these are false. Click each false statement. A second wrong pick ends it.', 'Some of these are false. Tap each false statement. A second wrong tap ends it.'],
+  groups: ['These 16 are 4 sets of 4. Pick 4 that belong together, then check them. 4 wrong sets end it.', 'These 16 are 4 sets of 4. Tap 4 that belong together, then check them. 4 wrong sets end it.'],
 };
 
 /** The hint under the board while nothing has been said yet. */
@@ -554,7 +555,7 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
           </span>
         </div>
         <div className={styles.titleRow}>
-          <h1 className={styles.title}>{daily ? `Find the hidden ${def.noun}` : `Find ${total} ${def.noun}`}</h1>
+          <h1 className={styles.title}>{daily ? `Find the hidden ${def.noun}` : `Find ${countOf(total, def.noun)}`}</h1>
           <BigClock startAt={s.startAt} endAt={s.endAt} />
         </div>
         {holdsLine && <p className={styles.holds}>{holdsLine}</p>}

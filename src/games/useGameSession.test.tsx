@@ -289,3 +289,28 @@ describe('useGameSession save and resume', () => {
     expect(onStart).toHaveBeenCalledTimes(2);
   });
 });
+
+describe('a repeated wrong pick in a game with few tries', () => {
+  it('Liar: the same true statement tapped again, on any letter, costs no second try', async () => {
+    const { getPassage } = await import('./catalog');
+    const { LIAR_N } = await import('../engine/specials');
+    const { def } = getPassage('bible', LIAR_N)!;
+    const liar = registry.liar;
+    const p = liar.build(def);
+    // The first letter, and a later letter, of a true statement (a line that is not a lie).
+    const lines = def.text.split('\n');
+    const k = lines.findIndex((l) => !def.dict.includes(l));
+    const start = lines.slice(0, k).reduce((n, l) => n + l.length + 1, 0);
+    const first = p.chars[start]!.li;
+    const later = p.chars.slice(start + 5).find((c) => c.li >= 0)!.li;
+    const { result } = renderHook(() => useGameSession({ mod: liar, puzzle: p, resumeId: 'liar-test' }));
+    act(() => result.current.pick(first, first));
+    expect(result.current.s.tries).toBe(1);
+    act(() => result.current.pick(later, later));
+    expect(result.current.s.tries).toBe(1);
+    expect(result.current.finished).toBe(false);
+    expect(copyPools.triedThat).toContain(result.current.s.msg);
+    // Not logged: the server never sees the repeat.
+    expect(result.current.s.log!.events).toHaveLength(1);
+  });
+});

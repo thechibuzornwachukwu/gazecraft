@@ -200,7 +200,7 @@ export function profilePage(origin: string, p: ProfileSummary): Page {
         },
       },
     ],
-    body: `<h1>${esc(p.name)} (@${esc(p.handle)})</h1><p>${esc(stats)}. ${p.followers} followers on Gazecraft.</p>`,
+    body: `<h1>${esc(p.name)} (@${esc(p.handle)})</h1><p>${esc(stats)}. ${p.followers} ${p.followers === 1 ? 'follower' : 'followers'} on Gazecraft.</p>`,
   };
 }
 
