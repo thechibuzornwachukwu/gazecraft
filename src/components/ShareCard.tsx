@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef, type ReactNode, type Ref } from 'react';
 import type { puzzleCards, resultCard } from '../engine/cards';
 import tokens from '../styles/tokens.json';
 import { Logo } from './Logo';
+import { t } from '../i18n';
 import styles from './ShareCard.module.css';
 
 export type ResultCardData = ReturnType<typeof resultCard>;
@@ -129,7 +130,7 @@ function Result({ card, ref }: { card: ResultCardData; ref?: Ref<HTMLDivElement>
             {card.score}
           </span>
           {card.badge && (
-            <span className={styles.badge} data-kind={card.badge === 'Perfect' ? 'perfect' : 'gave-up'}>
+            <span className={styles.badge} data-kind={card.badge === t('Perfect') ? 'perfect' : 'gave-up'}>
               {card.badge}
             </span>
           )}
@@ -181,7 +182,7 @@ function Puzzle({ card, onOverflow, ref }: { card: PuzzleCardData; onOverflow?: 
       data-card="puzzle"
       style={{ width: card.w, height: card.h, padding: card.pad, gap: card.gap }}
     >
-      <Brand date={card.date}>{card.spoiler && <span className={styles.stamp}>Contains answers</span>}</Brand>
+      <Brand date={card.date}>{card.spoiler && <span className={styles.stamp}>{t('Contains answers')}</span>}</Brand>
       <div className={styles.heading}>
         <div className={styles.kicker}>{card.kicker}</div>
         {card.showTitle && (
@@ -198,7 +199,7 @@ function Puzzle({ card, onOverflow, ref }: { card: PuzzleCardData; onOverflow?: 
           </span>
         ))}
       </div>
-      <Footer card={card} line1={card.pline} line2={card.pline2} cta="Play this puzzle" />
+      <Footer card={card} line1={card.pline} line2={card.pline2} cta={t('Play this puzzle')} />
     </div>
   );
 }

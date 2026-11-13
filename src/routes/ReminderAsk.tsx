@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { TextLink } from '../components/TextLink';
 import { enableReminder, reminderState, type ReminderState } from '../lib/push';
+import { t } from '../i18n';
 import styles from './GameResults.module.css';
 
 /**
@@ -24,14 +25,14 @@ export function ReminderAsk() {
   if (asked && state?.status === 'on') {
     return (
       <p className={styles.note} role="status">
-        Done. One nudge a day, only if you have not played. Change it in Settings.
+        {t('Done. One nudge a day, only if you have not played. Change it in Settings.')}
       </p>
     );
   }
   if (asked && state?.status === 'blocked') {
     return (
       <p className={styles.note} role="status">
-        Notifications are blocked for this site. Allow them in your browser settings to get a reminder.
+        {t('Notifications are blocked for this site. Allow them in your browser settings to get a reminder.')}
       </p>
     );
   }
@@ -44,7 +45,7 @@ export function ReminderAsk() {
           void enableReminder().then(setState);
         }}
       >
-        Remind me tomorrow
+        {t('Remind me tomorrow')}
       </TextLink>
     </p>
   );

@@ -15,6 +15,7 @@ import { games } from '../games/catalog';
 import { fetchPoints, saveAvatar, saveLook } from '../lib/api';
 import { keepLook, loadLook } from '../lib/firstMinute';
 import { LOOK_CHOICES, type LookChoice } from '../lib/onboarding';
+import { t } from '../i18n';
 import styles from './AvatarDesigner.module.css';
 
 /**
@@ -22,10 +23,10 @@ import styles from './AvatarDesigner.module.css';
  * A new part in PARTS that is not listed here still shows, under Wear.
  */
 const TABS: Array<{ key: string; title: string; icon: LucideIcon; parts: PartKey[] }> = [
-  { key: 'face', title: 'Face', icon: Smile, parts: ['skin', 'eyes', 'mouth', 'mark', 'face'] },
-  { key: 'hair', title: 'Hair', icon: Scissors, parts: ['hair', 'colour', 'tie'] },
-  { key: 'wear', title: 'Wear', icon: Shirt, parts: ['outfit', 'kit', 'extra', 'item'] },
-  { key: 'scene', title: 'Scene', icon: Palette, parts: ['back', 'festive'] },
+  { key: 'face', title: t('Face'), icon: Smile, parts: ['skin', 'eyes', 'mouth', 'mark', 'face'] },
+  { key: 'hair', title: t('Hair'), icon: Scissors, parts: ['hair', 'colour', 'tie'] },
+  { key: 'wear', title: t('Wear'), icon: Shirt, parts: ['outfit', 'kit', 'extra', 'item'] },
+  { key: 'scene', title: t('Scene'), icon: Palette, parts: ['back', 'festive'] },
 ];
 const listed = new Set(TABS.flatMap((t) => t.parts));
 TABS[2]!.parts.push(...PARTS.map((p) => p.key).filter((k) => !listed.has(k)));
@@ -68,7 +69,7 @@ type EditorProps = {
  */
 export function CharacterEditor({ open, ...editor }: EditorProps & { open: boolean }) {
   return (
-    <Dialog open={open} onClose={editor.onClose} label="Edit your character" variant="editor">
+    <Dialog open={open} onClose={editor.onClose} label={t('Edit your character')} variant="editor">
       {open && <Editor {...editor} />}
     </Dialog>
   );
@@ -95,9 +96,9 @@ export function AvatarDesigner({ id, handle, code, onSaved }: Props) {
     <div className={styles.summary}>
       <Avatar handle={handle} size={88} />
       <div className={styles.summaryText}>
-        <p className={styles.summaryLine}>This is you on every board, profile and room.</p>
+        <p className={styles.summaryLine}>{t('This is you on every board, profile and room.')}</p>
         <div>
-          <Button variant="secondary" size="icon" onClick={() => setOpen(true)} aria-label="Edit character">
+          <Button variant="secondary" size="icon" onClick={() => setOpen(true)} aria-label={t('Edit character')}>
             <Icon icon={Pencil} size={20} />
           </Button>
         </div>
@@ -161,15 +162,15 @@ function Editor({ seed, code, look, onSave, onLook, onClose }: EditorProps) {
     const next = avatarCode(parts);
     const ok = await onSave(next).catch(() => false);
     setBusy(false);
-    if (!ok) return setNote('Could not save. Try again.');
+    if (!ok) return setNote(t('Could not save. Try again.'));
     setSaved(next);
     setBefore(null);
-    setNote('Saved. This is you on every board.');
+    setNote(t('Saved. This is you on every board.'));
   };
   const dress = async (next: LookChoice) => {
     setNote('');
     const ok = await onLook(next).catch(() => false);
-    setNote(ok ? 'Saved. Your choices are in a new order.' : 'Could not save. Try again.');
+    setNote(ok ? t('Saved. Your choices are in a new order.') : t('Could not save. Try again.'));
   };
 
   // Left and right arrows move between tabs, as in any tab list.
@@ -186,22 +187,22 @@ function Editor({ seed, code, look, onSave, onLook, onClose }: EditorProps) {
     <div className={styles.editor}>
       {/* The stage wears the chosen background, so the character sits in its own colour. */}
       <div className={styles.stage} style={{ background: BACKS[parts.back] }} data-dark={parts.back === 1 || undefined}>
-        <button type="button" className={styles.close} onClick={onClose} aria-label="Close the editor">
+        <button type="button" className={styles.close} onClick={onClose} aria-label={t('Close the editor')}>
           <Icon icon={X} size={18} />
         </button>
         <Avatar parts={parts} size={168} className={styles.hero} />
         <div className={styles.quick}>
-          <button type="button" className={styles.round} onClick={shuffle} aria-label="Surprise me" title="Surprise me">
+          <button type="button" className={styles.round} onClick={shuffle} aria-label={t('Surprise me')} title={t('Surprise me')}>
             <Icon icon={Dices} size={20} />
           </button>
-          <button type="button" className={styles.round} onClick={undo} disabled={!before} aria-label="Undo" title="Undo">
+          <button type="button" className={styles.round} onClick={undo} disabled={!before} aria-label={t('Undo')} title={t('Undo')}>
             <Icon icon={Undo2} size={20} />
           </button>
         </div>
       </div>
 
       <div className={styles.side}>
-        <div className={styles.tabs} role="tablist" aria-label="Parts of your character" onKeyDown={tabKey}>
+        <div className={styles.tabs} role="tablist" aria-label={t('Parts of your character')} onKeyDown={tabKey}>
           {TABS.map((t) => (
             <button
               key={t.key}
@@ -224,10 +225,10 @@ function Editor({ seed, code, look, onSave, onLook, onClose }: EditorProps) {
         {/* Keyed by tab, so each one opens at its top. This pane is the editor's only scroll. */}
         <div key={tab} className={styles.pane} role="tabpanel" id="avatar-panel" aria-labelledby={`avatar-tab-${tab}`} tabIndex={0}>
           {tab === 'face' && (
-            <section className={styles.group} aria-label="Mood">
+            <section className={styles.group} aria-label={t('Mood')}>
               <h3 className={styles.groupTitle}>
-                Mood
-                <span className={styles.chosen}>Sets the eyes and mouth together</span>
+                {t('Mood')}
+                <span className={styles.chosen}>{t('Sets the eyes and mouth together')}</span>
               </h3>
               <div className={styles.tiles}>
                 {MOOD_SETS.map((m) => (
@@ -236,7 +237,7 @@ function Editor({ seed, code, look, onSave, onLook, onClose }: EditorProps) {
                     type="button"
                     className={styles.tile}
                     aria-pressed={parts.eyes === m.eyes && parts.mouth === m.mouth}
-                    aria-label={`Mood: ${cap(m.name)}`}
+                    aria-label={t('Mood: {name}', { name: cap(m.name) })}
                     onClick={() => {
                       setNote('');
                       setBefore(null);
@@ -251,10 +252,10 @@ function Editor({ seed, code, look, onSave, onLook, onClose }: EditorProps) {
             </section>
           )}
           {tab === 'wear' && (
-            <section className={styles.group} aria-label="Who are we dressing?">
+            <section className={styles.group} aria-label={t('Who are we dressing?')}>
               <h3 className={styles.groupTitle}>
-                Who are we dressing?
-                <span className={styles.chosen}>Only you see this</span>
+                {t('Who are we dressing?')}
+                <span className={styles.chosen}>{t('Only you see this')}</span>
               </h3>
               <div className={styles.chips}>
                 {LOOK_CHOICES.map((c) => (
@@ -279,7 +280,7 @@ function Editor({ seed, code, look, onSave, onLook, onClose }: EditorProps) {
                 </h3>
 
                 {key === 'hair' && (
-                  <div className={styles.chips} role="group" aria-label="Kind of hair">
+                  <div className={styles.chips} role="group" aria-label={t('Kind of hair')}>
                     {HAIR_FAMILIES.map((f) => (
                       <button key={f.key} type="button" className={styles.chip} aria-pressed={f.key === family} onClick={() => setFamily(f.key)}>
                         {f.title}
@@ -294,7 +295,7 @@ function Editor({ seed, code, look, onSave, onLook, onClose }: EditorProps) {
                     // An earned piece not yet earned: shown, so the prize is in sight, and not for choosing.
                     const need = needOf(key, name);
                     const locked = !!need && !on && !isEarned(need, standing);
-                    const label = `${part.title}: ${cap(name)}${locked ? `. Locked. ${howTo(need)}` : ''}`;
+                    const label = locked ? t('{part}: {name}. Locked. {how}', { part: part.title, name: cap(name), how: howTo(need) }) : t('{part}: {name}', { part: part.title, name: cap(name) });
                     return swatches ? (
                       <button key={name} type="button" className={styles.dot} style={{ background: swatches[i] }} aria-pressed={on} aria-label={label} title={cap(name)} onClick={() => choose(key, i)}>
                         {on && <Icon icon={Check} size={18} className={styles.dotCheck} />}
@@ -317,13 +318,13 @@ function Editor({ seed, code, look, onSave, onLook, onClose }: EditorProps) {
 
         <div className={styles.foot}>
           <p className={styles.note} role="status">
-            {note || (dirty ? 'Not saved yet.' : '')}
+            {note || (dirty ? t('Not saved yet.') : '')}
           </p>
           <Button variant="secondary" onClick={onClose}>
-            {dirty ? 'Cancel' : 'Done'}
+            {dirty ? t('Cancel') : t('Done')}
           </Button>
           <Button onClick={save} disabled={busy || !dirty}>
-            Keep this look
+            {t('Keep this look')}
           </Button>
         </div>
       </div>

@@ -88,13 +88,9 @@
     "Same letter. One starts there",
     "Still marked. Start at the hand"
   ],
-  "guestPlace": [
-    "That score is place {n} of {m} today. Sign in to put your name on the board.",
-    "Place {n} of {m} today, as a guest. Sign in and the board shows your name."
-  ],
   "guestRun": [
-    "A run of {n} days, kept in this browser only. Sign in and it goes where you go.",
-    "{n} days in a row. The run lives in this browser. Sign in to keep it on any device."
+    "{n} days in a row, saved in this browser only.",
+    "A run of {n} days. Only this browser knows it."
   ],
   "resumed": [
     "Back where you left it",
@@ -195,24 +191,6 @@
     "{name} has played today. Your turn.",
     "{name} found theirs. Go find yours."
   ],
-  "streakKeep": [
-    "{n} days so far. Your next puzzle is waiting.",
-    "You are on {n} days. A puzzle is waiting."
-  ],
-  "streakDay": [
-    "{n} days in a row.",
-    "Day {n} of your run."
-  ],
-  "streakStart": [
-    "Day 1. Come back tomorrow to start a run."
-  ],
-  "streakMilestone": [
-    "{n} days in a row. That is a real habit.",
-    "{n} days. Not many get here."
-  ],
-  "streakBack": [
-    "Day 1 of a new run. Your best is {n}. Go and beat it."
-  ],
   "cleanRead": [
     "A clean read. No tip-offs, no wrong picks.",
     "Clean read. No tip-off, nothing wrong."
@@ -221,22 +199,11 @@
     "Your picks ran across {n} of these.",
     "You went over {n} of these and kept going."
   ],
-  "doneToday": [
-    "That is today done. See you tomorrow.",
-    "Done for today. The next one lands at midnight.",
-    "That is today done. Go and enjoy your day."
-  ],
-  "leftCount": [
-    "{n} left"
-  ],
   "weekDays": [
     "Played {n} of the last 7 days."
   ],
   "runMonth": [
     "Current run: {n}. Days this month: {m}."
-  ],
-  "shelfDone": [
-    "{n} of {t} finished"
   ],
   "journeyCount": [
     "{n} of {t} puzzles"
@@ -269,14 +236,6 @@
     "Level {n}.",
     "You reached level {n}."
   ],
-  "rareFind": [
-    "Only {p}% found {w}. You did.",
-    "{w}: found by {p}% of players. And you."
-  ],
-  "rarestFind": [
-    "Your rarest find: {w}. {p}% of players found it.",
-    "{w} was your rarest find. {p}% found it."
-  ],
   "starsUp": [
     "New best here: {n} of 3 stars.",
     "{n} of 3 stars. Your best on this one."
@@ -292,18 +251,6 @@
   "skillLong": [
     "{w}. {n} letters, and you saw it.",
     "A long one. {w}, {n} letters."
-  ],
-  "dayHid": [
-    "Today hid {n}. Most days hide {m}."
-  ],
-  "dayHidSame": [
-    "Today hid {n}. That is a usual day."
-  ],
-  "todayLong": [
-    "Today hides a long one."
-  ],
-  "todayDeep": [
-    "Today hides a deep one."
   ],
   "recordClean": [
     "Your fastest clean read in {w}: {t}.",
@@ -335,10 +282,6 @@
   ],
   "sponsorWith": [
     "With {name}"
-  ],
-  "guestLook": [
-    "That result is yours. Pick a look and a pet to play the next puzzle with you.",
-    "Your first result. Now choose who you are, and the pet beside you."
   ],
   "sayErrorCat": [
     "Not this time.",

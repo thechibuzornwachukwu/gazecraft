@@ -114,11 +114,9 @@ describe('Header', () => {
     expect(screen.getByRole('link', { name: 'Play the next puzzle' }).getAttribute('href')).toMatch(/^\/play\/[a-z0-9-]+(\/\d+)?$/);
   });
 
-  it('on the landing page: its own sections and one way in', () => {
+  it('on the landing page: one way in', () => {
     at('/');
-    expect(screen.queryByRole('navigation', { name: 'Main' })).toBeNull();
-    const nav = screen.getByRole('navigation', { name: 'On this page' });
-    expect(nav).toHaveTextContent('How it worksAbout');
+    expect(screen.queryByRole('navigation')).toBeNull();
     expect(screen.getByRole('link', { name: 'Play' })).toHaveAttribute('href', '/play');
   });
 });

@@ -14,6 +14,7 @@ import { Toggle } from './Toggle';
 import { useCardBudget } from './useCardBudget';
 import { useDelayedWaiting } from './useDelayedWaiting';
 import { Waiting } from './Waiting';
+import { locale, t, num } from '../i18n';
 import styles from './ShareSheet.module.css';
 
 export type ShareGame = {
@@ -80,8 +81,8 @@ export function ShareSheet({ open, onClose, game, result, player, onShared }: Pr
       answers: result.answers,
       secs: result.secs,
       theme: (document.documentElement.getAttribute('data-theme') as 'dark' | 'light') ?? 'dark',
-      kicker: (daily ? `Daily #${game.daily!.n}` : `${game.category} · ${game.difficulty}`),
-      date: daily ? game.daily!.date : new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }),
+      kicker: (daily ? t('Daily #{n}', { n: game.daily!.n }) : `${game.category} · ${game.difficulty}`),
+      date: daily ? game.daily!.date : new Date().toLocaleDateString(locale, { day: 'numeric', month: 'short' }),
       url: shareUrlLabel(game.path),
       name: player.name,
       handle: player.handle ? `@${player.handle}` : undefined,
@@ -110,8 +111,8 @@ export function ShareSheet({ open, onClose, game, result, player, onShared }: Pr
   const link = shareUrl(game.vs ? `${game.path}?vs=${encodeURIComponent(game.vs)}` : game.path);
   const text =
     kind === 'result'
-      ? `Gazecraft · ${game.title}\n${daily ? `${found} found` : `${found}/${total}`} · ${formatTime(result.secs)} · ${result.score.toLocaleString('en-US')}\nCan you beat it?`
-      : `${daily ? `How many ${game.noun} can you find?` : `Can you find ${countOf(total, game.noun)}?`} Gazecraft`;
+      ? `Gazecraft · ${game.title}\n${daily ? t('{found} found', { found }) : `${found}/${total}`} · ${formatTime(result.secs)} · ${num(result.score)}\n${t('Can you beat it?')}`
+      : `${daily ? t('How many {noun} can you find?', { noun: game.noun }) : t('Can you find {what}?', { what: countOf(total, game.noun) })} Gazecraft`;
 
   const send = async () => {
     setBusy(true);
@@ -125,9 +126,9 @@ export function ShareSheet({ open, onClose, game, result, player, onShared }: Pr
       );
       const r = await deliver(files, text, link);
       if (r !== 'cancelled') onShared?.();
-      setNote(r === 'shared' ? 'Shared.' : r === 'saved' ? (files.length > 1 ? `Saved ${files.length} images.` : 'Saved.') : '');
+      setNote(r === 'shared' ? t('Shared.') : r === 'saved' ? (files.length > 1 ? t('Saved {n} images.', { n: files.length }) : t('Saved.')) : '');
     } catch {
-      setNote('Could not make the image. Try Copy link.');
+      setNote(t('Could not make the image. Try Copy link.'));
     } finally {
       setBusy(false);
     }
@@ -136,18 +137,18 @@ export function ShareSheet({ open, onClose, game, result, player, onShared }: Pr
   const copy = async () => {
     const copied = await copyText(link);
     if (copied) onShared?.();
-    setNote(copied ? 'Link copied.' : link);
+    setNote(copied ? t('Link copied.') : link);
   };
 
   const modeNote =
     mode === 'full'
       ? cards.length > 1
-        ? `The whole text in ${cards.length} pages. Shares as a carousel.`
-        : 'The whole text fits on one card.'
-      : 'Whole sentences with the most hidden words.';
+        ? t('The whole text in {n} pages. Shares as a carousel.', { n: cards.length })
+        : t('The whole text fits on one card.')
+      : t('Whole sentences with the most hidden words.');
 
   return (
-    <Dialog open={open} onClose={onClose} label="Share">
+    <Dialog open={open} onClose={onClose} label={t('Share')}>
       <div className={styles.sheet}>
         <div className={styles.previewCol}>
           <ShareCardFrame key={`${layoutKey}|${kind}|${current}`} card={card} onOverflow={onOverflow} />
@@ -156,7 +157,7 @@ export function ShareSheet({ open, onClose, game, result, player, onShared }: Pr
               <button
                 type="button"
                 className={styles.pageBtn}
-                aria-label="Previous page"
+                aria-label={t('Previous page')}
                 onClick={() => setPage((current - 1 + cards.length) % cards.length)}
               >
                 <Icon icon={ChevronLeft} size={18} />
@@ -167,7 +168,7 @@ export function ShareSheet({ open, onClose, game, result, player, onShared }: Pr
               <button
                 type="button"
                 className={styles.pageBtn}
-                aria-label="Next page"
+                aria-label={t('Next page')}
                 onClick={() => setPage((current + 1) % cards.length)}
               >
                 <Icon icon={ChevronRight} size={18} />
@@ -178,23 +179,23 @@ export function ShareSheet({ open, onClose, game, result, player, onShared }: Pr
 
         <div className={styles.controls}>
           <div className={styles.head}>
-            <h2 className={styles.title}>Share</h2>
-            <button type="button" className={styles.close} onClick={onClose} aria-label="Close">
+            <h2 className={styles.title}>{t('Share')}</h2>
+            <button type="button" className={styles.close} onClick={onClose} aria-label={t('Close')}>
               <Icon icon={X} size={18} />
             </button>
           </div>
           <Segmented
-            label="Card"
+            label={t('Card')}
             hideLabel
             options={[
-              ['result', 'Result'],
-              ['puzzle', 'Puzzle'],
+              ['result', t('Result')],
+              ['puzzle', t('Puzzle')],
             ]}
             value={kind}
             onChange={(v) => reset(() => setKind(v))}
           />
           <Segmented
-            label="Frame"
+            label={t('Frame')}
             options={[
               ['1:1', '1:1'],
               ['4:5', '4:5'],
@@ -207,10 +208,10 @@ export function ShareSheet({ open, onClose, game, result, player, onShared }: Pr
             <>
               <div className={styles.group}>
                 <Segmented
-                  label="Text"
+                  label={t('Text')}
                   options={[
-                    ['excerpt', 'Excerpt'],
-                    ['full', 'Full puzzle'],
+                    ['excerpt', t('Excerpt')],
+                    ['full', t('Full puzzle')],
                   ]}
                   value={mode}
                   onChange={(v) => reset(() => setMode(v))}
@@ -218,13 +219,13 @@ export function ShareSheet({ open, onClose, game, result, player, onShared }: Pr
                 <span className={styles.note}>{modeNote}</span>
               </div>
               <Toggle
-                label="Show my finds"
+                label={t('Show my finds')}
                 note={
                   daily
-                    ? 'Locked for daily puzzles until tomorrow'
+                    ? t('Locked for daily puzzles until tomorrow')
                     : showOn
-                      ? 'Card is stamped Contains answers'
-                      : 'Off. Nothing is spoiled.'
+                      ? t('Card is stamped Contains answers')
+                      : t('Off. Nothing is spoiled.')
                 }
                 checked={showOn}
                 disabled={daily}
@@ -234,9 +235,9 @@ export function ShareSheet({ open, onClose, game, result, player, onShared }: Pr
           )}
           <div className={styles.actions}>
             <Button variant="primary" onClick={send} disabled={busy} className={styles.send}>
-              {cards.length > 1 ? `Share ${cards.length} images` : 'Share image'}
+              {cards.length > 1 ? t('Share {n} images', { n: cards.length }) : t('Share image')}
             </Button>
-            <Button variant="secondary" size="icon" onClick={copy} aria-label="Copy link">
+            <Button variant="secondary" size="icon" onClick={copy} aria-label={t('Copy link')}>
               <Icon icon={Copy} size={20} />
             </Button>
           </div>

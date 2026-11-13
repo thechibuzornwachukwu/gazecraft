@@ -3,12 +3,13 @@ import { Segmented } from '../components/Segmented';
 import { Skeleton, SkeletonGroup } from '../components/Skeleton';
 import { Toggle } from '../components/Toggle';
 import { DEFAULT_HOUR, disableReminder, enableReminder, reminderState, setReminderHour, type ReminderState } from '../lib/push';
+import { t } from '../i18n';
 import styles from './Settings.module.css';
 
 const WHY: Partial<Record<ReminderState['status'], string>> = {
-  unsupported: 'This browser cannot send reminders. On iPhone, add Gazecraft to your Home Screen and open it from there.',
-  unavailable: 'Reminders are not switched on yet. Check back soon.',
-  blocked: 'Notifications are blocked for this site. Allow them in your browser settings, then turn this on.',
+  unsupported: t('This browser cannot send reminders. On iPhone, add Gazecraft to your Home Screen and open it from there.'),
+  unavailable: t('Reminders are not switched on yet. Check back soon.'),
+  blocked: t('Notifications are blocked for this site. Allow them in your browser settings, then turn this on.'),
 };
 
 /** Settings, Reminders: one nudge a day at a time you pick, and only on days you have not played. */
@@ -49,19 +50,19 @@ export function Reminders() {
   return (
     <div className={styles.narrow}>
       <Toggle
-        label="Daily reminder"
-        note="One nudge a day, only if you have not played yet."
+        label={t('Daily reminder')}
+        note={t('One nudge a day, only if you have not played yet.')}
         checked={on}
         disabled={busy || !canToggle}
         onChange={(v) => void toggle(v)}
       />
       {on && (
         <Segmented
-          label="When"
+          label={t('When')}
           options={[
-            ['8', 'Morning'],
-            ['13', 'Midday'],
-            ['19', 'Evening'],
+            ['8', t('Morning')],
+            ['13', t('Midday')],
+            ['19', t('Evening')],
           ]}
           value={String(state.hour) as '8' | '13' | '19'}
           onChange={(h) => {

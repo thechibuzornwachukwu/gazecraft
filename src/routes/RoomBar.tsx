@@ -8,6 +8,7 @@ import { Button } from '../components/Button';
 import { Icon } from '../components/Icon';
 import { rankRoom, type Peer, type RoomStats, type RoomStatus, type Row } from '../lib/room';
 import { copyText } from '../lib/share';
+import { t, plural } from '../i18n';
 import { InviteFollowing } from './GameInvites';
 import styles from './RoomBar.module.css';
 
@@ -16,40 +17,40 @@ type Props = { code: string; peers: Peer[]; path: string; status: RoomStatus; me
 const isPartner = (x: unknown): x is PartnerId => PARTNERS.some((p) => p.id === x);
 
 const line = (r: Row) =>
-  [`${r.finds ?? 0} ${r.finds === 1 ? 'word' : 'words'}`, r.finds ? `${r.pace ?? 0}s a word` : '', `${r.hints ?? 0} ${r.hints === 1 ? 'tip-off' : 'tip-offs'}`]
+  [plural(r.finds ?? 0, '{n} word', '{n} words'), r.finds ? t('{secs}s a word', { secs: r.pace ?? 0 }) : '', plural(r.hints ?? 0, '{n} tip-off', '{n} tip-offs')]
     .filter(Boolean)
     .join(' · ');
 
-const STATUS: Record<RoomStatus, string> = { connecting: 'Connecting', live: 'Live', offline: 'Reconnecting' };
+const STATUS: Record<RoomStatus, string> = { connecting: t('Connecting'), live: t('Live'), offline: t('Reconnecting') };
 
 /** Who is in the room, the invite, and the way out. Signed in players are ranked as a team; guests are shown only. */
 export function RoomBar({ code, peers, path, status, me, you, gameId, mates }: Props) {
-  const rows = rankRoom([{ ...you, name: 'You', you: true, ...me }, ...peers]);
+  const rows = rankRoom([{ ...you, name: t('You'), you: true, ...me }, ...peers]);
   const [note, setNote] = useState('');
   const url = `${window.location.origin}${path}?room=${code}`;
   const invite = async () => {
     try {
       if (navigator.share) {
-        await navigator.share({ title: 'Gazecraft', text: 'Find them with me on Gazecraft.', url });
+        await navigator.share({ title: 'Gazecraft', text: t('Find them with me on Gazecraft.'), url });
         return;
       }
     } catch {
       /* closed the share sheet, fall through to copy */
     }
-    setNote((await copyText(url)) ? 'Link copied.' : url);
+    setNote((await copyText(url)) ? t('Link copied.') : url);
   };
   return (
-    <section className={styles.room} aria-label="Playing together">
+    <section className={styles.room} aria-label={t('Playing together')}>
       <div className={styles.info}>
         <span className={styles.title}>
           <Icon icon={UsersRound} size={18} />
-          Playing together
+          {t('Playing together')}
           <span className={styles.live} data-status={status}>
             {STATUS[status]}
           </span>
         </span>
         {peers.length ? (
-          <ol className={styles.players} data-peers={peers.length} aria-label="Room scoreboard">
+          <ol className={styles.players} data-peers={peers.length} aria-label={t('Room scoreboard')}>
             {rows.map((p, i) => (
               <li key={p.id} className={styles.player} data-away={p.away || undefined} data-you={p.you || undefined}>
                 <span className={styles.rank}>{i + 1}</span>
@@ -67,24 +68,24 @@ export function RoomBar({ code, peers, path, status, me, you, gameId, mates }: P
                 )}
                 <span className={styles.state}>
                   {line(p)}
-                  {p.away ? ' · away' : ''}
+                  {p.away ? ` · ${t('away')}` : ''}
                 </span>
               </li>
             ))}
           </ol>
         ) : (
           <span className={styles.who} data-peers={0}>
-            Waiting for a friend. Send the invite.
+            {t('Waiting for a friend. Send the invite.')}
           </span>
         )}
-        <span className={styles.note}>Room {code}. Most words wins, then time per word, then fewest tip-offs. Signed in teams go on the Together board.</span>
+        <span className={styles.note}>{t('Room {code}. Most words wins, then time per word, then fewest tip-offs. Signed in teams go on the Together board.', { code })}</span>
       </div>
       <div className={styles.actions}>
         <Button variant="secondary" size="sm" onClick={invite}>
-          Invite
+          {t('Invite')}
         </Button>
         <Link to={path} className={styles.leave}>
-          Leave
+          {t('Leave')}
         </Link>
       </div>
       <span className={styles.status} role="status">

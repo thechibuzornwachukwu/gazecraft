@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { PageHeader } from '../components/PageHeader';
 import { TextLink } from '../components/TextLink';
-import { helpArticle, helpByGroup, searchHelp } from '../help/articles';
+import { helpArticle, helpByGroup, helpGroupName, searchHelp } from '../help/articles';
 import type { HelpArticle } from '../help/types';
+import { t } from '../i18n';
 import styles from './Help.module.css';
 
 /** /help: the help centre. Search, then the articles by what a player is trying to do. Every article is bundled. */
@@ -13,24 +14,24 @@ export function Help() {
 
   return (
     <div className={styles.page}>
-      <PageHeader title="Help" />
+      <PageHeader title={t('Help')} />
       <input
         type="search"
         className={styles.search}
-        aria-label="Search help"
-        placeholder="Search help"
+        aria-label={t('Search help')}
+        placeholder={t('Search help')}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
       {groups.length === 0 ? (
-        <p className={styles.none}>Nothing matches that. Try another word.</p>
+        <p className={styles.none}>{t('Nothing matches that. Try another word.')}</p>
       ) : (
         groups.map(({ group, articles }) => {
           const id = `help-${group.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
           return (
             <section key={group} className={styles.group} aria-labelledby={id}>
               <h2 id={id} className={styles.h2}>
-                {group}
+                {helpGroupName(group)}
               </h2>
               <ul className={styles.list}>
                 {articles.map((a) => (
@@ -59,7 +60,7 @@ export function HelpArticlePage() {
 
   return (
     <article className={styles.article} data-help={slug}>
-      <TextLink to="/help">All help</TextLink>
+      <TextLink to="/help">{t('All help')}</TextLink>
       <h1 className={styles.title}>{a.title}</h1>
       <p className={styles.answer}>{a.answer}</p>
       {a.steps && a.steps.length > 0 && (
@@ -77,7 +78,7 @@ export function HelpArticlePage() {
         </ul>
       )}
       {related.length > 0 && (
-        <nav className={styles.related} aria-label="Related">
+        <nav className={styles.related} aria-label={t('Related')}>
           {related.map((r) => (
             <Link key={r.slug} to={`/help/${r.slug}`} className={styles.item}>
               {r.title}

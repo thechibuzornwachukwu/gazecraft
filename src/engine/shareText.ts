@@ -2,6 +2,7 @@
 // It tells the story of the game (find, miss, hint, in the order played) and never which words,
 // where they are, or how many are left.
 
+import { num, t } from '../i18n';
 import { formatTime } from './time';
 
 export type Move = { a: number; b: number; t: number };
@@ -37,10 +38,10 @@ export type ShareTextInput = {
 };
 
 export function shareText(i: ShareTextInput): string {
-  const head = i.daily ? `Gazecraft Daily #${i.daily}` : `Gazecraft · ${i.title}`;
-  const count = i.daily ? `${i.found} found` : `${i.found}/${i.total}`;
+  const head = i.daily ? t('Gazecraft Daily #{n}', { n: i.daily }) : t('Gazecraft · {title}', { title: i.title });
+  const count = i.daily ? t('{n} found', { n: i.found }) : `${i.found}/${i.total}`;
   const shown = i.marks.slice(0, MAX_MARKS);
   const rows: string[] = [];
   for (let k = 0; k < shown.length; k += PER_ROW) rows.push(shown.slice(k, k + PER_ROW).join(''));
-  return [head, `${count} · ${formatTime(i.secs)} · ${i.score.toLocaleString('en-US')}`, ...rows, `Beat it: ${i.url}`].join('\n');
+  return [head, `${count} · ${formatTime(i.secs)} · ${num(i.score)}`, ...rows, t('Beat it: {url}', { url: i.url })].join('\n');
 }

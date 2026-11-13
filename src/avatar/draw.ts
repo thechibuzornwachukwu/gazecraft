@@ -20,6 +20,7 @@
 
 import { EXTRA_STYLES, EYE_STYLES, FACE_HAIR_STYLES, HAIR_TIE_NAMES, headband, MARK_STYLES, MOUTH_ITEM_STYLES, MOUTH_STYLES, scrunchie } from './parts/face';
 import { EARNED } from './earned';
+import { t } from '../i18n';
 import { FESTIVE_STYLES } from './parts/festive';
 import { KIT_STYLES } from './parts/kit';
 import { HAIR_STYLES } from './parts/hair';
@@ -39,20 +40,20 @@ const anyone: ReadonlyArray<Look | undefined> = [];
  * its choices in saved order, and the look each choice usually goes with (see `surprise`).
  */
 export const PARTS = [
-  { key: 'back', letter: 'b', title: 'Background', names: BACK_NAMES as readonly string[], looks: anyone },
-  { key: 'skin', letter: 's', title: 'Skin', names: SKINS.map((_, i) => `tone ${i + 1}`), looks: anyone },
-  { key: 'hair', letter: 'h', title: 'Hair and headwear', names: names(HAIR_STYLES), looks: looks(HAIR_STYLES) },
-  { key: 'colour', letter: 'c', title: 'Hair colour', names: HAIR_COLOUR_NAMES as readonly string[], looks: anyone },
-  { key: 'eyes', letter: 'e', title: 'Eyes', names: names(EYE_STYLES), looks: looks(EYE_STYLES) },
-  { key: 'mouth', letter: 'm', title: 'Mouth', names: names(MOUTH_STYLES), looks: looks(MOUTH_STYLES) },
-  { key: 'face', letter: 'f', title: 'Facial hair', names: names(FACE_HAIR_STYLES), looks: looks(FACE_HAIR_STYLES) },
-  { key: 'extra', letter: 'x', title: 'Glasses and earrings', names: names(EXTRA_STYLES), looks: looks(EXTRA_STYLES) },
-  { key: 'mark', letter: 'k', title: 'Skin marks', names: names(MARK_STYLES), looks: looks(MARK_STYLES) },
-  { key: 'item', letter: 't', title: 'In the mouth', names: names(MOUTH_ITEM_STYLES), looks: looks(MOUTH_ITEM_STYLES) },
-  { key: 'tie', letter: 'a', title: 'Hair ties', names: HAIR_TIE_NAMES as readonly string[], looks: anyone },
-  { key: 'outfit', letter: 'o', title: 'Outfit', names: names(OUTFIT_STYLES), looks: looks(OUTFIT_STYLES) },
-  { key: 'festive', letter: 'z', title: 'Festive', names: names(FESTIVE_STYLES), looks: anyone },
-  { key: 'kit', letter: 'd', title: 'Extras', names: names(KIT_STYLES), looks: anyone },
+  { key: 'back', letter: 'b', title: t('Background'), names: BACK_NAMES as readonly string[], looks: anyone },
+  { key: 'skin', letter: 's', title: t('Skin'), names: SKINS.map((_, i) => t('tone {n}', { n: i + 1 })), looks: anyone },
+  { key: 'hair', letter: 'h', title: t('Hair and headwear'), names: names(HAIR_STYLES), looks: looks(HAIR_STYLES) },
+  { key: 'colour', letter: 'c', title: t('Hair colour'), names: HAIR_COLOUR_NAMES as readonly string[], looks: anyone },
+  { key: 'eyes', letter: 'e', title: t('Eyes'), names: names(EYE_STYLES), looks: looks(EYE_STYLES) },
+  { key: 'mouth', letter: 'm', title: t('Mouth'), names: names(MOUTH_STYLES), looks: looks(MOUTH_STYLES) },
+  { key: 'face', letter: 'f', title: t('Facial hair'), names: names(FACE_HAIR_STYLES), looks: looks(FACE_HAIR_STYLES) },
+  { key: 'extra', letter: 'x', title: t('Glasses and earrings'), names: names(EXTRA_STYLES), looks: looks(EXTRA_STYLES) },
+  { key: 'mark', letter: 'k', title: t('Skin marks'), names: names(MARK_STYLES), looks: looks(MARK_STYLES) },
+  { key: 'item', letter: 't', title: t('In the mouth'), names: names(MOUTH_ITEM_STYLES), looks: looks(MOUTH_ITEM_STYLES) },
+  { key: 'tie', letter: 'a', title: t('Hair ties'), names: HAIR_TIE_NAMES as readonly string[], looks: anyone },
+  { key: 'outfit', letter: 'o', title: t('Outfit'), names: names(OUTFIT_STYLES), looks: looks(OUTFIT_STYLES) },
+  { key: 'festive', letter: 'z', title: t('Festive'), names: names(FESTIVE_STYLES), looks: anyone },
+  { key: 'kit', letter: 'd', title: t('Extras'), names: names(KIT_STYLES), looks: anyone },
 ] as const satisfies ReadonlyArray<{ key: string; letter: string; title: string; names: readonly string[]; looks: ReadonlyArray<Look | undefined> }>;
 
 export type PartKey = (typeof PARTS)[number]['key'];
@@ -219,8 +220,8 @@ export function drawAvatar(a: Avatar): Shape[] {
     MOUTH_STYLES[a.mouth]!.draw(k),
     extra.onEars && veiled ? [] : extra.draw(k),
     MOUTH_ITEM_STYLES[a.item]!.draw(k),
-    tie === 'scrunchie' ? (hair.scrunchie ?? []).map((at) => scrunchie(k, at)) : [],
-    tie === 'headband' && !hair.headwear && !hair.noHeadband ? [headband(k)] : [],
+    tie === t('scrunchie') ? (hair.scrunchie ?? []).map((at) => scrunchie(k, at)) : [],
+    tie === t('headband') && !hair.headwear && !hair.noHeadband ? [headband(k)] : [],
     // Festive touches go on last, so a hat sits over whatever hair is underneath.
     FESTIVE_STYLES[a.festive]!.draw(k),
     // Extras, earned: drawn over everything.

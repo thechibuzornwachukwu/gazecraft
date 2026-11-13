@@ -1,4 +1,4 @@
-// The lines a finished game can earn, and the one a daily shows before it starts.
+// The lines a finished game can earn.
 // Pure: facts come from the engine, words come from the copy pools through the picker passed in.
 // Every helper returns '' (or no line) when it has nothing true to say, so the screen never prints a blank,
 // a missing number or an unfilled placeholder.
@@ -9,9 +9,7 @@ import type { Answer } from '../engine/hiddenWords';
 import { DEEP_JOINS, LONG_WORD, skillsOf, type Skills } from '../engine/skill';
 import type { Char } from '../engine/text';
 import { formatTime } from '../engine/time';
-import { dayStats, type DayProfile } from '../engine/variableDay';
 import type { NewRecord } from '../lib/records';
-import { RARE_PCT } from '../lib/wordStats';
 
 export type Picker = (key: PoolKey, vars?: Vars) => string;
 
@@ -22,8 +20,6 @@ type Found = { key: string; label: string; by?: string };
 export const MAX_SKILL_LINES = 2;
 /** At most this many record lines under one result. Every record is still stored. */
 export const MAX_RECORD_LINES = 2;
-/** "Most days" needs a few days to be true. */
-export const MIN_POOL = 3;
 
 const whole = (n: unknown): n is number => typeof n === 'number' && Number.isInteger(n) && n >= 0;
 const word = (w: unknown): w is string => typeof w === 'string' && w.trim() !== '';
@@ -72,31 +68,6 @@ export function skillLines(facts: PlayFacts, pick: Picker): string[] {
 export function starsUpLine(stars: number, wentUp: boolean, pick: Picker): string {
   if (!wentUp || (stars !== 1 && stars !== 2 && stars !== 3)) return '';
   return filled(pick('starsUp', { n: stars }));
-}
-
-/**
- * "Today hid 11. Most days hide 8." Today's puzzle counts as one of the days. '' when today hides nothing or
- * there are too few days to call any count usual.
- */
-export function dayHidLine(today: Built, pool: readonly Built[], pick: Picker): string {
-  const days = pool.includes(today) ? pool : [...pool, today];
-  if (days.length < MIN_POOL) return '';
-  const { total, typical } = dayStats(today, days);
-  if (!whole(total) || !whole(typical) || total < 1 || typical < 1) return '';
-  return filled(total === typical ? pick('dayHidSame', { n: total }) : pick('dayHid', { n: total, m: typical }));
-}
-
-/** Before today's daily: what it holds, never how much. A deep word is the rarer of the 2, so it is said first. */
-export function todayHoldsLine(profile: Pick<DayProfile, 'longWord' | 'deepWord'>, pick: Picker): string {
-  if (profile.deepWord) return filled(pick('todayDeep'));
-  if (profile.longWord) return filled(pick('todayLong'));
-  return '';
-}
-
-/** The rarest word you found. "Only" is kept for a word half the players or fewer found. */
-export function rareLine(rare: { pct: number } | null, label: string | null | undefined, pick: Picker): string {
-  if (!rare || !word(label) || !whole(rare.pct) || rare.pct < 1 || rare.pct > 100) return '';
-  return filled(pick(rare.pct <= RARE_PCT ? 'rareFind' : 'rarestFind', { p: rare.pct, w: label }));
 }
 
 /** One line per new record, at most 2: fastest clean read, most in a daily, longest word. */

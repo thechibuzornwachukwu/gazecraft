@@ -1,3 +1,5 @@
+import { t } from '../i18n';
+
 /** Dailies played and the current run of consecutive days, ending today or yesterday. */
 export function dailyStats(days: Iterable<number>, today: number): { played: number; streak: number } {
   const set = new Set([...days].filter((d) => Number.isInteger(d) && d >= 1 && d <= today));
@@ -8,21 +10,6 @@ export function dailyStats(days: Iterable<number>, today: number): { played: num
     d--;
   }
   return { played: set.size, streak };
-}
-
-/** Run lengths worth a bigger line. */
-export const MILESTONES: readonly number[] = [7, 30, 50, 100, 365];
-
-/**
- * Which copy pool speaks after today's daily, and the number it carries. A milestone beats the plain count;
- * a first day after a real run points at the best run instead of the loss.
- */
-export function streakPool(streak: number, best: number): { pool: 'streakMilestone' | 'streakDay' | 'streakBack' | 'streakStart'; n: number } | null {
-  if (streak < 1) return null;
-  if (MILESTONES.includes(streak)) return { pool: 'streakMilestone', n: streak };
-  if (streak >= 2) return { pool: 'streakDay', n: streak };
-  if (best >= 3) return { pool: 'streakBack', n: best };
-  return { pool: 'streakStart', n: 1 };
 }
 
 /** Only same-site paths. Blocks open redirects like `//evil.com` or `https://evil.com`. */
@@ -43,10 +30,10 @@ export const RESERVED_HANDLES = ['admin', 'gazecraft', 'fignda', 'support', 'roo
 export function checkProfile(rawName: string, rawHandle: string): { name: string; handle: string } | { error: string } {
   const name = rawName.trim().replace(/\s+/g, ' ');
   const handle = rawHandle.trim().toLowerCase().replace(/^@/, '');
-  if (!name) return { error: 'Add a name. First name is fine.' };
-  if (name.length > 40) return { error: 'Keep your name under 40 letters.' };
-  if (handle.length < 2) return { error: 'Handles need at least 2 letters or numbers.' };
-  if (!HANDLE_RE.test(handle)) return { error: 'Handles use a to z, 0 to 9, dots and underscores. Up to 20.' };
-  if (RESERVED_HANDLES.includes(handle)) return { error: 'That handle is taken. Try another.' };
+  if (!name) return { error: t('Add a name. First name is fine.') };
+  if (name.length > 40) return { error: t('Keep your name under 40 letters.') };
+  if (handle.length < 2) return { error: t('Handles need at least 2 letters or numbers.') };
+  if (!HANDLE_RE.test(handle)) return { error: t('Handles use a to z, 0 to 9, dots and underscores. Up to 20.') };
+  if (RESERVED_HANDLES.includes(handle)) return { error: t('That handle is taken. Try another.') };
   return { name, handle };
 }

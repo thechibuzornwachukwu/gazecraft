@@ -3,6 +3,7 @@ import { Eye, Flag, Flame, Gem, FolderCheck, Layers, Lock, Ruler, Share2, Sparkl
 import type { Avatar as AvatarParts } from '../avatar/draw';
 import { medalsOf, type Medal, type MedalCounts, type MedalKey } from '../lib/medals';
 import { cardToFile, deliver, shareUrlLabel } from '../lib/share';
+import { t } from '../i18n';
 import { Button } from './Button';
 import { Dialog } from './Dialog';
 import { Icon } from './Icon';
@@ -57,14 +58,14 @@ export function Medals({ codes, counts, owner, name, handle, parts, path = '/pla
 
   const share = async (m: Medal) => {
     const url = `${window.location.origin}${path}`;
-    const text = `${owner ? `${owner} earned` : 'I earned'} the ${m.name} medal on Gazecraft.`;
+    const text = owner ? t('{owner} earned the {name} medal on Gazecraft.', { owner, name: m.name }) : t('I earned the {name} medal on Gazecraft.', { name: m.name });
     // The picture first: the medal, the detective and the name. Where it cannot be made, the line and the link.
     if (card.current) {
       setBusy(true);
       try {
         const file = await cardToFile(card.current, MEDAL_CARD, MEDAL_CARD, `gazecraft-${m.key}.png`);
         const done = await deliver([file], text, url);
-        setSaid(done === 'saved' ? 'Saved' : '');
+        setSaid(done === 'saved' ? t('Saved') : '');
         return;
       } catch {
         /* Fall back to the line and the link. */
@@ -76,7 +77,7 @@ export function Medals({ codes, counts, owner, name, handle, parts, path = '/pla
       if (navigator.share) await navigator.share({ title: 'Gazecraft', text, url });
       else {
         await navigator.clipboard.writeText(`${text} ${url}`);
-        setSaid('Copied');
+        setSaid(t('Copied'));
       }
     } catch {
       /* The player closed the sheet. Nothing to say. */
@@ -95,7 +96,7 @@ export function Medals({ codes, counts, owner, name, handle, parts, path = '/pla
                 className={styles.card}
                 data-medal={m.key}
                 data-earned={earned || undefined}
-                aria-label={`${m.name}. ${earned ? 'Earned.' : 'Not earned yet.'}${m.toward ? ` ${m.toward} toward the next.` : ''}`}
+                aria-label={`${m.name}. ${earned ? t('Earned.') : t('Not earned yet.')}${m.toward ? ` ${t('{toward} toward the next.', { toward: m.toward })}` : ''}`}
                 onClick={() => {
                   setSaid('');
                   setOpen(m.key);
@@ -114,7 +115,7 @@ export function Medals({ codes, counts, owner, name, handle, parts, path = '/pla
         })}
       </ul>
 
-      <Dialog open={!!shown} onClose={() => setOpen(null)} label={shown?.name ?? 'Medal'}>
+      <Dialog open={!!shown} onClose={() => setOpen(null)} label={shown?.name ?? t('Medal')}>
         {shown && (
           <div className={styles.show} data-medal-open={shown.key}>
             <MedalFace medal={shown} size="lg" />
@@ -130,7 +131,7 @@ export function Medals({ codes, counts, owner, name, handle, parts, path = '/pla
             {shown.tier >= 0 && (
               <Button variant="primary" onClick={() => void share(shown)} disabled={busy}>
                 <Icon icon={Share2} size={18} />
-                {said || 'Share'}
+                {said || t('Share')}
               </Button>
             )}
             {shown.tier >= 0 && (

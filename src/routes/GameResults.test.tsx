@@ -42,10 +42,6 @@ describe('GameResults', () => {
       starsUp: 'New best here: 3 of 3 stars.',
       skills: ['A clean read. No hints, no wrong picks.', 'IGOAT ran across 4 words. You followed it.'],
       records: ['Your fastest clean read in Bible: 1:15.'],
-      rare: 'Only 8% found Habakkuk. You did.',
-      day: 'Today hid 11. Most days hide 8.',
-      streak: '4 days in a row.',
-      done: 'That is today done. See you tomorrow.',
     });
     expect(lines).toEqual(['The ones you missed are shaded below.', 'New best here: 3 of 3 stars.']);
     expect(screen.getByRole('button', { name: 'Share' })).toBeInTheDocument();
@@ -58,10 +54,6 @@ describe('GameResults', () => {
       'A clean read. No hints, no wrong picks.',
       'IGOAT ran across 4 words. You followed it.',
       'Your fastest clean read in Bible: 1:15.',
-      'Only 8% found Habakkuk. You did.',
-      'Today hid 11. Most days hide 8.',
-      '4 days in a row.',
-      'That is today done. See you tomorrow.',
     ]);
     expect(screen.getByRole('button', { name: 'Less' })).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getByText('5/8')).toBeInTheDocument();
@@ -72,7 +64,7 @@ describe('GameResults', () => {
   });
 
   it('a game ended at once with 0 found shows the title and the line, and the stats behind More', () => {
-    const lines = show({ title: 'Next time.', found: 0, score: 0, secs: 0, skills: [], records: [], stars: 0, starsUp: '', rare: '', day: '' });
+    const lines = show({ title: 'Next time.', found: 0, score: 0, secs: 0, skills: [], records: [], stars: 0, starsUp: '' });
     expect(lines).toEqual(['The ones you missed are shaded below.']);
     expect(screen.getByRole('heading', { name: 'Next time.' })).toBeInTheDocument();
     expect(more()).toEqual([]);
@@ -86,7 +78,7 @@ describe('GameResults', () => {
   });
 
   it('drops blank lines and says no line twice', () => {
-    show({ skills: ['', '  ', 'Every word, and no hints.', 'Every word, and no hints.'], records: [''], rare: 'Every word, and no hints.' });
+    show({ skills: ['', '  ', 'Every word, and no hints.', 'Every word, and no hints.'], records: ['Every word, and no hints.'] });
     expect(more()).toEqual(['Every word, and no hints.']);
   });
 
@@ -122,7 +114,7 @@ describe('GameResults', () => {
   });
 
   it('a sponsored puzzle says who it is with, in view, and links the sponsor in a new tab', () => {
-    const lines = show({ done: 'That is today done. See you tomorrow.', sponsor: { line: 'With Chi Farms', url: 'https://chifarms.example/', host: 'chifarms.example' } });
+    const lines = show({ sponsor: { line: 'With Chi Farms', url: 'https://chifarms.example/', host: 'chifarms.example' } });
     expect(lines).toEqual([base.line, 'With Chi Farms · chifarms.example']);
     const link = screen.getByRole('link', { name: 'chifarms.example' });
     expect(link).toHaveAttribute('href', 'https://chifarms.example/');
@@ -178,32 +170,31 @@ describe('GameResults for a guest', () => {
         <GameResults {...base} guest />
       </MemoryRouter>,
     );
-    expect(screen.getByText(/You are playing as a guest/)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Keep this score' })).toBeInTheDocument();
+    expect(screen.getByText('Sign in to keep this score on every device.')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Sign in' })).toBeInTheDocument();
     unmount();
     render(
       <MemoryRouter>
-        <GameResults {...base} guest guestLine="That score is place 14 of 60 today. Sign in to put your name on the board." />
+        <GameResults {...base} guest guestLine="5 days in a row, saved in this browser only." />
       </MemoryRouter>,
     );
-    expect(screen.getByText(/place 14 of 60 today/)).toBeInTheDocument();
-    expect(screen.queryByText(/You are playing as a guest/)).toBeNull();
-    expect(screen.getByRole('link', { name: 'Keep this score' })).toBeInTheDocument();
+    expect(screen.getByText(/5 days in a row/)).toBeInTheDocument();
+    expect(screen.queryByText('Sign in to keep this score on every device.')).toBeNull();
+    expect(screen.getByRole('link', { name: 'Sign in' })).toBeInTheDocument();
   });
 
-  it('after a first result the link is the way to their detective and partner', () => {
+  it('with a run to keep, the link says so and leads back to this result', () => {
     render(
       <MemoryRouter initialEntries={['/play/bible/1']}>
-        <GameResults {...base} guest guestLine="That detective is yours." guestAction="Choose your look" />
+        <GameResults {...base} guest guestAction="Keep your streak" />
       </MemoryRouter>,
     );
-    expect(screen.getByRole('link', { name: 'Choose your look' })).toHaveAttribute('href', '/welcome?from=%2Fplay%2Fbible%2F1');
-    expect(screen.queryByRole('link', { name: 'Keep this score' })).toBeNull();
+    expect(screen.getByRole('link', { name: 'Keep your streak' })).toHaveAttribute('href', '/welcome?from=%2Fplay%2Fbible%2F1');
   });
 
   it('a signed in player is never asked', () => {
-    show({ guestLine: 'That score is place 14 of 60 today.' });
-    expect(screen.queryByText(/place 14 of 60/)).toBeNull();
-    expect(screen.queryByRole('link', { name: 'Keep this score' })).toBeNull();
+    show({ guestLine: '5 days in a row, saved in this browser only.' });
+    expect(screen.queryByText(/5 days in a row/)).toBeNull();
+    expect(screen.queryByRole('link', { name: 'Sign in' })).toBeNull();
   });
 });

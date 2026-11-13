@@ -1,4 +1,5 @@
 import { createElement } from 'react';
+import { t } from '../i18n';
 import styles from './Logo.module.css';
 import { CAT, CAT_BOX, CAT_IN_WORDMARK, WORDMARK_BOX } from '../brand/cat';
 import { LOGO_G, LOGO_REST } from './logoPaths';
@@ -34,7 +35,7 @@ export function Logo({ height = 22, className }: Props) {
       height={height}
       viewBox={WORDMARK_BOX.join(' ')}
       role="img"
-      aria-label="Gazecraft"
+      aria-label={t('Gazecraft')}
       focusable="false"
       className={[styles.logo, className].filter(Boolean).join(' ')}
     >

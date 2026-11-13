@@ -21,20 +21,20 @@ function walk(how: (s: Step) => 'done' | 'skipped', start: Account = GUEST): { s
 }
 
 describe('the first minute: which step', () => {
-  it('a new guest answers everything: character, sign in, the outfit question, then the name, last', () => {
-    expect(walk(() => 'done').seen).toEqual(['character', 'signin', 'look', 'name']);
+  it('a new guest is asked to sign in, then for a name', () => {
+    expect(walk(() => 'done').seen).toEqual(['signin', 'name']);
   });
 
-  it('a player who skips everything is asked each question once and never left on a step', () => {
+  it('a guest who skips sign in is asked once and never left on a step', () => {
     const { seen, flow } = walk(() => 'skipped');
     // No account, so there is nobody to name.
-    expect(seen).toEqual(['character', 'signin', 'look']);
+    expect(seen).toEqual(['signin']);
     expect(nextStep(flow, GUEST)).toBeNull();
     expect(nextStep({ ...flow, done: true }, GUEST)).toBeNull();
   });
 
   it('an existing account never sees a step, whatever this browser holds', () => {
-    for (const flow of [{}, { character: 'done' }, { done: true }, { character: 'skipped', look: 'skipped' }] as Flow[]) {
+    for (const flow of [{}, { signin: 'done' }, { done: true }, { signin: 'skipped' }] as Flow[]) {
       expect(nextStep(flow, EXISTING)).toBeNull();
       expect(progress(flow, EXISTING).step).toBe(0);
     }
@@ -42,72 +42,58 @@ describe('the first minute: which step', () => {
     expect(nextStep(parseFlow(null), EXISTING)).toBeNull();
   });
 
-  it('leaving half way and returning resumes at the first step with no answer', () => {
-    expect(nextStep({ character: 'done' }, GUEST)).toBe('signin');
-    expect(nextStep({ character: 'done', signin: 'skipped' }, GUEST)).toBe('look');
-    expect(nextStep({ character: 'skipped' }, SIGNED_IN)).toBe('look');
-    expect(nextStep({ character: 'done', look: 'done' }, SIGNED_IN)).toBe('name');
-    // The answers survive a trip through storage.
-    expect(nextStep(parseFlow(JSON.parse(JSON.stringify({ character: 'done', signin: 'skipped' }))), GUEST)).toBe('look');
+  it('a new account that came in by /signin is only asked for its name', () => {
+    expect(walk(() => 'done', SIGNED_IN).seen).toEqual(['name']);
   });
 
-  it('a new account that came in by /signin is still asked for its character and the outfit question, then its name', () => {
-    expect(walk(() => 'done', SIGNED_IN).seen).toEqual(['character', 'look', 'name']);
-    expect(walk(() => 'skipped', SIGNED_IN).seen).toEqual(['character', 'look', 'name']);
-  });
-
-  it('a guest who finished earlier and signs up later is only asked for a name', () => {
-    expect(nextStep({ character: 'done', signin: 'skipped', look: 'done', done: true }, SIGNED_IN)).toBe('name');
+  it('a guest who skipped earlier and signs up later is only asked for a name', () => {
+    expect(nextStep({ signin: 'skipped', done: true }, SIGNED_IN)).toBe('name');
   });
 
   it('the name is asked until a profile exists, so a save that failed is never the end of it', () => {
-    const flow: Flow = { character: 'done', look: 'done', name: 'skipped', done: true };
+    const flow: Flow = { name: 'skipped', done: true };
     expect(nextStep(flow, SIGNED_IN)).toBe('name');
     expect(nextStep(flow, EXISTING)).toBeNull();
   });
 
   it('a guest who is done is not asked again', () => {
     expect(nextStep({ done: true }, GUEST)).toBeNull();
-    expect(nextStep({ character: 'done', signin: 'skipped', look: 'skipped', done: true }, GUEST)).toBeNull();
   });
 
-  it('sign in not set up: the character and the outfit question only', () => {
-    expect(walk(() => 'done', NO_AUTH).seen).toEqual(['character', 'look']);
-    expect(stepsFor({}, NO_AUTH)).toEqual(['character', 'look']);
-    expect(progress({}, NO_AUTH).label).toBe('Step 1 of 2');
+  it('sign in not set up: nothing to ask', () => {
+    expect(stepsFor({}, NO_AUTH)).toEqual([]);
+    expect(nextStep({}, NO_AUTH)).toBeNull();
   });
 });
 
 describe('stored answers that are missing or broken', () => {
-  it.each([null, undefined, '', 'nonsense', 7, true, [], ['character'], { character: 'yes' }, { character: 3, look: null, done: 'true' }])('%j reads as no answers', (raw) => {
+  it.each([null, undefined, '', 'nonsense', 7, true, [], ['signin'], { signin: 'yes' }, { signin: 3, name: null, done: 'true' }, { character: 'done' }])('%j reads as no answers', (raw) => {
     expect(parseFlow(raw)).toEqual({});
-    expect(nextStep(parseFlow(raw), GUEST)).toBe('character');
+    expect(nextStep(parseFlow(raw), GUEST)).toBe('signin');
   });
 
   it('keeps what is good and drops the rest', () => {
-    expect(parseFlow({ character: 'done', signin: 'later', look: 'skipped', extra: 1, done: true })).toEqual({ character: 'done', look: 'skipped', done: true });
+    expect(parseFlow({ character: 'done', signin: 'skipped', look: 'skipped', name: 'later', extra: 1, done: true })).toEqual({ signin: 'skipped', done: true });
   });
 
   it('answering on top of broken data starts clean', () => {
-    expect(answer('broken' as unknown as Flow, 'character', 'done')).toEqual({ character: 'done' });
+    expect(answer('broken' as unknown as Flow, 'signin', 'done')).toEqual({ signin: 'done' });
   });
 });
 
 describe('the ring', () => {
   it('counts the steps behind the player and names the one they are on', () => {
-    expect(progress({}, GUEST)).toEqual({ step: 1, of: 4, value: 0, label: 'Step 1 of 4' });
-    expect(progress({ character: 'done' }, GUEST)).toEqual({ step: 2, of: 4, value: 0.25, label: 'Step 2 of 4' });
-    expect(progress({ character: 'done' }, SIGNED_IN)).toEqual({ step: 3, of: 4, value: 0.5, label: 'Step 3 of 4' });
-    expect(progress({ character: 'done', look: 'done' }, SIGNED_IN)).toEqual({ step: 4, of: 4, value: 0.75, label: 'Step 4 of 4' });
+    expect(progress({}, GUEST)).toEqual({ step: 1, of: 2, value: 0, label: 'Step 1 of 2' });
+    expect(progress({}, SIGNED_IN)).toEqual({ step: 2, of: 2, value: 0.5, label: 'Step 2 of 2' });
   });
 
-  it('skipping sign in drops the name step, so the ring counts 3', () => {
-    expect(progress({ character: 'done', signin: 'skipped' }, GUEST)).toEqual({ step: 3, of: 3, value: 2 / 3, label: 'Step 3 of 3' });
+  it('skipping sign in drops the name step', () => {
+    expect(progress({ signin: 'skipped' }, GUEST).value).toBe(1);
   });
 
   it('closes when there is nothing left to ask, and is never NaN or out of range', () => {
     expect(progress({ done: true }, GUEST).value).toBe(1);
-    for (const flow of [{}, { character: 'done' }, { done: true }, parseFlow('x')] as Flow[]) {
+    for (const flow of [{}, { signin: 'done' }, { done: true }, parseFlow('x')] as Flow[]) {
       for (const account of [GUEST, SIGNED_IN, EXISTING, NO_AUTH]) {
         const p = progress(flow, account);
         expect(p.value).toBeGreaterThanOrEqual(0);

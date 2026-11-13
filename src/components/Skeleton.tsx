@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { t } from '../i18n';
 import styles from './Skeleton.module.css';
 
 /** One grey shape standing where content is on its way. Decorative: the group around it says "Loading". */
@@ -10,7 +11,7 @@ export function Skeleton({ width = '100%', height = 14, round = false }: { width
 export function SkeletonGroup({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div className={[styles.group, className].filter(Boolean).join(' ')} aria-busy="true" data-skeleton>
-      <span className={styles.srOnly}>Loading.</span>
+      <span className={styles.srOnly}>{t('Loading.')}</span>
       {children}
     </div>
   );

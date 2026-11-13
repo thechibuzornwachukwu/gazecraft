@@ -11,19 +11,19 @@ import { applyHint, applyPick, newSession, type Session } from '../games/session
 import { guideSeen, markDemoDone, markGuideSeen } from '../lib/firstMinute';
 import { useCoarsePointer, useMediaQuery } from '../lib/media';
 import { chime } from '../lib/sound';
+import { lang, t } from '../i18n';
+import { getPuzzle } from '../games/catalog';
+import { DEMOS } from './landingDemos';
 import styles from './LandingDemo.module.css';
 
-const TEXT =
-  'This line is a most ordinary sentence. Pat omitted nothing. Linda talked for ages, Pedro mentioned very little, and a big old clock kept the time.';
 
+const DEMO = DEMOS[lang];
+const TEXT = DEMO.text;
 /** Demo words in list order, each with the category it teases. */
-const WORDS = [
-  { word: 'Atom', lead: 'Science' },
-  { word: 'Data', lead: 'AI' },
-  { word: 'Rome', lead: 'History' },
-  { word: 'Gold', lead: 'General' },
-  { word: 'Amos', lead: 'Bible' },
-] as const;
+const WORDS = DEMO.words;
+/** Where the warm up leads, and how many words wait there. */
+const NEXT = DEMO.next;
+const NEXT_COUNT = getPuzzle(NEXT)?.answers.length ?? 0;
 
 const DEF: GameDef = {
   id: 'demo',
@@ -35,6 +35,7 @@ const DEF: GameDef = {
   expectedAnswers: WORDS.map((w) => w.word),
   dict: WORDS.map((w) => w.word),
   text: TEXT,
+  lang: lang === 'en' ? undefined : lang,
 };
 
 const mod = registry[DEF.type];
@@ -164,16 +165,16 @@ export function LandingDemo({ guide = false }: { guide?: boolean }) {
       <div className={styles.main}>
         <p id={instructionId} className={styles.instruction}>
           {guiding
-            ? 'A word is hiding where the hand points. Tap its first letter, then its last.'
+            ? t('A word is hiding where the hand points. {verb} its first letter, then its last.', { verb: coarse ? t('Tap') : t('Click') })
             : coarse
-              ? 'Five words are hidden below. Swipe across the letters, or tap the first and then the last.'
-              : 'Five words are hidden below. Drag across the letters to find them.'}
+              ? t('Five words are hidden below. Swipe across the letters, or tap the first and then the last.')
+              : t('Five words are hidden below. Drag across the letters to find them.')}
         </p>
         <div ref={stage} className={styles.stage}>
           <mod.Board
             {...mod.boardProps(puzzle)}
             size="hero"
-            label="Demo sentence"
+            label={t('Demo sentence')}
             found={foundSpans}
             missed={[]}
             // While the guide runs, the word's first letter wears the hint ring, so it reads without the hand too.
@@ -187,21 +188,21 @@ export function LandingDemo({ guide = false }: { guide?: boolean }) {
           {guiding && <GuideHand stage={stage} first={lead[0]} last={lead[1]} />}
         </div>
         <div className={styles.actions}>
-          <TextLink onClick={onHint}>{done ? 'Play again' : showing ? 'Show it' : 'Ask for a tip-off'}</TextLink>
-          {guiding && <TextLink onClick={endGuide}>Skip the guide</TextLink>}
+          <TextLink onClick={onHint}>{done ? t('Play again') : showing ? t('Show it') : t('Ask for a tip-off')}</TextLink>
+          {guiding && <TextLink onClick={endGuide}>{t('Skip the guide')}</TextLink>}
           <span className={styles.msg} role="status">
             {s.msg}
           </span>
         </div>
       </div>
       <WordList
-        title="Hidden above"
+        title={t('Hidden above')}
         count={`${s.found.length} / ${total}`}
         rows={rows}
         footer={
           done && (
-            <Button variant="accent" to="/play/nigeria" className={styles.cta}>
-              That was the warm up. Now find 26.
+            <Button variant="accent" to={`/play/${NEXT}`} className={styles.cta}>
+              {t('That was the warm up. Now find {n}.', { n: NEXT_COUNT })}
               <Icon icon={ArrowRight} size={16} />
             </Button>
           )

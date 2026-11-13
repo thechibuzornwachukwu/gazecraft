@@ -1,14 +1,14 @@
 // @vitest-environment jsdom
 import { POOLS } from '../copy';
-import { guestAsk, guestKeepLabel, KEEP_RUN, markRunTold, PLACE_MIN_PLAYERS, RUN_ASK, runTold } from './guestAsk';
+import { guestAsk, guestKeepLabel, KEEP_RUN, markRunTold, RUN_ASK, runTold } from './guestAsk';
 
-const facts = { today: true, streak: 1, runTold: false, place: null };
+const facts = { streak: 1, runTold: false };
 
 describe('guestAsk', () => {
-  it('away from today’s daily: no place, but the run is said after any win (set 11a)', () => {
-    expect(guestAsk({ ...facts, today: false, streak: 1, place: { place: 2, players: 40 } })).toBeNull();
-    expect(guestAsk({ ...facts, today: false, streak: 9, runTold: true, place: { place: 2, players: 40 } })).toBeNull();
-    expect(guestAsk({ ...facts, today: false, streak: 9 })).toEqual({ pool: 'guestRun', vars: { n: 9 }, run: true });
+  it(`says where the run lives from ${RUN_ASK} days, and only until it has been said`, () => {
+    expect(guestAsk({ ...facts, streak: RUN_ASK - 1 })).toBeNull();
+    expect(guestAsk({ ...facts, streak: RUN_ASK })).toEqual({ pool: 'guestRun', vars: { n: RUN_ASK }, run: true });
+    expect(guestAsk({ ...facts, streak: 12, runTold: true })).toBeNull();
   });
 
   it(`asks to keep the streak from ${KEEP_RUN} days, and the score before that`, () => {
@@ -19,40 +19,9 @@ describe('guestAsk', () => {
     expect(guestKeepLabel(Number.NaN)).toBeUndefined();
   });
 
-  it('says the place the score would take on today’s board', () => {
-    expect(guestAsk({ ...facts, place: { place: 14, players: 60 } })).toEqual({ pool: 'guestPlace', vars: { n: 14, m: 60 }, run: false });
-  });
-
-  it('says no place on a board too small to mean anything, or before the server answers', () => {
-    expect(guestAsk({ ...facts, place: { place: 1, players: PLACE_MIN_PLAYERS - 1 } })).toBeNull();
-    expect(guestAsk({ ...facts, place: { place: 1, players: PLACE_MIN_PLAYERS } })).not.toBeNull();
-    expect(guestAsk({ ...facts, place: null })).toBeNull();
-    expect(guestAsk({ ...facts })).toBeNull();
-  });
-
-  it.each([
-    [{ place: 0, players: 60 }],
-    [{ place: 61, players: 60 }],
-    [{ place: 1.5, players: 60 }],
-    [{ place: Number.NaN, players: 60 }],
-    [{ place: 3, players: Number.POSITIVE_INFINITY }],
-  ])('never prints a place that cannot be one: %o', (place) => {
-    expect(guestAsk({ ...facts, place })).toBeNull();
-  });
-
-  it(`says where the run lives at ${RUN_ASK} days, before the place, and only until it has been said`, () => {
-    const place = { place: 14, players: 60 };
-    expect(guestAsk({ ...facts, streak: RUN_ASK - 1, place })?.pool).toBe('guestPlace');
-    expect(guestAsk({ ...facts, streak: RUN_ASK, place })).toEqual({ pool: 'guestRun', vars: { n: RUN_ASK }, run: true });
-    expect(guestAsk({ ...facts, streak: 12 })?.pool).toBe('guestRun');
-    expect(guestAsk({ ...facts, streak: 12, runTold: true, place })?.pool).toBe('guestPlace');
-    expect(guestAsk({ ...facts, streak: 12, runTold: true })).toBeNull();
-  });
-
-  it('has lines to say, with the numbers in them and no guilt', () => {
-    for (const line of POOLS.guestPlace) expect(line).toMatch(/\{n\}.*\{m\}/);
+  it('has lines to say, with the number in them and no guilt', () => {
     for (const line of POOLS.guestRun) expect(line).toMatch(/\{n\}/);
-    for (const line of [...POOLS.guestPlace, ...POOLS.guestRun]) expect(line).not.toMatch(/[—!]|lose|losing|lost|miss out|last chance|hurry/i);
+    for (const line of POOLS.guestRun) expect(line).not.toMatch(/[—!]|lose|losing|lost|miss out|last chance|hurry/i);
   });
 });
 

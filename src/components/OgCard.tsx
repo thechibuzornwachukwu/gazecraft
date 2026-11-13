@@ -2,6 +2,7 @@ import { excerptRange } from '../engine/excerpt';
 import { answersFrom } from '../engine/cards';
 import { buildHiddenWords } from '../engine/hiddenWords';
 import { rangeText, sentences, toChars } from '../engine/text';
+import { t } from '../i18n';
 import { Logo } from './Logo';
 import styles from './OgCard.module.css';
 
@@ -20,12 +21,12 @@ export function OgCard({ input }: { input: OgInput }) {
         <Brand />
         <div className={styles.body}>
           <div className={styles.display}>
-            Find it.
+            {t('Find it.')}
             <br />
-            <span className={styles.sub}>Figure it out.</span>
+            <span className={styles.sub}>{t('Figure it out.')}</span>
           </div>
         </div>
-        <Foot left="The words are in plain sight. You will miss them." />
+        <Foot left={t('The words are in plain sight. You will miss them.')} />
       </div>
     );
   }
@@ -37,18 +38,18 @@ export function OgCard({ input }: { input: OgInput }) {
   const excerpt = r ? rangeText(chars, sents, r[0], r[1]) : '';
   const cut = r && r[1] < sents.length - 1 ? `${excerpt} …` : excerpt;
   const question = input.daily
-    ? `How many ${input.noun} can you find?`
-    : `Can you find ${p.answers.length} ${input.noun}?`;
+    ? t('How many {noun} can you find?', { noun: input.noun })
+    : t('Can you find {n} {noun}?', { n: p.answers.length, noun: input.noun });
 
   return (
     <div className={styles.og} data-theme="dark" data-og="">
-      <Brand kicker={input.daily ? 'Daily puzzle' : input.title} />
+      <Brand kicker={input.daily ? t('Daily puzzle') : input.title} />
       <div className={styles.body}>
         {input.sponsor && <div className={styles.with}>{input.sponsor}</div>}
         <div className={styles.question}>{question}</div>
         <div className={styles.excerpt}>{cut}</div>
       </div>
-      <Foot left="Play this puzzle" />
+      <Foot left={t('Play this puzzle')} />
     </div>
   );
 }

@@ -33,16 +33,20 @@ import { Ring, type RingPart } from '../components/Ring';
 import { Segmented } from '../components/Segmented';
 import { GOALS, loadGoal, puzzlesToday, saveGoal, type GoalKey } from '../lib/goal';
 import { Medals } from '../components/Medals';
+import { num, plural, t } from '../i18n';
 import styles from './Me.module.css';
+import { goalName } from '../i18n/gameNames';
+import { LanguagePicker } from '../components/LanguagePicker';
 
-const num = (n: number) => n.toLocaleString('en-US');
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const indexOf = (key: 'kit' | 'outfit', name: string) => (PARTS.find((p) => p.key === key)!.names as readonly string[]).indexOf(name);
 
 /** Gear, in the order it is offered: nothing, then every earned piece. */
-const GEAR = [{ part: 'kit' as const, name: 'none', need: undefined }, ...EARNED];
+const NONE = t('none');
+const GEAR = [{ part: 'kit' as const, name: NONE, need: undefined }, ...EARNED];
 /** Where on the drawing a piece of gear is worn: the card shows that part close up. The rest are shown whole. */
-const GEAR_VIEW: Record<string, string | undefined> = { 'star pin': '12 50 72 72', headphones: '6 10 84 84', 'bomber jacket': '12 50 72 72', crown: '6 -2 84 84' };
+// Keyed by the names as the player reads them, which is how GEAR holds them.
+const GEAR_VIEW: Record<string, string | undefined> = { [t('star pin')]: '12 50 72 72', [t('headphones')]: '6 10 84 84', [t('bomber jacket')]: '12 50 72 72', [t('crown')]: '6 -2 84 84' };
 type Gear = (typeof GEAR)[number];
 /** What is being tried on the stage, before it is chosen. */
 type Trying = { kind: 'partner'; id: PartnerId } | { kind: 'gear'; gear: Gear } | null;
@@ -125,16 +129,16 @@ export function Me() {
     const how = standingOf(partner, trying.id, partner.points);
     const at = nextAt(partner);
     if (trying.id === partner.current) line = '';
-    else if (how === 'locked') line = at == null ? '' : !profile ? `Locked. Sign in and reach ${num(at)} points.` : `Locked. ${num(Math.max(0, at - partner.points))} points to go.`;
-    else action = { label: `Select ${partnerName(trying.id)}`, run: () => choosePartner(trying.id, !!profile) };
+    else if (how === 'locked') line = at == null ? '' : !profile ? t('Locked. Sign in and reach {points} points.', { points: num(at) }) : t('Locked. {points} points to go.', { points: num(Math.max(0, at - partner.points)) });
+    else action = { label: t('Select {name}', { name: partnerName(trying.id) }), run: () => choosePartner(trying.id, !!profile) };
     // A guest holds 1 partner and can swap it freely.
-    if (!profile && trying.id !== partner.current) action = { label: `Select ${partnerName(trying.id)}`, run: () => choosePartner(trying.id, false) };
+    if (!profile && trying.id !== partner.current) action = { label: t('Select {name}', { name: partnerName(trying.id) }), run: () => choosePartner(trying.id, false) };
   } else if (trying?.kind === 'gear') {
     const g = trying.gear;
     const locked = !!g.need && !isEarned(g.need, standing);
-    if (wearing(mine, g)) line = g.name === 'none' ? 'No gear on.' : `You are wearing the ${g.name}.`;
-    else if (locked) line = `Locked. ${howTo(g.need!)}`;
-    else action = { label: g.name === 'none' ? 'Take the gear off' : `Wear the ${g.name}`, run: () => keep(avatarCode(wear(mine, g))) };
+    if (wearing(mine, g)) line = g.name === NONE ? t('No gear on.') : t('You are wearing the {gear}.', { gear: g.name });
+    else if (locked) line = t('Locked. {how}', { how: howTo(g.need!) });
+    else action = { label: g.name === NONE ? t('Take the gear off') : t('Wear the {gear}', { gear: g.name }), run: () => keep(avatarCode(wear(mine, g))) };
   }
 
   const go = async () => {
@@ -144,24 +148,24 @@ export function Me() {
     const ok = await action.run();
     setBusy(false);
     if (ok) setTrying(null);
-    else setNote('That did not save. Try again.');
+    else setNote(t('That did not save. Try again.'));
   };
 
   return (
     <div className={styles.page}>
-      <PageHeader title="You" action={profile ? <IconLink to="/settings" icon={Settings} label="Settings" /> : auth.enabled ? <TextLink to="/welcome?from=%2Fme">Sign in</TextLink> : undefined} />
+      <PageHeader title={t('You')} action={profile ? <IconLink to="/settings" icon={Settings} label={t('Settings')} /> : auth.enabled ? <TextLink to="/welcome?from=%2Fme">{t('Sign in')}</TextLink> : undefined} />
 
-      <section className={styles.stage} aria-label="You and your pet" data-trying={trying?.kind}>
+      <section className={styles.stage} aria-label={t('You and your pet')} data-trying={trying?.kind}>
         <div className={styles.cast}>
           <figure className={styles.figure}>
             <span className={styles.portrait}>
               <Avatar parts={shownParts} size={128} />
               {/* A pencil on the picture: the way to change it, where the eye already is. */}
-              <button type="button" className={styles.edit} aria-label="Edit character" title="Edit character" onClick={() => setEditing(true)}>
+              <button type="button" className={styles.edit} aria-label={t('Edit character')} title={t('Edit character')} onClick={() => setEditing(true)}>
                 <Icon icon={Pencil} size={18} />
               </button>
             </span>
-            <figcaption className={styles.caption}>{profile?.name ?? 'You'}</figcaption>
+            <figcaption className={styles.caption}>{profile?.name ?? t('You')}</figcaption>
             {profile && <LevelBadge points={partner.points} size="sm" />}
           </figure>
           <figure className={styles.figure}>
@@ -188,7 +192,7 @@ export function Me() {
       </section>
       <section className={styles.section} aria-labelledby="me-partners">
         <h2 id="me-partners" className={styles.h2}>
-          Pets
+          {t('Pets')}
         </h2>
         <ul className={styles.row}>
           {PARTNERS.map((p) => {
@@ -197,8 +201,8 @@ export function Me() {
             const locked = how === 'locked' && !!profile;
             const at = nextAt(partner);
             const closed = partner.bonds[p.id] ?? 0;
-            const bond = closed === 0 ? '' : closed === 1 ? ', 1 pack' : `, ${closed} packs`;
-            const state = on ? `With you${bond}` : how === 'own' ? `Yours${bond}` : locked && at != null ? `${num(at)} points` : 'Tap to try';
+            const bond = closed === 0 ? '' : plural(closed, ', {n} pack', ', {n} packs');
+            const state = on ? `${t('With you')}${bond}` : how === 'own' ? `${t('Yours')}${bond}` : locked && at != null ? t('{points} points', { points: num(at) }) : t('Tap to try');
             return (
               <li key={p.id}>
                 <button
@@ -207,7 +211,7 @@ export function Me() {
                   aria-pressed={shownPartner === p.id}
                   data-locked={locked || undefined}
                   data-on={on || undefined}
-                  aria-label={`${p.name}. ${locked ? `Locked. ${state}.` : `${state}.`}`}
+                  aria-label={`${p.name}. ${locked ? t('Locked. {state}.', { state }) : t('{state}.', { state })}`}
                   onClick={() => setTrying({ kind: 'partner', id: p.id })}
                 >
                   <Partner who={p.id} moment={locked ? 'asleep' : 'empty'} size={88} />
@@ -235,14 +239,14 @@ export function Me() {
 
       <section className={styles.section} aria-labelledby="me-gear">
         <h2 id="me-gear" className={styles.h2}>
-          Gear
+          {t('Gear')}
         </h2>
         <ul className={styles.row}>
           {GEAR.map((g) => {
             const on = wearing(mine, g);
             const locked = !!g.need && !isEarned(g.need, standing);
-            const title = g.name === 'none' ? 'No gear' : cap(g.name);
-            const state = on ? 'On you' : locked ? howTo(g.need!) : g.need ? 'Yours' : 'Plain';
+            const title = g.name === NONE ? t('No gear') : cap(g.name);
+            const state = on ? t('On you') : locked ? howTo(g.need!) : g.need ? t('Yours') : t('Plain');
             return (
               <li key={`${g.part}-${g.name}`}>
                 <button
@@ -251,7 +255,7 @@ export function Me() {
                   aria-pressed={trying?.kind === 'gear' ? trying.gear === g : on}
                   data-locked={locked || undefined}
                   data-on={on || undefined}
-                  aria-label={`${title}. ${locked ? `Locked. ${state}` : `${state}.`}`}
+                  aria-label={`${title}. ${locked ? t('Locked. {state}', { state }) : t('{state}.', { state })}`}
                   onClick={() => setTrying({ kind: 'gear', gear: g })}
                 >
                   {/* The thing itself, close up. It needs no name under it, and no word for whose it is. */}
@@ -282,25 +286,21 @@ export function Me() {
       {showBadges && (
         <section id="badges" className={styles.section} aria-labelledby="me-badges">
           <h2 id="me-badges" className={styles.h2}>
-            Badges
+            {t('Badges')}
           </h2>
           {/* The next 3 to aim for sit after the earned ones. */}
           {earned == null ? <SkeletonPills /> : <Medals codes={earned} counts={{ run: run.streak, cases: standing.cases, points: standing.points }} name={profile?.name} parts={mine} path={profile ? `/u/${profile.handle}` : '/play'} all />}
         </section>
       )}
 
+      {/* Guests have no Settings: the language is chosen here. */}
+      {!profile && <LanguagePicker />}
 
-      <p className={styles.more}>
-        {profile ? (
-          <TextLink to={`/u/${profile.handle}`}>See your public page</TextLink>
-        ) : (
-          auth.enabled && (
-            <>
-              Your character and pet are kept in this browser. <TextLink to="/welcome?from=%2Fme">Sign in to keep them everywhere</TextLink>
-            </>
-          )
-        )}
-      </p>
+      {profile && (
+        <p className={styles.more}>
+          <TextLink to={`/u/${profile.handle}`}>{t('See your public page')}</TextLink>
+        </p>
+      )}
 
       <CharacterEditor
         open={editing}
@@ -324,18 +324,18 @@ function DailyGoal() {
   const [goal, setGoal] = useState(loadGoal);
   const done = puzzlesToday();
   const parts = Array.from({ length: goal.n }, (_, i): RingPart => (i < done ? 'done' : 'empty'));
-  const label = `${Math.min(done, goal.n)} of ${goal.n} today`;
+  const label = t('{n} of {total} today', { n: Math.min(done, goal.n), total: goal.n });
   return (
     <section className={styles.goal} aria-labelledby="me-goal" data-goal={goal.key}>
       <h2 id="me-goal" className={styles.h2}>
-        Today
+        {t('Today')}
       </h2>
       <div className={styles.goalRow}>
         <Ring parts={parts} label={label} size={40} />
         <Segmented
-          label="Puzzles a day"
+          label={t('Puzzles a day')}
           hideLabel
-          options={GOALS.map((g) => [g.key, g.name] as const)}
+          options={GOALS.map((g) => [g.key, goalName(g.name)] as const)}
           value={goal.key}
           onChange={(k: GoalKey) => {
             saveGoal(k);
@@ -357,14 +357,14 @@ function PetOutfits({ standing }: { standing: Standing }) {
   return (
     <section className={styles.section} aria-labelledby="me-outfits" data-pet-outfits>
       <h2 id="me-outfits" className={styles.h2}>
-        Outfits
+        {t('Outfits')}
       </h2>
       <ul className={styles.row}>
         {choices.map((o) => {
           const need = o ? OUTFIT_NEEDS[o] : undefined;
           const locked = !!need && !isEarned(need, standing) && worn !== o;
           const on = worn === o;
-          const name = o ? o[0]!.toUpperCase() + o.slice(1) : 'No outfit';
+          const name = o ? o[0]!.toUpperCase() + o.slice(1) : t('No outfit');
           return (
             <li key={o ?? 'none'}>
               <button
@@ -374,7 +374,7 @@ function PetOutfits({ standing }: { standing: Standing }) {
                 aria-disabled={locked || undefined}
                 data-locked={locked || undefined}
                 data-on={on || undefined}
-                aria-label={`${name}. ${locked ? `Locked. ${howTo(need!)}` : on ? 'On.' : 'Yours.'}`}
+                aria-label={`${name}. ${locked ? t('Locked. {how}', { how: howTo(need!) }) : on ? t('On.') : t('Yours.')}`}
                 onClick={() => !locked && wearOutfit(o)}
               >
                 <Partner moment={locked ? 'asleep' : 'empty'} outfit={o} size={88} />

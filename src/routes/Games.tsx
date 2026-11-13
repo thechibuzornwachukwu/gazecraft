@@ -10,6 +10,7 @@ import { useStreak, type Streak } from '../lib/useStreak';
 import { TextLink } from '../components/TextLink';
 import { useAuth } from '../lib/auth';
 import { useUnlocks } from '../lib/useUnlocks';
+import { t, num } from '../i18n';
 import { GameInvites } from './GameInvites';
 import { Journey } from './Journey';
 import styles from './Games.module.css';
@@ -30,7 +31,7 @@ export function Week({ run, best = 0 }: { run: Streak; best?: number }) {
       <p className={styles.weekText}>
         <span className={styles.weekLine}>{weekLine}</span>
         <span className={styles.dailySub}>{runLine}</span>
-        {best > 0 && <span className={styles.dailySub} data-best-week>Best week: {best.toLocaleString('en-US')} points.</span>}
+        {best > 0 && <span className={styles.dailySub} data-best-week>{t('Best week: {points} points.', { points: num(best) })}</span>}
       </p>
     </div>
   );
@@ -44,7 +45,7 @@ export function Games() {
   return (
     <div className={styles.screen}>
       {/* One thing to do, then the path. Who is on the case sits small in the corner, and leads to the stage. */}
-      <PageHeader title="Your Puzzles" action={<Crew />} />
+      <PageHeader title={t('Your Puzzles')} action={<Crew />} />
 
       <GameInvites />
 
@@ -52,8 +53,8 @@ export function Games() {
 
       {auth.enabled && open.make && (
         <p className={styles.more}>
-          <TextLink to="/make">Make a puzzle</TextLink>
-          <TextLink to="/made">Made by players</TextLink>
+          <TextLink to="/make">{t('Make a puzzle')}</TextLink>
+          <TextLink to="/made">{t('Made by players')}</TextLink>
         </p>
       )}
 
@@ -66,7 +67,7 @@ function Crew() {
   const { profile } = useAuth();
   const starter = useMemo(() => guestAvatar(), []);
   return (
-    <Link to="/me" className={styles.crew} data-crew aria-label="Change your look and your pet">
+    <Link to="/me" className={styles.crew} data-crew aria-label={t('Change your look and your pet')}>
       {profile ? <Avatar handle={profile.handle} size={36} /> : <Avatar parts={starter} size={36} />}
       <Partner moment="empty" size={36} />
     </Link>

@@ -9,6 +9,7 @@ import { Logo, LogoMark } from './Logo';
 import { ThemeToggle } from './ThemeToggle';
 import { Avatar } from './Avatar';
 import { Skeleton } from './Skeleton';
+import { t } from '../i18n';
 import styles from './Header.module.css';
 
 const navCls = ({ isActive }: { isActive: boolean }) =>
@@ -20,7 +21,7 @@ function AccountLink() {
   if (profile) {
     const first = profile.name.split(/\s+/)[0];
     return (
-      <Link to="/me" className={styles.account} aria-label={`${first}, your profile`}>
+      <Link to="/me" className={styles.account} aria-label={t('{first}, your profile', { first })}>
         <Avatar handle={profile.handle} size={28} />
         {/* On a phone the face is enough; the name would push the header onto a second row. */}
         <span className={styles.accountName}>{first}</span>
@@ -32,13 +33,13 @@ function AccountLink() {
   const next = pathname.startsWith('/signin') ? '' : `?next=${encodeURIComponent(pathname)}`;
   return (
     <Link to={`/signin${next}`} className={styles.account}>
-      Sign in
+      {t('Sign in')}
     </Link>
   );
 }
 
 /**
- * Two headers, by context. The landing page is a pitch: its own sections and one way in.
+ * Two headers, by context. The landing page has one way in: Play.
  * Everywhere else is the app, on wide screens only (a phone has the dock): the same places in the same order as the
  * dock, and the same Play, which always knows what is next. Your face leads to You.
  */
@@ -52,29 +53,20 @@ export function Header() {
   return (
     <header ref={ref} className={[styles.header, tucked && styles.tucked].filter(Boolean).join(' ')} data-tucked={tucked || undefined} data-app={hasTabBar(pathname) || undefined}>
       <div className={styles.inner}>
-        <Link to="/" className={styles.home} aria-label="Gazecraft home">
+        <Link to="/" className={styles.home} aria-label={t('Gazecraft home')}>
           <Logo className={styles.wordmark} />
           <LogoMark height={28} className={styles.mark} />
         </Link>
-        {landing ? (
-          <nav className={styles.nav} aria-label="On this page">
-            <Link to="/#how" className={styles.navLink}>
-              How it works
-            </Link>
-            <Link to="/#about" className={styles.navLink}>
-              About
-            </Link>
-          </nav>
-        ) : (
-          <nav className={styles.nav} aria-label="Main">
+        {!landing && (
+          <nav className={styles.nav} aria-label={t('Main')}>
             <NavLink to="/play" className={navCls}>
-              Puzzles
+              {t('Puzzles')}
             </NavLink>
             <NavLink to="/players" className={navCls}>
-              People
+              {t('People')}
             </NavLink>
             <NavLink to="/leaderboard" className={navCls}>
-              League
+              {t('League')}
             </NavLink>
           </nav>
         )}
@@ -86,12 +78,12 @@ export function Header() {
           <ThemeToggle />
           {landing ? (
             <Button to="/play" size="sm">
-              Play
+              {t('Play')}
             </Button>
           ) : (
             <span className={styles.appOnly}>
               <Button to={play.to} size="sm" aria-label={play.name}>
-                Play
+                {t('Play')}
               </Button>
             </span>
           )}

@@ -35,7 +35,7 @@ const list = (page: Page) => page.getByRole('complementary', { name: 'Hidden abo
 
 test('demo completes by drag and links to the hard puzzle', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(/Do you have\s*what it takes\?/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Words are hiding in this sentence.');
   const S = await letters(page);
   await expect(cta(page)).toHaveCount(0);
 
@@ -74,9 +74,8 @@ test('hint cycles Ask for a tip-off, Show it, Play again', async ({ page }) => {
   await expect(cta(page)).toHaveCount(0);
 });
 
-test('sections and anchors', async ({ page }) => {
-  await page.goto('/#about');
-  await expect(page.getByRole('heading', { name: 'About' })).toBeInViewport();
+test('topics', async ({ page }) => {
+  await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Pick a topic' })).toBeVisible();
   await page.getByRole('link', { name: /Nigerian names\s*26 words · Hard/ }).click();
   await expect(page).toHaveURL(/\/play\/nigeria$/);
@@ -101,11 +100,15 @@ test.describe('touch', () => {
 });
 
 test('a guest on the landing page never loads the auth client', async ({ page }) => {
-  const calls: string[] = [];
-  page.on('request', (r) => {
-    if (r.url().includes(':54321') || r.url().includes('supabase')) calls.push(r.url());
+  // Judged by what arrives, not by file names: chunk names change with the bundle.
+  const loaded: string[] = [];
+  page.on('response', async (r) => {
+    if (r.url().includes(':54321')) loaded.push(r.url());
+    if (!r.url().endsWith('.js')) return;
+    const body = await r.text().catch(() => '');
+    if (body.includes('GoTrueClient')) loaded.push(r.url());
   });
   await page.goto('/');
   await page.waitForLoadState('networkidle');
-  expect(calls).toEqual([]);
+  expect(loaded).toEqual([]);
 });

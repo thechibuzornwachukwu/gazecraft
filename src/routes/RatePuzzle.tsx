@@ -11,6 +11,7 @@ import {
   type PuzzleRating,
 } from "../lib/api";
 import { useAuth } from "../lib/auth";
+import { t } from "../i18n";
 import styles from "./GameResults.module.css";
 import local from "./RatePuzzle.module.css";
 
@@ -57,15 +58,15 @@ export function RatePuzzle({ code }: { code: string }) {
   return (
     <div className={styles.rate}>
       <span className={styles.guestText}>
-        Made by{" "}
+        {t("Made by")}{" "}
         <Link to={`/u/${r.maker}`} className={styles.signin}>
           @{r.maker}
         </Link>
         .
         {r.own
-          ? ` ${r.ups} liked it.`
+          ? ` ${t("{n} liked it.", { n: r.ups })}`
           : auth.profile
-            ? " Was it a good one?"
+            ? ` ${t("Was it a good one?")}`
             : ""}
       </span>
       {!r.own && auth.profile && (
@@ -76,7 +77,7 @@ export function RatePuzzle({ code }: { code: string }) {
             aria-pressed={mine === true}
             onClick={() => rate(true)}
           >
-            Good one
+            {t("Good one")}
           </button>
           <button
             type="button"
@@ -84,7 +85,7 @@ export function RatePuzzle({ code }: { code: string }) {
             aria-pressed={mine === false}
             onClick={() => rate(false)}
           >
-            Not for me
+            {t("Not for me")}
           </button>
         </span>
       )}
@@ -96,19 +97,18 @@ export function RatePuzzle({ code }: { code: string }) {
             </span>
           ) : (
             <TextLink onClick={() => setAsking(true)}>
-              Report this puzzle
+              {t("Report this puzzle")}
             </TextLink>
           )}
           <Dialog
             open={asking}
             onClose={() => !busy && setAsking(false)}
-            label="Report this puzzle"
+            label={t("Report this puzzle")}
           >
             <div className={local.confirm}>
-              <h2 className={local.title}>Report this puzzle?</h2>
+              <h2 className={local.title}>{t("Report this puzzle?")}</h2>
               <p className={local.help}>
-                Tell us if it is rude, unsafe or not a real puzzle. A few
-                reports hide it while we look.
+                {t("Tell us if it is rude, unsafe or not a real puzzle. A few reports hide it while we look.")}
               </p>
               <div className={local.row}>
                 <Button
@@ -116,10 +116,10 @@ export function RatePuzzle({ code }: { code: string }) {
                   onClick={() => setAsking(false)}
                   disabled={busy}
                 >
-                  Cancel
+                  {t("Cancel")}
                 </Button>
                 <Button variant="primary" onClick={report} disabled={busy}>
-                  Report
+                  {t("Report")}
                 </Button>
               </div>
             </div>

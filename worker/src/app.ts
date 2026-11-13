@@ -12,7 +12,8 @@ import { buildLiar, type Statement } from '../../src/engine/liar';
 import { buildGroups, type GroupBoard } from '../../src/engine/groups';
 import { buildRelay } from '../../src/engine/relay';
 import { buildSeries } from '../../src/engine/series';
-import { specialClues, type SpecialSources } from '../../src/engine/specials';
+import { NO_SOURCES, specialClues, type SpecialSources } from '../../src/engine/specials';
+import { langOf } from '../../src/engine/text';
 import { passages } from '../../src/engine/passages';
 import { starsFor } from '../../src/engine/stars';
 import { buildSums, sumsClue } from '../../src/engine/sums';
@@ -620,7 +621,9 @@ async function plays(req: Request, deps: Deps) {
 
   const g = await deps.db.from('games').select('id, kind, category, text, dict').eq('id', gameId).maybeSingle();
   if (g.error || !g.data) throw new HttpError(404, 'unknown_game');
-  const puzzle = buildHiddenWords({ text: g.data.text as string, dict: g.data.dict as string[] });
+  // A puzzle in another language says so in its id, and reads its letters the way the client does.
+  const lang = langOf(gameId);
+  const puzzle = buildHiddenWords({ text: g.data.text as string, dict: g.data.dict as string[], lang });
   if (expected && puzzle.answers.map((x) => x.key).join() !== expected.join()) throw new HttpError(500, 'daily_mismatch');
 
   if (game.type === 'game' && game.clue != null) {
@@ -629,7 +632,7 @@ async function plays(req: Request, deps: Deps) {
     // only. It is kept apart from `plays`, so no board changes.
     if (room) throw new HttpError(400, 'bad_request');
     const cut = g.data.kind === 'curated' ? passages(puzzle) : [];
-    const specials = cut.length < 2 ? new Map() : specialClues(puzzle, gameId, String(g.data.category ?? ''), SPECIAL_SOURCES);
+    const specials = cut.length < 2 ? new Map() : specialClues(puzzle, gameId, String(g.data.category ?? ''), lang ? NO_SOURCES : SPECIAL_SOURCES);
     if (!caseOrder(cut.length, new Set(specials.keys())).includes(game.clue) || game.clue === 0) throw new HttpError(404, 'unknown_clue');
     const kind = clueKind(game.clue);
     const sp = specials.get(game.clue);
@@ -646,7 +649,7 @@ async function plays(req: Request, deps: Deps) {
                 ? replay(buildLiar(sp!), log, false, EVALUATE.liar, TRIES.liar)
                 : kind === 'groups'
                   ? replay(buildGroups(sp!), log, false, EVALUATE.groups, TRIES.groups)
-                : replay(buildHiddenWords({ text: cut[game.clue - 1]!.text, dict: g.data.dict as string[] }), log, false);
+                : replay(buildHiddenWords({ text: cut[game.clue - 1]!.text, dict: g.data.dict as string[], lang }), log, false);
     if (!c.ok) throw new HttpError(422, c.reason);
     const stars = starsFor({ finished: true, found: c.found, total: c.total, hints: c.hints, wrongs: c.wrongs });
     // A clue given up with less than half found earns nothing and is not kept: no stars, no points, no day on the run.

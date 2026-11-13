@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Contrast } from 'lucide-react';
 import { Icon } from './Icon';
 import { currentTheme, followSystemTheme, setTheme, type Theme } from '../lib/theme';
+import { t } from '../i18n';
 import styles from './ThemeToggle.module.css';
 
 export function ThemeToggle() {
@@ -11,7 +12,7 @@ export function ThemeToggle() {
   useEffect(() => followSystemTheme(setState), []);
 
   const next: Theme = theme === 'light' ? 'dark' : 'light';
-  const label = `Switch to ${next} theme`;
+  const label = next === 'dark' ? t('Switch to dark theme') : t('Switch to light theme');
 
   return (
     <button

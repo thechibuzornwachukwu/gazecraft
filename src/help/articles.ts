@@ -13,6 +13,10 @@ import { GUEST_GAMES } from '../lib/guestLimit';
 import { LEAGUE_TIERS, LEAGUE_UP } from '../lib/league';
 import { OUTFIT_NEEDS } from '../lib/petOutfit';
 import { CLEAN_BONUS, RARE_BONUS } from '../lib/profileStats';
+import { lang } from '../i18n';
+import { HELP_ARTICLES_DE, HELP_GROUP_DE } from './articles.de';
+import { HELP_ARTICLES_ES, HELP_GROUP_ES } from './articles.es';
+import { HELP_ARTICLES_FR, HELP_GROUP_FR } from './articles.fr';
 import { HELP_GROUPS, type HelpArticle } from './types';
 
 const n = (x: number) => x.toLocaleString('en-US');
@@ -38,7 +42,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     title: 'How do I play?',
     answer: 'Read the paragraph and drag across the letters of a hidden word. Words run across spaces and punctuation, so "Pat omitted" hides ATOM.',
     steps: [
-      'Open Packs and tap the next puzzle.',
+      'Open Puzzles and tap the next one.',
       'Read the paragraph slowly.',
       "Drag across a word's letters. On a phone, swipe, or tap the first letter and then the last.",
       "Find every word, or press I'm done when you have found all you can.",
@@ -71,7 +75,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     slug: 'liar-puzzles',
     group: 'Playing',
     title: 'How do I play Liar?',
-    answer: 'Tap each false statement: 1 or 2 of the 5 are false. Tapping a true one counts as a wrong pick.',
+    answer: 'Statements come one at a time: swipe a lie left and a truth right, or press Lie or True. 1 or 2 of the 5 are false, and calling a true one a lie is a wrong pick.',
     related: ['how-to-play'],
   },
   {
@@ -246,7 +250,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     title: 'How do I make a puzzle?',
     answer: 'Open Make and type a topic, an emoji, or a paragraph of your own. Check the draft, change what you like, then publish it and send the link.',
     steps: [
-      'Open Make, from the foot of Packs.',
+      'Open Make, from the foot of Puzzles.',
       'Type a topic, or leave the box empty and press Surprise me.',
       'Change the title, the words or the icon in the draft.',
       'Press Publish puzzle.',
@@ -262,7 +266,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     slug: 'made-by-players',
     group: 'Making puzzles',
     title: 'Where are puzzles other players made?',
-    answer: 'On Made by players, linked at the foot of Packs. The most liked come first.',
+    answer: 'On Made by players, linked at the foot of Puzzles. The most liked come first.',
     related: ['make-a-puzzle'],
   },
 
@@ -290,15 +294,25 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
   },
 ];
 
+/** The articles in the player's language. HELP_ARTICLES stays English for the pages search engines read. */
+const LOCAL: Record<string, { articles: readonly HelpArticle[]; groups: Record<string, string> }> = {
+  es: { articles: HELP_ARTICLES_ES, groups: HELP_GROUP_ES },
+  fr: { articles: HELP_ARTICLES_FR, groups: HELP_GROUP_FR },
+  de: { articles: HELP_ARTICLES_DE, groups: HELP_GROUP_DE },
+};
+export const HELP_LOCAL: readonly HelpArticle[] = LOCAL[lang]?.articles ?? HELP_ARTICLES;
+/** A help group's name in the player's language. */
+export const helpGroupName = (g: string): string => LOCAL[lang]?.groups[g] ?? g;
+
 /** The article at /help/SLUG, if there is one. */
-export const helpArticle = (slug: string): HelpArticle | undefined => HELP_ARTICLES.find((a) => a.slug === slug);
+export const helpArticle = (slug: string, articles: readonly HelpArticle[] = HELP_LOCAL): HelpArticle | undefined => articles.find((a) => a.slug === slug);
 
 /** Articles by group, in group order, leaving out empty groups. */
-export const helpByGroup = (articles: readonly HelpArticle[] = HELP_ARTICLES) =>
+export const helpByGroup = (articles: readonly HelpArticle[] = HELP_LOCAL) =>
   HELP_GROUPS.map((g) => ({ group: g, articles: articles.filter((a) => a.group === g) })).filter((x) => x.articles.length > 0);
 
 /** Articles whose question, answer, steps or facts contain every word typed, case ignored. */
-export function searchHelp(query: string, articles: readonly HelpArticle[] = HELP_ARTICLES): HelpArticle[] {
+export function searchHelp(query: string, articles: readonly HelpArticle[] = HELP_LOCAL): HelpArticle[] {
   const words = query.toLowerCase().split(/\s+/).filter(Boolean);
   if (words.length === 0) return [...articles];
   return articles.filter((a) => {

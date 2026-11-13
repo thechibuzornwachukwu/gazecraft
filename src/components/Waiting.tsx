@@ -6,6 +6,7 @@ import { Avatar } from './Avatar';
 import { Partner } from './Partner';
 import { TextLink } from './TextLink';
 import { WAIT_LINE_MS } from './useDelayedWaiting';
+import { t } from '../i18n';
 import styles from './Waiting.module.css';
 
 type Props = {
@@ -80,7 +81,7 @@ export function Waiting({ size = 'full', pool = 'waiting', onCancel, cover = fal
       </p>
       {onCancel && (
         <TextLink onClick={onCancel} className={styles.cancel}>
-          Cancel
+          {t('Cancel')}
         </TextLink>
       )}
     </div>

@@ -8,11 +8,9 @@ import { MobileBar } from '../components/MobileBar';
 import { Ring } from '../components/Ring';
 import { TextLink } from '../components/TextLink';
 import { WordList, type WordListHandle, type WordRow } from '../components/WordList';
-import { dayNo } from '../engine/daily';
-import { caseClues, dailyPool, getGameDef, getPassage, getPuzzle, sponsorFor, type GameDef, type GameType, type Part } from '../games/catalog';
-import { dailyInfo, dailyLabel } from '../games/daily';
+import { caseClues, getGameDef, getPassage, sponsorFor, type GameDef, type GameType, type Part } from '../games/catalog';
 import { registry } from '../games/registry';
-import { dayHidLine, playFacts, rareLine, recordLines, skillLines, starsUpLine, todayHoldsLine } from '../games/resultLines';
+import { playFacts, recordLines, skillLines, starsUpLine } from '../games/resultLines';
 import { isCleanRead, scoreOf, secondsOf, useGameSession, type Session } from '../games/session';
 import { GuestWall } from '../components/GuestWall';
 import { clueId, clueKind } from '../engine/journey';
@@ -26,15 +24,11 @@ import { guestBlocked, markGuestPlayed, playKey } from '../lib/guestLimit';
 import { loadPartner } from '../lib/partner';
 import { countOf } from '../engine/specials';
 import { starsFor } from '../engine/stars';
-import { dayProfile } from '../engine/variableDay';
-import { countEvent, fetchCustomGame, fetchDailyPlace, fetchWordStats, mergeGuestDailies, submitPlay } from '../lib/api';
-import { loadFlow } from '../lib/firstMinute';
+import { countEvent, fetchCustomGame, submitPlay } from '../lib/api';
 import { guestAsk, guestKeepLabel, markRunTold, runTold } from '../lib/guestAsk';
-import { rarestFound } from '../lib/wordStats';
 import { useAuth } from '../lib/auth';
 import { useCoarsePointer } from '../lib/media';
 import { ShareSheet, type ShareGame } from '../components/ShareSheet';
-import { dailyDate } from '../games/daily';
 import { copyText, sharePath, shareUrl } from '../lib/share';
 import { readPast } from '../engine/reveal';
 import { shareText, storyMarks } from '../engine/shareText';
@@ -43,18 +37,18 @@ import { mateSlots } from '../lib/mates';
 import { joinRoom, newRoomCode, ROOM_RE, type Peer, type Room, type RoomStats, type RoomStatus } from '../lib/room';
 import { Challenge } from './Challenge';
 import { RoomBar } from './RoomBar';
-import { ReminderAsk } from './ReminderAsk';
 import { RatePuzzle } from './RatePuzzle';
 import { recordPlay } from '../lib/records';
 import { markFinished } from '../lib/shelves';
 import { record as recordSound } from '../lib/sound';
 import { markPlayedToday } from '../lib/playDays';
 import { recordStars } from '../lib/starStore';
-import { streakPool } from '../lib/streak';
 import { useStreak } from '../lib/useStreak';
 import { GameResults } from './GameResults';
 import { GameReveal } from './GameReveal';
+import { t, plural } from '../i18n';
 import styles from './Game.module.css';
+import { difficultyName, nameOf } from '../i18n/gameNames';
 
 /** The clock, read when the player acts, never while drawing. */
 const now = (): number => Date.now();
@@ -73,16 +67,6 @@ export function PassageById() {
   const p = /^\d+$/.test(n) ? getPassage(id, Number(n)) : undefined;
   if (!p) return <Navigate to={`/play/${id}`} replace />;
   return <Gated key={`${id}~${p.part.n}`} def={p.def} part={p.part} />;
-}
-
-export function DailyGame() {
-  const { n = '' } = useParams();
-  const num = Number(n);
-  // Future days are not out yet. The server decides for real in M6.
-  if (!Number.isInteger(num) || num < 1 || num > dayNo()) return <Navigate to="/play" replace />;
-  const info = dailyInfo(num);
-  if (!info) return <Navigate to="/play" replace />;
-  return <Gated key={`d${num}`} def={info.def} dailyN={num} />;
 }
 
 /** A custom game opened by its share code. */
@@ -116,16 +100,13 @@ export function GameByCode() {
   return <Gated key={def.id} def={def} />;
 }
 
-/** A daily says how many are left only from here down. */
-const NEAR = 3;
-
-type ScreenProps = { def: GameDef; dailyN?: number; /** A sitting: `def` is the puzzle with one passage as its text. */ part?: Part };
+type ScreenProps = { def: GameDef; /** A sitting: `def` is the puzzle with one passage as its text. */ part?: Part };
 
 /** A guest plays 2 games. A third asks them to sign in. A game they already played stays open. */
 function Gated(props: ScreenProps) {
   const auth = useAuth();
   // Decided when the game opens, so the result of a guest's last game is never walled.
-  const [blocked] = useState(() => guestBlocked(playKey(props.def.id, props.dailyN, props.part?.n)));
+  const [blocked] = useState(() => guestBlocked(playKey(props.def.id, undefined, props.part?.n)));
   if (!auth.enabled || !blocked) return <GameScreen {...props} />;
   // Still finding out who this is: never wall someone who is signed in.
   if (auth.loading) return <SkeletonPage rows={4} />;
@@ -135,38 +116,27 @@ function Gated(props: ScreenProps) {
 /** How each type is played, for a mouse and for a finger. */
 const HOW: Record<GameType, readonly [string, string]> = {
   'hidden-words': [
-    'Drag across the letters. Answers can run across spaces and punctuation.',
-    'Swipe across the letters. Or tap the first letter of a word, then the last.',
+    t('Drag across the letters. Answers can run across spaces and punctuation.'),
+    t('Swipe across the letters. Or tap the first letter of a word, then the last.'),
   ],
-  mirror: ['These words read right to left. Drag across one from either end.', 'These words read right to left. Swipe across one, or tap one end, then the other.'],
+  mirror: [t('These words read right to left. Drag across one from either end.'), t('These words read right to left. Swipe across one, or tap one end, then the other.')],
   'buried-sums': [
-    'Drag across digits in a row. A run is 2 or more digits that add up to the target.',
-    'Swipe across digits in a row. Or tap the first digit of a run, then the last.',
+    t('Drag across digits in a row. A run is 2 or more digits that add up to the target.'),
+    t('Swipe across digits in a row. Or tap the first digit of a run, then the last.'),
   ],
   series: [
-    'Drag across 3 or more digits in a row that step by the same amount: 1 3 5 7, or 9 6 3.',
-    'Swipe across 3 or more digits that step by the same amount: 1 3 5 7, or 9 6 3. Or tap the first, then the last.',
+    t('Drag across 3 or more digits in a row that step by the same amount: 1 3 5 7, or 9 6 3.'),
+    t('Swipe across 3 or more digits that step by the same amount: 1 3 5 7, or 9 6 3. Or tap the first, then the last.'),
   ],
   relay: [
-    'Each chain is words in a row, every one starting on the last letter of the one before. Drag across a whole chain.',
-    'Each chain is words in a row, every one starting on the last letter of the one before. Swipe across a whole chain.',
+    t('Each chain is words in a row, every one starting on the last letter of the one before. Drag across a whole chain.'),
+    t('Each chain is words in a row, every one starting on the last letter of the one before. Swipe across a whole chain.'),
   ],
-  liar: ['Some of these are false. Click each false statement. A second wrong pick ends it.', 'Some of these are false. Tap each false statement. A second wrong tap ends it.'],
-  groups: ['These 16 are 4 sets of 4. Pick 4 that belong together, then check them. 4 wrong sets end it.', 'These 16 are 4 sets of 4. Tap 4 that belong together, then check them. 4 wrong sets end it.'],
+  liar: [t('Some of these are false. Press Lie or True for each, or use the arrow keys. A second wrong call ends it.'), t('Some of these are false. Swipe a lie left and a truth right. A second wrong call ends it.')],
+  groups: [t('These 16 are 4 sets of 4. Pick 4 that belong together, then check them. 4 wrong sets end it.'), t('These 16 are 4 sets of 4. Tap 4 that belong together, then check them. 4 wrong sets end it.')],
 };
 
-/** The hint under the board while nothing has been said yet. */
-const PROMPT: Record<GameType, readonly [string, string]> = {
-  'hidden-words': ['Drag across the letters', 'Swipe across letters, or tap first then last'],
-  mirror: ['Drag across the letters', 'Swipe across letters, or tap first then last'],
-  'buried-sums': ['Drag across the digits', 'Swipe across digits, or tap first then last'],
-  series: ['Drag across the digits', 'Swipe across digits, or tap first then last'],
-  relay: ['Drag across a whole chain', 'Swipe across a whole chain'],
-  liar: ['Click a false statement', 'Tap a false statement'],
-  groups: ['Pick 4 that belong together', 'Tap 4 that belong together'],
-};
-
-function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** A sitting: `def` is the puzzle with one passage as its text. */ part?: Part }) {
+function GameScreen({ def, part }: ScreenProps) {
   const mod = registry[def.type];
   const puzzle = useMemo(() => mod.build(def), [mod, def]);
   // Words are what records and skill lines are about. A run of digits or a letter is not one.
@@ -177,7 +147,7 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
   const navigate = useNavigate();
   // What this browser keeps this game under: stars and the kept game. A sitting is its own game.
   const gameKey = clueId(def.id, part?.n ?? 0);
-  const roomCode = dailyN == null && !part ? (params.get('room') ?? '') : '';
+  const roomCode = !part ? (params.get('room') ?? '') : '';
   const inRoom = auth.enabled && ROOM_RE.test(roomCode);
   const roomRef = useRef<Room | null>(null);
   const [peers, setPeers] = useState<Peer[]>([]);
@@ -186,10 +156,9 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
   const g = useGameSession({
     mod,
     puzzle,
-    dailyN,
     // Leaving keeps the game. A room game is kept under its room, so a dropped connection or a reload loses
     // nothing and your finds stay yours; its clock is the team's and runs on.
-    resumeId: dailyN != null ? undefined : inRoom ? `room-${roomCode}-${def.id}` : gameKey,
+    resumeId: inRoom ? `room-${roomCode}-${def.id}` : gameKey,
     sharedClock: inRoom,
     hintKind: () => HINT_OF[loadPartner().current],
     beforeHit: (k) => listRef.current?.capture(k),
@@ -197,7 +166,7 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
     onStart: () => countEvent(def.id, 'start'),
     onFinish: (fs) => onFinish(fs),
   });
-  const { s, foundSet, total, answers, daily, finished } = g;
+  const { s, foundSet, total, answers, finished } = g;
   const coarse = useCoarsePointer();
   const instructionId = useId();
   const signedIn = !!auth.profile;
@@ -229,7 +198,7 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
       const spans = gRef.current.s.found.map((f) => f.span);
       if (spans.length) roomRef.current?.sendSync(spans);
     };
-    const me: Peer = { id: roomId, name: myName ?? 'A friend', handle: myHandle, partner: loadPartner().current };
+    const me: Peer = { id: roomId, name: myName ?? t('A friend'), handle: myHandle, partner: loadPartner().current };
     void joinRoom(roomCode, me, {
       onFind: (a, b, from) => gRef.current.teamPick(a, b, from.name),
       onPeers: (p) => alive && setPeers(p),
@@ -266,35 +235,23 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
   }, [inRoom, roomCode, roomId, myName, myHandle]);
 
   // Signed in: send the play log once per finished game. The Worker replays it and stores a verified score.
-  // Today's daily only; if that fails for a reason other than "already played", keep it as an unverified merge.
   const sent = useRef<number | null>(null);
-  // Set once the server has answered for this play, so the word stats can include it.
-  const [answered, setAnswered] = useState(false);
   useEffect(() => {
     // A sitting is sent as a clue of its case: checked and kept on the account, on no board.
     if (!finished || !signedIn || s.endAt == null || sent.current === s.startAt) return;
-    // A result opened again was sent when it was earned. The daily is asked again on purpose: the server
-    // answers "already played", and that answer is what lets the word stats load.
-    if (!daily && s.sent) return;
+    // A result opened again was sent when it was earned.
+    if (s.sent) return;
     sent.current = s.startAt;
-    if (!daily) gRef.current.markSent();
-    const isToday = daily && dailyN === dayNo();
-    if (daily && !isToday) {
-      mergeGuestDailies().catch(() => {});
-      return;
-    }
+    gRef.current.markSent();
     const log = s.log ?? { events: [], hints: [] };
     void submitPlay({
-      game: daily ? { type: 'daily', day_no: dailyN! } : part ? { type: 'game', id: def.id, clue: part.n } : { type: 'game', id: def.id },
+      game: part ? { type: 'game', id: def.id, clue: part.n } : { type: 'game', id: def.id },
       log: { events: log.events, hints: log.hints, finish: Math.max(1, s.endAt - s.startAt) },
       // In a room the log holds only your own picks. The server replays it for the Together board and never
       // for the solo boards: a teammate's find is not yours to score.
       ...(inRoom ? { room: roomCode } : {}),
-    }).then((r) => {
-      if (daily && !r.ok && r.status !== 409) mergeGuestDailies().catch(() => {});
-      setAnswered(true);
     });
-  }, [part, finished, signedIn, inRoom, roomCode, s.endAt, s.startAt, s.log, s.sent, daily, dailyN, def.id]);
+  }, [part, finished, signedIn, inRoom, roomCode, s.endAt, s.startAt, s.log, s.sent, def.id]);
 
   const foundCount = s.found.length;
   // The clues of this case, for the row of marks at the top. Read once a visit: it does not change mid clue.
@@ -311,16 +268,11 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
     setSeen({ tally, found: s.found.length, wrongs: s.wrongs, hints: s.hints, mood });
   }
   const pet = finished ? null : <Partner moment={seen.mood} size={32} className={styles.pet} />;
-  const count = daily && !finished ? `${foundCount} found` : `${foundCount} / ${total}`;
+  const count = `${foundCount} / ${total}`;
   const progress = total ? foundCount / total : 0;
-  // A daily hides its count. With 3 or fewer left, and at least 1 found, it says how many and the ring shows the gap.
-  const left = total - foundCount;
-  const near = daily && !finished && foundCount > 0 && left > 0 && left <= NEAR;
-  const leftLine = useMemo(() => (near ? copy.pick('leftCount', { n: left }) : ''), [near, left]);
-  const hideProgress = daily && !finished && !near;
 
   // Pack shelves: a catalogue puzzle played to the end with at least 1 find is finished in this browser.
-  const inCatalogue = !daily && !part && !!getGameDef(def.id);
+  const inCatalogue = !part && !!getGameDef(def.id);
   // Played to the end means at least half found: a game given up with less is not finished (src/engine/stars.ts).
   const earnedEnd = finished && starsFor({ finished, found: foundCount, total, hints: 0, wrongs: 0 }) > 0;
   useEffect(() => {
@@ -328,18 +280,18 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
   }, [earnedEnd, inCatalogue, def.id]);
 
   // The moment a game ends, once: stars for a catalogue puzzle played alone, then personal records.
-  // Both live in this browser. A finished daily opened again does not come through here.
+  // Both live in this browser.
   const starred = (inCatalogue || !!part) && !inRoom;
   const [end, setEnd] = useState<{ at: number; starsUp: boolean; records: string[] } | null>(null);
   // The popup for a clue done: open for the finish itself, never for a result opened again.
   const [popup, setPopup] = useState<number | null>(null);
   function onFinish(fs: Session) {
     // A guest's games are counted: 2, then they are asked to sign in.
-    if (!signedIn) markGuestPlayed(playKey(def.id, dailyN, part?.n));
+    if (!signedIn) markGuestPlayed(playKey(def.id, undefined, part?.n));
     const mine = fs.found.filter((f) => !f.by);
     const stars = starsFor({ finished: true, found: fs.found.length, total, hints: fs.hints, wrongs: fs.wrongs, byOthers: mine.length !== fs.found.length });
     // The run counts a day on which a clue was finished, with at least half found. A game given up counts nothing.
-    if (dailyN == null && stars > 0) {
+    if (stars > 0) {
       markPlayedToday();
       countPuzzleToday();
     }
@@ -349,10 +301,10 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
     const cleanRead = isCleanRead(fs, total);
     const starsUp = starred && recordStars(gameKey, stars);
     const broke = recordPlay({
-      pack: daily || inCatalogue ? def.category : null,
+      pack: inCatalogue ? def.category : null,
       // A sitting is a few words: its time is no record for the pack.
       cleanSecs: cleanRead && !part ? secondsOf(fs, fs.endAt ?? now()) : null,
-      dailyFound: daily ? mine.length : null,
+      dailyFound: null,
       longest: wordy ? playFacts(puzzle, fs.found, fs.wrongs, fs.hints).longest : null,
     });
     // A clue done gets its moment: a popup with what was won and the way on.
@@ -376,26 +328,24 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
       length: f.key.length,
       state: 'found',
     }));
-    if (daily && !finished) return foundRows;
     const order = mod.listOrder(puzzle);
     const rest = [...byKey.values()]
       .filter((a) => !foundSet.has(a.key))
       .sort((a, b) => order(a.key) - order(b.key))
       .map((a): WordRow => ({ key: a.key, label: a.label, length: a.length, state: finished ? 'missed' : 'hidden' }));
     return foundRows.concat(rest);
-  }, [answers, s.found, daily, finished, mod, puzzle, foundSet]);
+  }, [answers, s.found, finished, mod, puzzle, foundSet]);
 
   // The text result: paste it in a chat. Phones open the share sheet (WhatsApp is one tap), desktops copy.
   const sendText = async (): Promise<string> => {
     const secs = secondsOf(s, s.endAt ?? now());
-    const base = shareGame(def, puzzle.difficulty, dailyN, part).path;
+    const base = shareGame(def, puzzle.difficulty, part).path;
     const text = shareText({
       title: def.title,
-      daily: dailyN,
       found: s.found.length,
       total,
       secs,
-      score: scoreOf(s, total, daily, secs),
+      score: scoreOf(s, total, false, secs),
       marks: storyMarks(s.log?.events ?? [], s.log?.hints ?? [], s.found.filter((f) => !f.by).map((f) => f.span)),
       url: shareUrl(auth.profile && !part ? `${base}?vs=${auth.profile.handle}` : base),
     });
@@ -408,18 +358,12 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
         /* closed the sheet: fall back to copying */
       }
     }
-    if (!(await copyText(text))) return 'Could not copy. Use Share.';
+    if (!(await copyText(text))) return t('Could not copy. Use Share.');
     countEvent(def.id, 'share');
-    return 'Copied. Paste it in your group.';
+    return t('Copied. Paste it in your group.');
   };
 
-  // After today's daily: where the run stands. Picked once per finish.
-  const isToday = daily && dailyN === dayNo();
   const run = useStreak(finished ? s.endAt : 0);
-  const streakLine = useMemo(() => {
-    const p = isToday && finished ? streakPool(run.streak, run.best) : null;
-    return p ? copy.pick(p.pool, { n: p.n }) : '';
-  }, [isToday, finished, run.streak, run.best]);
   // Skill lines, 2 at most, rarest first. Picked once per finish.
   const lines = useMemo(
     () => (finished && wordy ? skillLines(playFacts(puzzle, s.found, s.wrongs, s.hints), copy.pick) : []),
@@ -436,73 +380,24 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
   // Where a finished clue leads: the next clue of the pack, or after its last, the first of the next pack.
   const onward = useMemo(() => {
     if (!part || !finished) return undefined;
-    if (!part.next) return { to: nextClueTo() ?? '/play', label: 'Next puzzle' };
-    return { to: `/play/${def.id}/${part.next}`, label: 'Next puzzle' };
+    if (!part.next) return { to: nextClueTo() ?? '/play', label: t('Next puzzle') };
+    return { to: `/play/${def.id}/${part.next}`, label: t('Next puzzle') };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [part, finished, def.id, s.startAt]);
-  // Variable days. Before today's daily: what it holds, never how much. After it: today against a usual day.
-  const holdsLine = useMemo(
-    () => (isToday && !finished ? todayHoldsLine(dayProfile(puzzle), copy.pick) : ''),
-    [isToday, finished, puzzle],
-  );
-  const dayLine = useMemo(() => {
-    if (!isToday || !finished) return '';
-    const pool = dailyPool.map((id) => (id === def.id ? puzzle : getPuzzle(id))).filter((p) => p != null);
-    return dayHidLine(puzzle, pool, copy.pick);
-  }, [isToday, finished, puzzle, def.id]);
 
   // What you missed, shown where it hides, and how many of them your own picks ran across. Picked once.
   const reveal = useMemo(() => (finished ? mod.reveal(puzzle, foundSet) : []), [finished, mod, puzzle, foundSet]);
   const past = finished ? readPast(s.log?.events ?? [], reveal.map((r) => r.span)) : 0;
   const pastLine = useMemo(() => (past ? copy.pick('readPast', { n: past }) : ''), [past]);
-  const doneLine = useMemo(() => (isToday && finished ? copy.pick('doneToday') : ''), [isToday, finished]);
 
-  // "Only 8% found Habakkuk": the rarest word you found on this daily, from 5 verified players up. Picked once.
-  // Guests and past days send nothing, so there is nothing to wait for.
-  const settled = finished && (!signedIn || !isToday || answered);
-  const [rare, setRare] = useState('');
-  useEffect(() => {
-    if (!daily || !settled || !auth.enabled) return;
-    let alive = true;
-    fetchWordStats(dailyN!)
-      .then((stats) => {
-        const r = rarestFound(stats, gRef.current.s.found.map((f) => f.key));
-        const label = r && gRef.current.s.found.find((f) => f.key === r.key)?.label;
-        const line = rareLine(r, label, copy.pick);
-        if (alive && line) setRare(line);
-      })
-      .catch(() => {});
-    return () => {
-      alive = false;
-    };
-  }, [daily, settled, dailyN, auth.enabled]);
-
-  // A guest after today's daily: where their score would stand, or, once, where their run lives. Picked once.
-  const guestToday = isToday && finished && !signedIn && auth.enabled;
-  const [place, setPlace] = useState<{ place: number; players: number } | null>(null);
-  useEffect(() => {
-    if (!guestToday) return;
-    let alive = true;
-    const cur = gRef.current.s;
-    const secs = secondsOf(cur, cur.endAt ?? now());
-    fetchDailyPlace(dailyN!, scoreOf(cur, gRef.current.total, true, secs), secs)
-      .then((p) => alive && setPlace(p))
-      .catch(() => {});
-    return () => {
-      alive = false;
-    };
-  }, [guestToday, dailyN]);
   const [toldBefore] = useState(runTold);
-  // At any win, not only today's daily: the run is what a guest would want to keep (BUILD_PLAN set 11a).
+  // At any win: the run is what a guest would want to keep (BUILD_PLAN set 11a).
   const guestDone = finished && !signedIn && auth.enabled;
   const ask = useMemo(
-    () => (guestDone ? guestAsk({ today: guestToday, streak: run.streak, runTold: toldBefore, place }) : null),
-    [guestDone, guestToday, run.streak, toldBefore, place],
+    () => (guestDone ? guestAsk({ streak: run.streak, runTold: toldBefore }) : null),
+    [guestDone, run.streak, toldBefore],
   );
-  // Play first: the character and the partner are asked after the first result, not before. Once, until it is answered.
-  const [lookAsk] = useState(() => !loadFlow().character);
-  const askLook = !signedIn && auth.enabled && lookAsk;
-  const guestLine = useMemo(() => (askLook ? copy.pick('guestLook') : ask ? copy.pick(ask.pool, ask.vars) : ''), [ask, askLook]);
+  const guestLine = useMemo(() => (ask ? copy.pick(ask.pool, ask.vars) : ''), [ask]);
   useEffect(() => {
     // Said once: the next result goes back to the place.
     if (ask?.run) markRunTold();
@@ -515,50 +410,42 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
   }, [def]);
 
   const Board = mod.Board;
+  const named = nameOf(def);
   const perfect = foundCount === total;
-  const holiday = dailyN != null && dailyLabel(dailyN) !== 'Daily' ? dailyLabel(dailyN) : '';
-  const resultLine =
-    (holiday ? `${holiday}. ` : '') +
-    (perfect ? 'Every answer found.' : 'The ones you missed are shaded below.') +
-    (daily
-      ? (s.misses ? ` ${s.misses} ${s.misses === 1 ? 'wrong pick.' : 'wrong picks.'}` : '') +
-        ' Come back tomorrow for a new one.'
-      : '');
+  const resultLine = perfect ? t('Every answer found.') : t('The ones you missed are shaded below.');
 
   return (
     <div className={styles.screen} style={{ '--pack': packHue(def.category) } as CSSProperties}>
       <div className={styles.top}>
         <div className={styles.meta}>
-          <Link to="/play" className={styles.back} aria-label="Packs">
+          <Link to="/play" className={styles.back} aria-label={t('Packs')}>
             <Icon icon={ArrowLeft} size={20} />
           </Link>
           <span className={styles.metaEnd}>
             {part ? (
                 // A pack as a row of marks, one a clue: done, this one, and those to come. A sums clue is square.
-                <ol className={styles.trail} aria-label={`${def.category}, clue ${part.at} of ${part.of}`} data-trail>
+                <ol className={styles.trail} aria-label={`${named.category}, ${t('clue {at} of {of}', { at: part.at, of: part.of })}`} data-trail>
                   {trail.map((c) => (
                     <li key={c.n} className={styles.mark} data-kind={c.kind} data-state={c.state} aria-hidden="true" />
                   ))}
                 </ol>
               ) : (
                 <span className={styles.level}>
-                  {holiday ? `${holiday} · ` : ''}
-                  {def.category} · {puzzle.difficulty}
+                  {named.category} · {difficultyName(puzzle.difficulty)}
                 </span>
               )}
-            {auth.enabled && !daily && !part && !inRoom && !finished && (
+            {auth.enabled && !part && !inRoom && !finished && (
               <button type="button" className={styles.together} onClick={() => navigate(`?room=${newRoomCode()}`)}>
                 <Icon icon={UsersRound} size={16} />
-                Play together
+                {t('Play together')}
               </button>
             )}
           </span>
         </div>
         <div className={styles.titleRow}>
-          <h1 className={styles.title}>{daily ? `Find the hidden ${def.noun}` : `Find ${countOf(total, def.noun)}`}</h1>
+          <h1 className={styles.title}>{t('Find {what}', { what: countOf(total, named.noun) })}</h1>
           <BigClock startAt={s.startAt} endAt={s.endAt} />
         </div>
-        {holdsLine && <p className={styles.holds}>{holdsLine}</p>}
       </div>
 
       {inRoom && <RoomBar gameId={def.id} code={roomCode} peers={peers} mates={mates} status={roomStatus} me={myStats} you={{ id: roomId, handle: myHandle, partner: loadPartner().current }} path={sharePath({ id: def.id, code: def.id.startsWith('c-') ? def.id.slice(2).toUpperCase() : undefined })} />}
@@ -566,19 +453,18 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
       {challenge && !inRoom && (
         <Challenge
           vs={challenge}
-          game={daily ? { day: dailyN! } : { id: def.id }}
-          mine={finished ? scoreOf(s, total, daily, secondsOf(s, s.endAt!)) : null}
+          game={{ id: def.id }}
+          mine={finished ? scoreOf(s, total, false, secondsOf(s, s.endAt!)) : null}
         />
       )}
 
       <div className={styles.progress}>
         <div className={styles.stats}>
           <span className={styles.tally}>
-            {!hideProgress && <Ring value={progress} label="Found" />}
+            <Ring value={progress} label={t('Found')} />
             <span className={styles.count}>{count}</span>
           </span>
-          {leftLine && <span className={styles.left}>{leftLine}</span>}
-          <span>{s.hints === 1 ? '1 tip-off' : `${s.hints} tip-offs`}</span>
+          <span>{plural(s.hints, '{n} tip-off', '{n} tip-offs')}</span>
         </div>
       </div>
 
@@ -586,31 +472,26 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
         <GameResults
           title={s.resultTitle ?? ''}
           line={resultLine}
-          score={scoreOf(s, total, daily, secondsOf(s, s.endAt!))}
+          score={scoreOf(s, total, false, secondsOf(s, s.endAt!))}
           found={foundCount}
           total={total}
           secs={secondsOf(s, s.endAt!)}
-          canReplay={!daily}
+          canReplay
           onReplay={g.replay}
           onShare={() => setSharing(true)}
           onText={sendText}
           next={onward}
-          boardPath={part || !auth.enabled ? undefined : daily ? `/leaderboard?day=${dailyN}` : inRoom && getGameDef(def.id) ? `/leaderboard/${def.id}?board=together` : undefined}
+          boardPath={part || !auth.enabled ? undefined : inRoom && getGameDef(def.id) ? `/leaderboard/${def.id}?board=together` : undefined}
           guest={!signedIn}
           guestLine={guestLine}
-          guestAction={askLook ? 'Choose your look' : guestKeepLabel(run.streak)}
-          streak={streakLine}
-          rare={rare}
+          guestAction={guestKeepLabel(run.streak)}
           stars={stars}
           starsUp={starLine}
           skills={lines}
           records={ended?.records}
-          day={dayLine}
-          done={doneLine}
           sponsor={sponsor && { ...sponsor, onVisit: () => countEvent(def.id, 'click') }}
         >
           <GameReveal items={reveal} past={pastLine} />
-          {isToday && signedIn && <ReminderAsk />}
           {auth.enabled && def.id.startsWith('c-') && <RatePuzzle code={def.id.slice(2).toUpperCase()} />}
         </GameResults>
       )}
@@ -630,12 +511,13 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
             onPick={g.pick}
             onTapStart={g.tapStart}
             onDragStart={g.dragStart}
+            onEnd={g.finish}
             describedBy={instructionId}
           />
           {!finished && (
             <div className={styles.actions}>
-              <TextLink onClick={g.hint}>Ask for a tip-off</TextLink>
-              <TextLink onClick={g.finish}>I'm done</TextLink>
+              <TextLink onClick={g.hint}>{t('Ask for a tip-off')}</TextLink>
+              <TextLink onClick={g.finish}>{t("I'm done")}</TextLink>
               <span className={styles.says} aria-hidden="true">
                 {pet}
                 <span className={styles.msg}>{s.msg}</span>
@@ -649,10 +531,9 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
 
         <WordList
           ref={listRef}
-          title={finished ? 'Answers' : def.type === 'liar' ? 'False above' : def.type === 'groups' ? 'Sets' : 'Hidden above'}
+          title={finished ? t('Answers') : def.type === 'liar' ? t('Lies') : def.type === 'groups' ? t('Sets') : t('Hidden above')}
           count={count}
           rows={rows}
-          moreHiding={daily && !finished}
         />
       </div>
 
@@ -661,14 +542,14 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
           open={sharing}
           onClose={() => setSharing(false)}
           onShared={() => countEvent(def.id, 'share')}
-          game={{ ...shareGame(def, puzzle.difficulty, dailyN, part), vs: part ? undefined : auth.profile?.handle, sponsor }}
+          game={{ ...shareGame(def, puzzle.difficulty, part), vs: part ? undefined : auth.profile?.handle, sponsor }}
           result={{
             answers: puzzle.answers.map((a) => {
               const f = s.found.find((x) => x.key === a.key);
               return { key: a.key, span: f?.span ?? a.spans[0]!, found: !!f, hinted: s.hinted.includes(a.key) };
             }),
             secs: secondsOf(s, s.endAt!),
-            score: scoreOf(s, total, daily, secondsOf(s, s.endAt!)),
+            score: scoreOf(s, total, false, secondsOf(s, s.endAt!)),
             hints: s.hints,
           }}
           player={{ name: auth.profile?.name, handle: auth.profile?.handle }}
@@ -681,7 +562,7 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
           onClose={() => setPopup(null)}
           title={s.resultTitle ?? ''}
           stars={stars}
-          line={`${foundCount} of ${total} found`}
+          line={t('{found} of {total} found', { found: foundCount, total })}
           next={onward}
         />
       )}
@@ -689,10 +570,9 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
       {!finished && (
         <MobileBar
           count={count}
-          progress={hideProgress ? null : progress}
-          left={leftLine}
+          progress={progress}
           time={<Elapsed startAt={s.startAt} endAt={s.endAt} />}
-          message={s.msg || PROMPT[def.type][coarse ? 1 : 0]}
+          message={s.msg}
           pet={pet}
           onHint={g.hint}
           onDone={g.finish}
@@ -703,16 +583,13 @@ function GameScreen({ def, dailyN, part }: { def: GameDef; dailyN?: number; /** 
 }
 
 /** What the share sheet needs to know about this game. */
-function shareGame(def: GameDef, difficulty: string, dailyN?: number, part?: Part): ShareGame {
+function shareGame(def: GameDef, difficulty: string, part?: Part): ShareGame {
   const code = def.id.startsWith('c-') ? def.id.slice(2).toUpperCase() : undefined;
   return {
     id: def.id,
-    title: def.title,
-    noun: def.noun,
-    category: def.category,
-    difficulty,
+    ...nameOf(def),
+    difficulty: difficultyName(difficulty),
     text: def.text,
-    daily: dailyN ? { n: dailyN, date: dailyDate(dailyN) } : undefined,
-    path: part ? `/play/${def.id}/${part.n}` : sharePath({ id: def.id, daily: dailyN, code }),
+    path: part ? `/play/${def.id}/${part.n}` : sharePath({ id: def.id, code }),
   };
 }

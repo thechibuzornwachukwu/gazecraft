@@ -1,24 +1,21 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
-import { Icon } from './Icon';
+import { t } from '../i18n';
 import styles from './Footer.module.css';
+import { LanguagePicker } from './LanguagePicker';
 
 export function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.inner}>
-        <Link to="/play" className={styles.cta}>
-          Start playing
-          <Icon icon={ArrowRight} size="em" />
-        </Link>
+        <LanguagePicker />
         <div className={styles.meta}>
           <Link to="/privacy" className={styles.metaLink}>
-            Privacy
+            {t('Privacy')}
           </Link>
           <Link to="/help" className={styles.metaLink}>
-            Help
+            {t('Help')}
           </Link>
-          <span>© 2026 Gazecraft</span>
+          <span>{t('© 2026 Gazecraft')}</span>
         </div>
       </div>
     </footer>

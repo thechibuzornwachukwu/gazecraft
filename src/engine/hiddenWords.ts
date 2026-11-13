@@ -1,8 +1,8 @@
-import { toChars, type Char } from './text';
+import { foldWord, toChars, type Char } from './text';
 
 export type Difficulty = 'Easy' | 'Medium' | 'Hard';
 
-export type HiddenWordsDef = { text: string; dict: readonly string[] };
+export type HiddenWordsDef = { text: string; dict: readonly string[]; /** A puzzle in another language: its letters read wide and folded. */ lang?: string };
 
 export type Answer = {
   /** Normalised: lowercase a-z only. */
@@ -30,11 +30,12 @@ export function difficultyOf(answers: number, chars: number): Difficulty {
 }
 
 export function buildHiddenWords<D extends HiddenWordsDef>(def: D): HiddenWordsPuzzle<D> {
-  const { chars, S } = toChars(def.text);
+  const wide = !!def.lang && def.lang !== 'en';
+  const { chars, S } = toChars(def.text, wide);
   const seen = new Set<string>();
   const answers: Answer[] = [];
   for (const w of def.dict) {
-    const k = norm(w);
+    const k = wide ? foldWord(w) : norm(w);
     if (k.length < 3 || seen.has(k)) continue;
     const spans: Array<[number, number]> = [];
     let i = S.indexOf(k);

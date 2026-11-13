@@ -5,6 +5,7 @@ import { GUEST_GAMES } from '../lib/guestLimit';
 import { Button } from './Button';
 import { Partner } from './Partner';
 import { TextLink } from './TextLink';
+import { t } from '../i18n';
 import styles from './GuestWall.module.css';
 
 /** A guest who has played their games: one screen, one way on. Nothing they earned is lost. */
@@ -13,16 +14,16 @@ export function GuestWall() {
   return (
     <div className={styles.wall} data-guest-wall>
       <Partner moment="hello" size={120} />
-      <h1 className={styles.title}>Sign in to keep playing</h1>
+      <h1 className={styles.title}>{t('Sign in to keep playing')}</h1>
       <p className={styles.lead}>
-        You have played {GUEST_GAMES} games as a guest. Sign in and the case carries on, with your stars, your detective and your pet. We send a code to your email. No password.
+        {t('You have played {n} puzzles as a guest. Sign in to keep your stars and your pet.', { n: GUEST_GAMES })}
       </p>
       <Button variant="accent" to={`/welcome?from=${encodeURIComponent(pathname)}`}>
-        Sign in
+        {t('Sign in')}
       </Button>
       <TextLink to="/play">
         <Icon icon={ArrowLeft} size={16} />
-        Back to packs
+        {t('Back to puzzles')}
       </TextLink>
     </div>
   );

@@ -1,6 +1,11 @@
 // Curated games from data/games.json. Answers and difficulty always come from the engine, never from this file.
 
 import raw from '../../data/games.json';
+import rawEs from '../../data/games.es.json';
+import rawFr from '../../data/games.fr.json';
+import rawDe from '../../data/games.de.json';
+import { lang, t } from '../i18n';
+import { langOf } from '../engine/text';
 import rawHolidays from '../../data/holidays.json';
 import { dailyGameId, holidayOn, type Calendar, type Holiday } from '../engine/daily';
 import rawMirror from '../../data/mirrorWords.json';
@@ -13,7 +18,7 @@ import { sumsClue, sumsTarget } from '../engine/sums';
 import { passages } from '../engine/passages';
 import type { Statement } from '../engine/liar';
 import type { GroupBoard } from '../engine/groups';
-import { SPECIAL_NOUN, specialClues, type SpecialSources } from '../engine/specials';
+import { NO_SOURCES, SPECIAL_NOUN, specialClues, type SpecialSources } from '../engine/specials';
 import { sponsorOf, type Sponsor } from '../engine/sponsor';
 
 export type GameType = 'hidden-words' | 'buried-sums' | 'mirror' | 'relay' | 'series' | 'liar' | 'groups';
@@ -45,13 +50,22 @@ export type GameDef = {
   text: string;
   /** The "With NAME" mark. Read it with `sponsorFor`, never directly. */
   sponsor?: { name: string; url?: string };
+  /** A puzzle in another language (from its id: `es-animales`). */
+  lang?: string;
 };
 
 type GamesFile = { filters: string[]; dailyPool: string[]; games: GameDef[] };
 
 const data = raw as GamesFile;
 
-export const games: readonly GameDef[] = data.games;
+/** Puzzles written in another language: their own file each, ids prefixed with the language. */
+const local = (file: { games: GameDef[] }): GameDef[] => file.games.map((g) => ({ ...g, lang: langOf(g.id) }));
+const BY_LANG: Record<string, GameDef[]> = { es: local(rawEs as { games: GameDef[] }), fr: local(rawFr as { games: GameDef[] }), de: local(rawDe as { games: GameDef[] }) };
+
+/** Every puzzle in every language: what the server holds, and what a link can open. */
+export const allGames: readonly GameDef[] = [...data.games, ...Object.values(BY_LANG).flat()];
+/** The puzzles on this player's path: theirs first, then the English ones. */
+export const games: readonly GameDef[] = [...(BY_LANG[lang] ?? []), ...data.games];
 export const filters: readonly string[] = data.filters;
 export const dailyPool: readonly string[] = data.dailyPool;
 export const calendar: Calendar = rawHolidays;
@@ -61,7 +75,7 @@ export const dailyIdFor = (n: number): string => dailyGameId(n, dailyPool, calen
 export const holidayFor = (n: number): Holiday | undefined => holidayOn(n, calendar);
 
 export function getGameDef(id: string): GameDef | undefined {
-  return games.find((g) => g.id === id);
+  return allGames.find((g) => g.id === id);
 }
 
 /** Who the puzzle is with, when its `sponsor` field passes the rule. Catalogue puzzles only: a player-made one never carries it. */
@@ -91,7 +105,8 @@ export function getPassage(id: string, n: number): { def: GameDef; part: Part } 
     const puzzle = getPuzzle(id);
     if (!def || !puzzle) return undefined;
     const cut = passages(puzzle);
-    const specials = specialClues(puzzle, id, def.category, SPECIAL_SOURCES);
+    // The special clues are made from English word lists and statements: a puzzle in another language has none.
+    const specials = specialClues(puzzle, id, def.category, def.lang ? NO_SOURCES : SPECIAL_SOURCES);
     const order = caseOrder(cut.length, new Set(specials.keys()));
     order.forEach((k, i) => {
       if (k === 0) return;
@@ -100,7 +115,7 @@ export function getPassage(id: string, n: number): { def: GameDef; part: Part } 
       if (kind === 'words') list!.set(k, { def: { ...def, text: cut[k - 1]!.text }, part });
       else if (kind === 'sums') {
         const made = sumsClue(`${id}~${k}`, k - SUMS_FROM);
-        list!.set(k, { def: { ...def, type: 'buried-sums', noun: `runs that add up to ${sumsTarget(made)}`, text: made.text, dict: [...made.dict], expectedAnswers: [] }, part });
+        list!.set(k, { def: { ...def, type: 'buried-sums', noun: t('runs that add up to {n}', { n: sumsTarget(made) }), text: made.text, dict: [...made.dict], expectedAnswers: [] }, part });
       } else {
         const sp = specials.get(k);
         if (sp) list!.set(k, { def: { ...def, type: sp.type, noun: SPECIAL_NOUN[sp.type], text: sp.text, dict: [...sp.dict], expectedAnswers: [] }, part });

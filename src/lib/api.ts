@@ -4,7 +4,6 @@ import { readLeague, type League, type LeagueRow } from './league';
 import type { SavedSession } from '../games/session';
 import type { PlayRow } from './profileStats';
 import { storage } from './storage';
-import type { WordStat } from './wordStats';
 import { getSupabase } from './supabase';
 import type { Note } from './notifications';
 
@@ -136,13 +135,6 @@ export async function fetchTogetherBoard(gameId: string, limit = 20): Promise<Te
   const { data, error } = await (await client()).rpc('together_board', { p_game: gameId, p_limit: limit });
   if (error) throw error;
   return (data ?? []) as TeamRow[];
-}
-
-/** How many verified players found each word of a daily. Empty for today until you have played it. */
-export async function fetchWordStats(day: number): Promise<WordStat[]> {
-  const { data, error } = await (await client()).rpc('daily_word_stats', { p_day: day });
-  if (error) throw error;
-  return (data ?? []) as WordStat[];
 }
 
 // ---------------------------------------------------------------------------
@@ -402,19 +394,6 @@ export async function fetchDailyDays(): Promise<number[]> {
   const { data, error } = await (await client()).from('plays').select('day_no').not('day_no', 'is', null);
   if (error) throw error;
   return data.map((r) => r.day_no as number);
-}
-
-/**
- * Where a score would stand on a daily board: its place and the number of players, the asker counted as one.
- * For a guest, whose score is never stored. Null when the server cannot say.
- */
-export async function fetchDailyPlace(day: number, score: number, secs: number): Promise<{ place: number; players: number } | null> {
-  const { data, error } = await (await client()).rpc('daily_place', { p_day: day, p_score: score, p_secs: secs });
-  if (error) return null;
-  const row = (data as Array<{ place: unknown; players: unknown }> | null)?.[0];
-  const place = Number(row?.place);
-  const players = Number(row?.players);
-  return Number.isInteger(place) && Number.isInteger(players) ? { place, players } : null;
 }
 
 /** Finished dailies in this browser, newest first. */

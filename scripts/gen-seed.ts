@@ -6,7 +6,7 @@
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { buildHiddenWords } from '../src/engine/hiddenWords';
-import { dailyIdFor, games } from '../src/games/catalog';
+import { allGames as games, dailyIdFor } from '../src/games/catalog';
 
 /** Days to schedule ahead. 2026-01-01 is day 1. */
 const DAYS = 1100;

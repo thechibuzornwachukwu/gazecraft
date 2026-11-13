@@ -3,6 +3,7 @@ import { Button } from './Button';
 import { Dialog } from './Dialog';
 import { Stars } from './Stars';
 import { TextLink } from './TextLink';
+import { t } from '../i18n';
 import styles from './ClueDone.module.css';
 
 type Props = {
@@ -38,7 +39,7 @@ export function ClueDone({ open, onClose, title, stars, line, next }: Props) {
               {next.label}
             </Button>
           )}
-          <TextLink onClick={onClose}>See the result</TextLink>
+          <TextLink onClick={onClose}>{t('See the result')}</TextLink>
         </div>
       </div>
     </Dialog>

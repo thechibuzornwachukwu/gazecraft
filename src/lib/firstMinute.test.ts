@@ -75,7 +75,7 @@ describe('what the browser keeps for a guest', () => {
       expect(loadFlow()).toEqual({});
       expect(loadLook()).toBeNull();
       expect(hasPlayed()).toBe(false);
-      expect(() => saveFlow({ character: 'done' })).not.toThrow();
+      expect(() => saveFlow({ signin: 'done' })).not.toThrow();
       expect(() => keepLook('mixed')).not.toThrow();
       expect(() => setGuestAvatarCode(CODE)).not.toThrow();
       expect(guestAvatar()).toBeTruthy();
@@ -86,10 +86,10 @@ describe('what the browser keeps for a guest', () => {
   });
 
   it('answers, the look and the character come back after a reload', () => {
-    saveFlow({ character: 'done', signin: 'skipped' });
+    saveFlow({ signin: 'skipped', done: true });
     keepLook('feminine');
     setGuestAvatarCode(CODE);
-    expect(loadFlow()).toEqual({ character: 'done', signin: 'skipped' });
+    expect(loadFlow()).toEqual({ signin: 'skipped', done: true });
     expect(loadLook()).toBe('feminine');
     expect(guestAvatar()).toEqual(parseAvatar(CODE));
     keepLook(null);

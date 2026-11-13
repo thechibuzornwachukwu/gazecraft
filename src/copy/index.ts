@@ -1,9 +1,17 @@
 // Every in-game feedback line. Pools live in data/copy.json. Picks by context, never repeats back to back.
 
 import pools from '../../data/copy.json';
+import poolsDe from '../../data/copy.de.json';
+import poolsEs from '../../data/copy.es.json';
+import poolsFr from '../../data/copy.fr.json';
+import { lang } from '../i18n';
 
 export type PoolKey = keyof typeof pools;
-export const POOLS: Readonly<Record<PoolKey, readonly string[]>> = pools;
+type Pools = Readonly<Record<PoolKey, readonly string[]>>;
+/** Every language has every pool English has: a missing one fails the build. */
+const BY_LANG: Record<string, Pools> = { en: pools, es: poolsEs, fr: poolsFr, de: poolsDe };
+export const POOLS_EN: Pools = pools;
+export const POOLS: Pools = BY_LANG[lang] ?? pools;
 
 export type Vars = Record<string, string | number | null | undefined>;
 

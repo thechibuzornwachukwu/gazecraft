@@ -12,6 +12,7 @@ import { buildSums, sumsTarget } from '../engine/sums';
 import { buildLiar, statementOf } from '../engine/liar';
 import { buildGroups, tilesOfAnswer } from '../engine/groups';
 import { GroupsBoard } from '../components/GroupsBoard';
+import { LiarDeck } from '../components/LiarDeck';
 import { buildRelay } from '../engine/relay';
 import { buildSeries } from '../engine/series';
 import type { GameDef, GameType } from './catalog';
@@ -131,8 +132,9 @@ export const registry: Record<GameType, GameModule<Built>> = {
   },
   liar: {
     ...spans({ family: 'verbal', build: (def) => buildLiar(def), evaluate: EVALUATE.liar, listOrder: byPlace }),
-    // A statement is picked with one tap.
+    // One statement at a time: swipe a lie left, a truth right.
     boardProps: (p) => ({ chars: p.chars, letters: p.S.length, tapPicks: true }),
+    Board: LiarDeck,
     tries: TRIES.liar,
     // A tap anywhere in a statement picks that statement.
     pickId: (p, a) => `s${statementOf(p, a)}`,

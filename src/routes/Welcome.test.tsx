@@ -1,11 +1,10 @@
 // @vitest-environment jsdom
 // The first minute (BUILD_PLAN 3b). The step rules are tested in src/lib/onboarding.test.ts; this is what a player sees.
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { vi } from 'vitest';
-import { GUEST_AVATAR_KEY } from '../avatar/guest';
 import { playNext } from '../lib/playNext';
-import { FLOW_KEY, LOOK_KEY } from '../lib/firstMinute';
+import { FLOW_KEY } from '../lib/firstMinute';
 import { Welcome } from './Welcome';
 
 type User = { id: string; email?: string | null; user_metadata?: Record<string, unknown> | null };
@@ -97,103 +96,35 @@ beforeEach(() => {
 });
 
 describe('a new guest', () => {
-  it('builds a character first, then is offered sign in, with the ring one step on', () => {
+  it('is asked to sign in first, with a ring that says where they are', () => {
     open();
-    expectStep('This is you.', 'Step 1 of 4');
+    expectStep('Sign in to keep your score.', 'Step 1 of 2');
     expect(ring()).toHaveAttribute('aria-valuenow', '0');
-    click('Keep this look');
-    expectStep('Sign in to keep it.', 'Step 2 of 4');
-    expect(ring()).toHaveAttribute('aria-valuenow', '25');
     expect(screen.getByLabelText('Email')).toBeInTheDocument();
-    // Keeping the starter makes it theirs, and the answer survives a reload.
-    expect(localStorage.getItem(GUEST_AVATAR_KEY)).toMatch(/^([a-z][0-9]{1,2})+$/);
-    expect(stored()).toEqual({ character: 'done' });
   });
 
-  it('the outfit question: the agreed words, 3 answers, and one tap ends in a clue', () => {
-    localStorage.setItem(FLOW_KEY, JSON.stringify({ character: 'done', signin: 'skipped' }));
+  it('skips sign in: one tap, and the flow ends in a clue, not a menu', () => {
     open();
-    expectStep('We believe you should look good.', 'Step 3 of 3');
-    const group = screen.getByRole('group', { name: 'Who are we dressing?' });
-    expect(within(group).getAllByRole('button').map((b) => b.textContent)).toEqual(['A woman', 'A man', "I'd rather not say"]);
-    expect(screen.queryByText(/Change it any time/)).toBeNull();
-    click("I'd rather not say");
-    // A full answer, not a skip.
-    expect(localStorage.getItem(LOOK_KEY)).toBe('mixed');
-    expect(stored()).toEqual({ character: 'done', signin: 'skipped', look: 'done', done: true });
-    expect(where()).toBe(FIRST);
-  });
-
-  it.each([
-    ['A woman', 'feminine'],
-    ['A man', 'masculine'],
-  ])('%s is kept in this browser as %s', (label, value) => {
-    localStorage.setItem(FLOW_KEY, JSON.stringify({ character: 'done', signin: 'skipped' }));
-    open();
-    click(label);
-    expect(localStorage.getItem(LOOK_KEY)).toBe(value);
-  });
-
-  it('skips everything: 3 taps, nothing kept about them, and the flow ends in a clue, not a menu', () => {
-    open();
-    click('Skip');
-    expectStep('Sign in to keep it.', 'Step 2 of 4');
-    click('Skip');
-    expectStep('We believe you should look good.', 'Step 3 of 3');
     click('Skip');
     expect(where()).toBe(FIRST);
-    expect(localStorage.getItem(LOOK_KEY)).toBeNull();
-    expect(localStorage.getItem(GUEST_AVATAR_KEY)).toBeNull();
-    expect(stored()).toEqual({ character: 'skipped', signin: 'skipped', look: 'skipped', done: true });
+    expect(stored()).toEqual({ signin: 'skipped', done: true });
   });
 
-  it('leaves half way and returns: the flow opens on the step they had reached', () => {
-    const first = open();
-    click('Keep this look');
-    first.unmount();
-    open();
-    expectStep('Sign in to keep it.', 'Step 2 of 4');
-  });
-
-  it.each(['{broken', '[]', '"done"', '{"character":7,"done":"yes"}', ''])('stored answers %s read as none: the flow starts at the character', (raw) => {
+  it.each(['{broken', '[]', '"done"', '{"signin":7,"done":"yes"}', ''])('stored answers %s read as none: the flow starts at sign in', (raw) => {
     localStorage.setItem(FLOW_KEY, raw);
-    localStorage.setItem(GUEST_AVATAR_KEY, '<bad>');
-    localStorage.setItem(LOOK_KEY, 'robot');
     open();
-    expectStep('This is you.', 'Step 1 of 4');
+    expectStep('Sign in to keep your score.', 'Step 1 of 2');
   });
 
   it('who has been through it comes back to keep a score: straight to sign in, and back to that score', () => {
-    localStorage.setItem(FLOW_KEY, JSON.stringify({ character: 'skipped', signin: 'skipped', look: 'skipped', done: true }));
+    localStorage.setItem(FLOW_KEY, JSON.stringify({ signin: 'skipped', done: true }));
     open('/welcome?from=%2Fplay%2Fbible');
     expect(where()).toBe('/signin?next=%2Fplay%2Fbible');
   });
 
-  it('can say they already have an account, from the first screen', () => {
-    open('/welcome?from=%2Fplay%2Fbible');
-    expect(screen.getByRole('link', { name: 'Already have an account? Sign in' })).toHaveAttribute('href', '/signin?next=%2Fplay%2Fbible');
-  });
-
-  it('opens the same editor as Settings, with the outfit question in it', () => {
-    open();
-    click('Change it');
-    const editor = screen.getByRole('dialog', { name: 'Edit your character' });
-    fireEvent.click(within(editor).getByRole('tab', { name: 'Wear' }));
-    fireEvent.click(within(editor).getByRole('button', { name: 'A woman' }));
-    expect(localStorage.getItem(LOOK_KEY)).toBe('feminine');
-    expect(within(editor).getByRole('button', { name: 'A woman' })).toHaveAttribute('aria-pressed', 'true');
-    // Every outfit is still on offer.
-    expect(within(editor).getByRole('button', { name: 'Outfit: Agbada' })).toBeInTheDocument();
-  });
-
-  it('sign in not set up: character, the question, a clue. No sign in step and no dead end', () => {
+  it('sign in not set up: no step and no dead end', () => {
     world.enabled = false;
     open();
-    expectStep('This is you.', 'Step 1 of 2');
-    expect(screen.queryByRole('link', { name: /Sign in/ })).toBeNull();
-    click('Skip');
-    expectStep('We believe you should look good.', 'Step 2 of 2');
-    click('A man');
     expect(where()).toBe(FIRST);
   });
 });
@@ -238,31 +169,25 @@ describe('a new signed in player', () => {
     world.user = { id: 'u2', email: 'chidi.okafor@example.com', user_metadata: {} };
   });
 
-  it('who came in by /signin is asked for a character and the question before the name', () => {
+  it('who came in by /signin is asked only for a name', () => {
     open('/welcome?next=%2Fs%2FABCD');
-    expectStep('This is you.', 'Step 1 of 4');
-    click('Keep this look');
-    expectStep('We believe you should look good.', 'Step 3 of 4');
-    click('A man');
-    expectStep(/What should\s*we call you\?/, 'Step 4 of 4');
+    expectStep(/What should\s*we call you\?/, 'Step 2 of 2');
   });
 
   it('name and @handle come last, prefilled, and one tap accepts them', async () => {
-    localStorage.setItem(FLOW_KEY, JSON.stringify({ character: 'done', look: 'done' }));
     open();
-    expectStep(/What should\s*we call you\?/, 'Step 4 of 4');
+    expectStep(/What should\s*we call you\?/, 'Step 2 of 2');
     expect(screen.getByLabelText('Name')).toHaveValue('Chidi');
     expect(screen.getByLabelText('Handle')).toHaveValue('chidi');
     click('Start finding');
     await waitFor(() => expect(where()).toBe(FIRST));
     expect(world.saved).toEqual([{ id: 'u2', name: 'Chidi', handle: 'chidi' }]);
-    // Refreshing the profile is what moves the guest character, look and dailies to the account.
+    // Refreshing the profile is what moves the guest character and look to the account.
     expect(world.refreshed).toBe(1);
     expect(stored().done).toBe(true);
   });
 
   it('ends on the page they asked for when a link brought them in', async () => {
-    localStorage.setItem(FLOW_KEY, JSON.stringify({ character: 'done', look: 'done' }));
     open('/welcome?next=%2Fs%2FABCD');
     click('Start finding');
     await waitFor(() => expect(where()).toBe('/s/ABCD'));
@@ -270,21 +195,19 @@ describe('a new signed in player', () => {
 
   it('a suggested handle that is taken gets a tail before they meet an error', async () => {
     world.taken = ['chidi'];
-    localStorage.setItem(FLOW_KEY, JSON.stringify({ character: 'done', look: 'done' }));
     open();
     await waitFor(() => expect((screen.getByLabelText('Handle') as HTMLInputElement).value).toMatch(/^chidi_[a-z0-9]{4}$/));
     expect(screen.getByLabelText('Name')).toHaveValue('Chidi');
   });
 
   it('typing a name still fills the handle, and a taken handle says so and stays on the step', async () => {
-    localStorage.setItem(FLOW_KEY, JSON.stringify({ character: 'done', look: 'done' }));
     world.saveResult = 'taken';
     open();
     fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'Ada Obi' } });
     expect(screen.getByLabelText('Handle')).toHaveValue('ada');
     click('Start finding');
     expect(await screen.findByRole('alert')).toHaveTextContent('That handle is taken. Try another.');
-    expectStep(/What should\s*we call you\?/, 'Step 4 of 4');
+    expectStep(/What should\s*we call you\?/, 'Step 2 of 2');
   });
 
   it.each([
@@ -293,9 +216,8 @@ describe('a new signed in player', () => {
     ['a reserved word', { id: 'u3', email: 'admin@example.com' }],
   ])('%s: the fields are still filled with something that can be saved', (_name, user) => {
     world.user = user;
-    localStorage.setItem(FLOW_KEY, JSON.stringify({ character: 'done', look: 'done' }));
     open();
-    expectStep(/What should\s*we call you\?/, 'Step 4 of 4');
+    expectStep(/What should\s*we call you\?/, 'Step 2 of 2');
     expect((screen.getByLabelText('Name') as HTMLInputElement).value).not.toBe('');
     expect((screen.getByLabelText('Handle') as HTMLInputElement).value).toMatch(/^[a-z0-9._]{2,20}$/);
     expect(['admin', 'root', 'help']).not.toContain((screen.getByLabelText('Handle') as HTMLInputElement).value);
@@ -303,14 +225,12 @@ describe('a new signed in player', () => {
 
   it('a Google name is the one prefilled', () => {
     world.user = { id: 'u4', email: 'x@example.com', user_metadata: { full_name: 'Ngozi Eze' } };
-    localStorage.setItem(FLOW_KEY, JSON.stringify({ character: 'done', look: 'done' }));
     open();
     expect(screen.getByLabelText('Name')).toHaveValue('Ngozi Eze');
     expect(screen.getByLabelText('Handle')).toHaveValue('ngozi');
   });
 
   it('Skip on the name gives a neutral one, said on the screen first, and nothing from the email', async () => {
-    localStorage.setItem(FLOW_KEY, JSON.stringify({ character: 'done', look: 'done' }));
     open();
     const said = screen.getByText(/^Skip and you are @reader_[a-z0-9]{4} for now\.$/).textContent!;
     click('Skip');
@@ -322,7 +242,6 @@ describe('a new signed in player', () => {
   });
 
   it('Skip that cannot be saved still lets them play, and the name is asked again next time', async () => {
-    localStorage.setItem(FLOW_KEY, JSON.stringify({ character: 'done', look: 'done' }));
     world.saveResult = 'failed';
     const first = open();
     click('Skip');
@@ -330,6 +249,6 @@ describe('a new signed in player', () => {
     expect(world.refreshed).toBe(0);
     first.unmount();
     open();
-    expectStep(/What should\s*we call you\?/, 'Step 4 of 4');
+    expectStep(/What should\s*we call you\?/, 'Step 2 of 2');
   });
 });

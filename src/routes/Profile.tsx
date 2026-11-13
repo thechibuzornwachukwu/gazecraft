@@ -22,6 +22,7 @@ import { BADGES } from "../lib/notifications";
 import { useAuth } from "../lib/auth";
 import { profileStats, type PlayRow } from "../lib/profileStats";
 import { unlocks } from "../lib/unlocks";
+import { locale, num, t } from "../i18n";
 import {
   SocialActions,
   SocialCounts,
@@ -32,6 +33,7 @@ import { Avatar } from "../components/Avatar";
 import { LevelBadge } from "../components/LevelBadge";
 import { Medals } from "../components/Medals";
 import styles from "./Profile.module.css";
+import { categoryName } from '../i18n/gameNames';
 
 type State =
   | { status: "loading" }
@@ -49,21 +51,26 @@ type State =
 function monthYear(iso: unknown): string {
   const d = typeof iso === "string" ? new Date(iso) : null;
   return d && Number.isFinite(d.getTime())
-    ? d.toLocaleDateString("en-GB", { month: "short", year: "numeric" })
+    ? d.toLocaleDateString(locale, { month: "short", year: "numeric" })
     : "";
 }
 
 function playTitle(p: PlayRow) {
-  if (p.day_no != null) return `Daily #${p.day_no}`;
-  if (p.game_id.startsWith("c-")) return "Custom puzzle";
-  return getGameDef(p.game_id)?.title ?? "Puzzle";
+  if (p.day_no != null) return t('Daily #{n}', { n: p.day_no });
+  if (p.game_id.startsWith("c-")) return t('Custom puzzle');
+  return getGameDef(p.game_id)?.title ?? t('Puzzle');
 }
 
 function playSub(p: PlayRow) {
   if (p.day_no != null)
     return `${getGameDef(p.game_id)?.noun ?? ""} · ${dailyDate(p.day_no)}`;
   const g = getGameDef(p.game_id);
-  return g ? g.category : "Made from a topic";
+  return g ? categoryName(g.category) : t('Made from a topic');
+}
+
+/** How a day in the last 14 reads to a screen reader or a hover. */
+function dayState(state: string) {
+  return state === "none" ? t('not played') : state === "perfect" ? t('every word found') : t('played');
 }
 
 /** /u/:handle. A player's public page, and only that: what everyone sees. What is yours alone (records, badges to aim for, settings) is on You. */
@@ -104,9 +111,9 @@ export function Profile() {
   }, [handle, own]);
 
   if (!auth.enabled) return <Navigate to="/play" replace />;
-  const title = "Player";
+  const title = t('Player');
   // Your own public page leads back to You, where everything about you is changed.
-  const settings = own ? <IconLink to="/me" icon={ArrowLeft} label="Back to You" /> : undefined;
+  const settings = own ? <IconLink to="/me" icon={ArrowLeft} label={t('Back to You')} /> : undefined;
   if (state.status === "loading") {
     return (
       <div className={styles.page}>
@@ -130,16 +137,16 @@ export function Profile() {
         <PartnerNote moment="error" layout="screen">
           <h2 className={styles.name}>
             {state.status === "missing"
-              ? `No player called @${handle}.`
-              : "This page did not load."}
+              ? t('No player called @{handle}.', { handle })
+              : t('This page did not load.')}
           </h2>
           <p className={styles.muted}>
             {state.status === "missing"
-              ? "Check the spelling, or find a puzzle instead."
-              : "Try again in a moment, or find a puzzle instead."}
+              ? t('Check the spelling, or find a puzzle instead.')
+              : t('Try again in a moment, or find a puzzle instead.')}
           </p>
           <div className={styles.freshActions}>
-            <Button to="/play">Play</Button>
+            <Button to="/play">{t('Play')}</Button>
           </div>
         </PartnerNote>
       </div>
@@ -170,7 +177,7 @@ export function Profile() {
       aria-labelledby="badges-title"
     >
       <h2 id="badges-title" className={styles.h2}>
-        Badges
+        {t('Badges')}
       </h2>
       <Medals codes={badges} owner={profile.name} handle={profile.handle} path={`/u/${profile.handle}`} />
     </section>
@@ -186,7 +193,7 @@ export function Profile() {
           {open.points && <LevelBadge points={state.points ?? s.points} size="sm" />}
           <span className={styles.handle}>
             @{profile.handle}
-            {since && ` · Playing since ${since}`}
+            {since && ` · ${t('Playing since {date}', { date: since })}`}
           </span>
           <SocialCounts social={social} />
         </div>
@@ -203,35 +210,35 @@ export function Profile() {
       </span>
 
       {playsFailed ? (
-        <section className={styles.fresh} aria-label="Plays">
+        <section className={styles.fresh} aria-label={t('Plays')}>
           <PartnerNote moment="error">
             <p className={styles.muted}>
               {own
-                ? "Your plays did not load. Try again in a moment."
-                : "Their plays did not load. Try again in a moment."}
+                ? t('Your plays did not load. Try again in a moment.')
+                : t('Their plays did not load. Try again in a moment.')}
             </p>
           </PartnerNote>
           {badgeList}
         </section>
       ) : plays.length === 0 ? (
-        <section className={styles.fresh} aria-label="New player">
+        <section className={styles.fresh} aria-label={t('New player')}>
           <PartnerNote layout="screen">
             <h2 className={styles.freshTitle}>
-              {own ? "Your run starts with one puzzle." : `${name} is new here.`}
+              {own ? t('Your run starts with one puzzle.') : t('{name} is new here.', { name })}
             </h2>
             <p className={styles.muted}>
               {own
-                ? "Find one word and you are on the board. Points, streaks and your last 14 dailies will show up here as you play."
-                : "No plays yet. Their points and streak will show up here after a first game."}
+                ? t('Find one word and you are on the board. Points, streaks and your last 14 dailies will show up here as you play.')
+                : t('No plays yet. Their points and streak will show up here after a first game.')}
             </p>
             <div className={styles.freshActions}>
               {own ? (
                 <Button variant="accent" to="/play">
-                  Open a case
+                  {t('Open a case')}
                 </Button>
               ) : (
                 <Button variant="secondary" to="/play">
-                  Find a puzzle
+                  {t('Find a puzzle')}
                 </Button>
               )}
             </div>
@@ -241,43 +248,43 @@ export function Profile() {
         <>
           {open.points && (
             <dl className={styles.points}>
-              <dt className={styles.statLabel}>Points</dt>
+              <dt className={styles.statLabel}>{t('Points')}</dt>
               <dd className={styles.statValue}>
-                {s.points.toLocaleString("en-US")}
+                {num(s.points)}
               </dd>
             </dl>
           )}
 
           <dl className={styles.stats} data-count={cleanReads > 0 ? 5 : 4}>
             <div className={styles.stat}>
-              <dt className={styles.statLabel}>Streak</dt>
+              <dt className={styles.statLabel}>{t('Streak')}</dt>
               <dd className={styles.statValue}>
                 {s.streak}
                 <span className={styles.unit}>
-                  {s.streak === 1 ? " day" : " days"}
+                  {s.streak === 1 ? ` ${t('day')}` : ` ${t('days')}`}
                 </span>
               </dd>
             </div>
             <div className={styles.stat}>
-              <dt className={styles.statLabel}>Best streak</dt>
+              <dt className={styles.statLabel}>{t('Best streak')}</dt>
               <dd className={styles.statValue}>
                 {s.bestStreak}
                 <span className={styles.unit}>
-                  {s.bestStreak === 1 ? " day" : " days"}
+                  {s.bestStreak === 1 ? ` ${t('day')}` : ` ${t('days')}`}
                 </span>
               </dd>
             </div>
             <div className={styles.stat}>
-              <dt className={styles.statLabel}>Dailies</dt>
+              <dt className={styles.statLabel}>{t('Dailies')}</dt>
               <dd className={styles.statValue}>{s.dailies}</dd>
             </div>
             <div className={styles.stat}>
-              <dt className={styles.statLabel}>Perfect</dt>
+              <dt className={styles.statLabel}>{t('Perfect')}</dt>
               <dd className={styles.statValue}>{s.perfect}</dd>
             </div>
             {cleanReads > 0 && (
               <div className={styles.stat}>
-                <dt className={styles.statLabel}>Clean reads</dt>
+                <dt className={styles.statLabel}>{t('Clean reads')}</dt>
                 <dd className={styles.statValue}>{cleanReads}</dd>
               </div>
             )}
@@ -286,11 +293,11 @@ export function Profile() {
           <section className={styles.section} aria-labelledby="days-title">
             <div className={styles.sectionHead}>
               <h2 id="days-title" className={styles.h2}>
-                Last 14 dailies
+                {t('Last 14 dailies')}
               </h2>
               <span className={styles.legend}>
-                <span className={styles.key} data-state="perfect" /> Every word
-                <span className={styles.key} data-state="played" /> Played
+                <span className={styles.key} data-state="perfect" /> {t('Every word')}
+                <span className={styles.key} data-state="played" /> {t('Played')}
               </span>
             </div>
             <ol className={styles.days}>
@@ -299,22 +306,18 @@ export function Profile() {
                   key={c.day}
                   className={styles.day}
                   data-state={c.state}
-                  title={`${dailyDate(c.day)}: ${c.state === "none" ? "not played" : c.state === "perfect" ? "every word found" : "played"}`}
+                  title={t('{date}: {state}', { date: dailyDate(c.day), state: dayState(c.state) })}
                 >
                   <span className={styles.srOnly}>
                     {dailyDate(c.day)},{" "}
-                    {c.state === "none"
-                      ? "not played"
-                      : c.state === "perfect"
-                        ? "every word found"
-                        : "played"}
+                    {dayState(c.state)}
                   </span>
                 </li>
               ))}
             </ol>
             <div className={styles.dayScale} aria-hidden="true">
               <span>{dailyDate(today - 13)}</span>
-              <span>Today</span>
+              <span>{t('Today')}</span>
             </div>
           </section>
 
@@ -322,17 +325,15 @@ export function Profile() {
 
           <section className={styles.section} aria-labelledby="recent-title">
             <h2 id="recent-title" className={styles.h2}>
-              Recent
+              {t('Recent')}
             </h2>
             {s.recent.length === 0 ? (
               <p className={styles.muted}>
-                {own
-                  ? "Nothing yet. "
-                  : `@${profile.handle} has no verified plays yet. `}
+                {own ? t('Nothing yet.') : t('@{handle} has no verified plays yet.', { handle: profile.handle })}{' '}
                 <Link to="/play" className={styles.inline}>
-                  {own ? "Play a puzzle" : "Find a puzzle"}
+                  {own ? t('Play a puzzle') : t('Find a puzzle')}
                 </Link>
-                .
+                {t('.')}
               </p>
             ) : (
               <ul className={styles.recent}>
@@ -342,17 +343,17 @@ export function Profile() {
                       <span className={styles.rowTitle}>{playTitle(p)}</span>
                       <span className={styles.rowSub}>
                         {playSub(p)}
-                        {own && p.verified === false && " · Unverified"}
+                        {own && p.verified === false && ` · ${t('Unverified')}`}
                       </span>
                     </div>
                     <span className={styles.rowFound}>
                       {p.total == null
-                        ? `${p.found} found`
+                        ? t('{n} found', { n: p.found })
                         : `${p.found}/${p.total}`}
                     </span>
                     <span className={styles.rowTime}>{formatTime(p.secs)}</span>
                     <span className={styles.rowScore}>
-                      {p.score.toLocaleString("en-US")}
+                      {num(p.score)}
                     </span>
                   </li>
                 ))}

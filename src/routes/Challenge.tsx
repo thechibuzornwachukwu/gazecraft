@@ -4,6 +4,7 @@ import { Swords } from 'lucide-react';
 import { Icon } from '../components/Icon';
 import { formatTime } from '../engine/time';
 import { fetchChallenger, type Challenger } from '../lib/api';
+import { t, num } from '../i18n';
 import styles from './Challenge.module.css';
 
 type Props = {
@@ -13,8 +14,6 @@ type Props = {
   /** Your score once you finish. */
   mine: number | null;
 };
-
-const fmt = (n: number) => n.toLocaleString('en-US');
 
 /**
  * Head-to-head from a shared link. Their best verified score (server replayed, not typed in a URL), then
@@ -44,24 +43,24 @@ export function Challenge({ vs, game, mine }: Props) {
   if (mine == null) {
     line = (
       <>
-        {who} scored {fmt(them.score)}
-        {'day' in game ? '' : ` with ${them.found} found in ${formatTime(them.secs)}`}. Beat it.
+        {who} {t('scored')} {num(them.score)}
+        {'day' in game ? '' : ` ${t('with {found} found in {time}', { found: them.found, time: formatTime(them.secs) })}`}. {t('Beat it.')}
       </>
     );
   } else if (mine > them.score) {
     line = (
       <>
-        You beat {who} by {fmt(mine - them.score)}. Send it back.
+        {t('You beat')} {who} {t('by')} {num(mine - them.score)}. {t('Send it back.')}
       </>
     );
   } else if (mine < them.score) {
     line = (
       <>
-        {who} wins by {fmt(them.score - mine)}. {'day' in game ? 'Tomorrow is another day.' : 'Play again and take it.'}
+        {who} {t('wins by')} {num(them.score - mine)}. {'day' in game ? t('Tomorrow is another day.') : t('Play again and take it.')}
       </>
     );
   } else {
-    line = <>Dead level with {who}.</>;
+    line = <>{t('Dead level with')} {who}.</>;
   }
   return (
     <p className={styles.challenge} role="status" data-challenge={mine == null ? 'open' : mine > them.score ? 'won' : mine < them.score ? 'lost' : 'tie'}>

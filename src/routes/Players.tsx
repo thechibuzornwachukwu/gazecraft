@@ -13,6 +13,7 @@ import { useStreak } from '../lib/useStreak';
 import { keepUnlocked, useUnlocks } from '../lib/useUnlocks';
 import { useAuth } from '../lib/auth';
 import { Avatar } from '../components/Avatar';
+import { t, plural } from '../i18n';
 import { FriendStreaks } from './FriendStreaks';
 import { PeopleFeed } from './PeopleFeed';
 import circles from './Circles.module.css';
@@ -42,7 +43,7 @@ function FollowButton({ me, handle, name, check }: { me: string; handle: string;
     if (ok) setOn(!on);
   };
   return (
-    <button type="button" className={styles.follow} aria-pressed={on} aria-label={`${on ? 'Following' : 'Follow'} ${name}`} disabled={busy} onClick={() => void toggle()}>
+    <button type="button" className={styles.follow} aria-pressed={on} aria-label={t(on ? 'Following {name}' : 'Follow {name}', { name })} disabled={busy} onClick={() => void toggle()}>
       <Icon icon={on ? UserCheck : UserPlus} size={18} />
     </button>
   );
@@ -59,7 +60,7 @@ const count = (n: unknown): number => (typeof n === 'number' && Number.isFinite(
 function List({ rows, empty, me, myHandle, check = false, pet = false }: { rows: Rows; empty: ReactNode; me?: string; myHandle?: string; check?: boolean; /** This list carries the screen's one pet when it is empty or did not load. */ pet?: boolean }) {
   if (rows == null) return <SkeletonList rows={5} avatar={40} sub />;
   // A list that failed says so. It never claims to be empty.
-  const none = rows === 'failed' ? 'This list did not load. Try again in a moment.' : rows.length === 0 ? empty : null;
+  const none = rows === 'failed' ? t('This did not load. Try again in a moment.') : rows.length === 0 ? empty : null;
   if (none != null) {
     const line = <p className={styles.muted}>{none}</p>;
     return pet ? <PartnerNote moment={rows === 'failed' ? 'error' : 'empty'}>{line}</PartnerNote> : line;
@@ -98,7 +99,7 @@ function YourCircles({ quiet }: { quiet: boolean }) {
       .then((l) => {
         if (!alive) return;
         const rows = (Array.isArray(l) ? l : []).filter((c) => c && typeof c.code === 'string' && c.code !== '');
-        setList(rows.map((c) => ({ code: c.code, name: c.name || 'Your circle', members: count(c.members) })));
+        setList(rows.map((c) => ({ code: c.code, name: c.name || t('Your circle'), members: count(c.members) })));
       })
       .catch(() => alive && setList('failed'));
     return () => {
@@ -111,25 +112,25 @@ function YourCircles({ quiet }: { quiet: boolean }) {
     <section id="circles" className={styles.section} aria-labelledby="circles-title">
       <div className={styles.sectionHead}>
         <h2 id="circles-title" className={styles.h2}>
-          Circles
+          {t('Circles')}
         </h2>
         <Button variant="secondary" size="sm" to="/circles">
-          Start a circle
+          {t('Start a circle')}
         </Button>
       </div>
       {list == null ? (
         <SkeletonList rows={2} stat={false} />
       ) : list === 'failed' ? (
-        <p className={styles.muted}>This list did not load. Try again in a moment.</p>
+        <p className={styles.muted}>{t('This did not load. Try again in a moment.')}</p>
       ) : list.length === 0 ? (
-        <p className={styles.muted}>A circle is a private daily table for your family, class, church or office. Start one and send the link.</p>
+        <p className={styles.muted}>{t('A private board for your family, class or office. Start one and send the link.')}</p>
       ) : (
         <ul className={circles.list}>
           {list.map((c) => (
             <li key={c.code}>
               <Link to={`/c/${c.code}`} className={circles.circle}>
                 <span className={circles.circleName}>{c.name}</span>
-                <span className={circles.circleMeta}>{c.members === 1 ? '1 player' : `${c.members} players`}</span>
+                <span className={circles.circleMeta}>{plural(c.members, '{n} player', '{n} players')}</span>
               </Link>
             </li>
           ))}
@@ -191,14 +192,14 @@ export function Players() {
 
   return (
     <div className={styles.page}>
-      <PageHeader title="Your People" action={finding ? <IconLink to="/players" icon={X} label="Close search" /> : <IconLink to="/players#find" icon={Search} label="Find people" />} />
+      <PageHeader title={t('Your People')} action={finding ? <IconLink to="/players" icon={X} label={t('Close search')} /> : <IconLink to="/players#find" icon={Search} label={t('Find people')} />} />
 
       {finding && (
-        <section className={styles.section} aria-label="Search players">
+        <section className={styles.section} aria-label={t('Search players')}>
           <Field
-            label="Find people"
+            label={t('Find people')}
             prefix="@"
-            placeholder="handle"
+            placeholder={t('handle')}
             autoFocus
             autoCapitalize="none"
             autoCorrect="off"
@@ -210,7 +211,7 @@ export function Players() {
               setHits(null);
             }}
           />
-          {searching && <List rows={hits} empty={`No handle starts with @${q.trim().toLowerCase()}.`} me={me} myHandle={myHandle} check pet />}
+          {searching && <List rows={hits} empty={t('No handle starts with @{handle}.', { handle: q.trim().toLowerCase() })} me={me} myHandle={myHandle} check pet />}
         </section>
       )}
 

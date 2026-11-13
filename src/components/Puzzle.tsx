@@ -3,6 +3,7 @@ import type { Char } from '../engine/text';
 import { Letter, type LetterState } from './Letter';
 import { durationMs } from '../lib/media';
 import { armSound, tick, unlock } from '../lib/sound';
+import { t } from '../i18n';
 import styles from './Puzzle.module.css';
 
 /** Letters in a selection, for the rising tick. */
@@ -42,6 +43,8 @@ export type PuzzleProps = {
   tapPicks?: boolean;
   /** Groups: each set's link by its (a, b), written on the row once the set is found. */
   setNames?: Readonly<Record<string, string>>;
+  /** The board has nothing left to play (the Liar deck ran out). The shell ends the game. */
+  onEnd?: () => void;
 };
 
 type Sel = { a: number; b: number };
@@ -90,7 +93,7 @@ export function Puzzle({
   onTapStart,
   onDragStart,
   describedBy,
-  label = 'Puzzle text',
+  label = t('Puzzle text'),
   size = 'game',
   variant = 'text',
   target,
@@ -548,11 +551,11 @@ function RunningTotal({ target, picked }: { target: number; picked: string }) {
   return (
     <span className={styles.total} data-total={state} aria-hidden="true">
       <span className={styles.target}>
-        <span className={styles.targetLabel}>Target</span>
+        <span className={styles.targetLabel}>{t('Target')}</span>
         <span className={styles.targetNumber}>{target}</span>
       </span>
       <span className={styles.sum}>
-        <span className={styles.sumText}>{digits.length ? `${digits.join(' + ')} = ${sum}` : `0 of ${target}`}</span>
+        <span className={styles.sumText}>{digits.length ? `${digits.join(' + ')} = ${sum}` : t('0 of {target}', { target })}</span>
         <span className={styles.meter}>
           <span className={styles.meterFill} style={{ transform: `scaleX(${Math.min(1, target ? sum / target : 0)})` }} />
         </span>

@@ -1,5 +1,6 @@
 import { formatTime } from '../engine/time';
 import { useElapsed } from '../lib/useElapsed';
+import { t } from '../i18n';
 import styles from './BigClock.module.css';
 
 type Props = { startAt: number; endAt: number | null };
@@ -10,7 +11,7 @@ export function BigClock({ startAt, endAt }: Props) {
   const done = endAt != null;
   return (
     <div className={styles.clock}>
-      <span className={styles.label}>{done ? 'Final time' : 'Time'}</span>
+      <span className={styles.label}>{done ? t('Final time') : t('Time')}</span>
       <span className={styles.digits} data-done={done || undefined} role="timer" aria-live="off">
         {formatTime(secs)}
       </span>

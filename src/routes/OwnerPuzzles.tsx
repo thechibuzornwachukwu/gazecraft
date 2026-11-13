@@ -10,6 +10,7 @@ import {
   type HiddenPuzzle,
 } from "../lib/api";
 import { useAuth } from "../lib/auth";
+import { t, plural } from "../i18n";
 import styles from "./OwnerPuzzles.module.css";
 
 type State =
@@ -19,9 +20,9 @@ type State =
   | { status: "ready"; puzzles: HiddenPuzzle[] };
 
 const SAFETY = {
-  passed: "Safety check passed",
-  failed: "Safety check failed",
-  unchecked: "Not checked",
+  passed: t("Safety check passed"),
+  failed: t("Safety check failed"),
+  unchecked: t("Not checked"),
 } as const;
 
 /** "9 Oct 2026", or nothing when the date is missing or unreadable. Never "Invalid Date". */
@@ -75,7 +76,7 @@ export function OwnerPuzzles() {
     );
     setBusy("");
     setRemoving(null);
-    if (!out.ok) return setNote("That did not work. Try again in a moment.");
+    if (!out.ok) return setNote(t("That did not work. Try again in a moment."));
     setState((s) =>
       s.status === "ready"
         ? {
@@ -86,21 +87,21 @@ export function OwnerPuzzles() {
     );
     setNote(
       kind === "restore"
-        ? `Restored ${p.title?.trim() || p.code}.`
-        : `Removed ${p.title?.trim() || p.code}.`,
+        ? t("Restored {title}.", { title: p.title?.trim() || p.code })
+        : t("Removed {title}.", { title: p.title?.trim() || p.code }),
     );
   };
 
   return (
     <div className={styles.page} aria-busy={state.status === "loading"}>
-      <PageHeader title="Hidden puzzles" />
+      <PageHeader title={t("Hidden puzzles")} />
       <span className={styles.note} role="status">
         {note}
       </span>
       {state.status === "error" && (
         <section className={styles.empty}>
           <p className={styles.muted}>
-            This list did not load. Try again in a moment.
+            {t("This did not load. Try again in a moment.")}
           </p>
           <div>
             <Button
@@ -110,14 +111,14 @@ export function OwnerPuzzles() {
                 setAttempt((n) => n + 1);
               }}
             >
-              Try again
+              {t("Try again")}
             </Button>
           </div>
         </section>
       )}
       {state.status === "ready" && state.puzzles.length === 0 && (
         <p className={styles.muted}>
-          Nothing is hidden. Puzzles show up here when 3 players report them.
+          {t("Nothing is hidden. Puzzles show up here when 3 players report them.")}
         </p>
       )}
       {state.status === "ready" && state.puzzles.length > 0 && (
@@ -129,13 +130,12 @@ export function OwnerPuzzles() {
               <li key={p.code} className={styles.row}>
                 <div className={styles.main}>
                   <Link to={`/p/${p.code}`} className={styles.title}>
-                    {p.title?.trim() || "Untitled puzzle"}
+                    {p.title?.trim() || t("Untitled puzzle")}
                   </Link>
                   <span className={styles.sub}>
-                    {p.maker ? `@${p.maker}` : "No maker"} · {reports}{" "}
-                    {reports === 1 ? "report" : "reports"} ·{" "}
+                    {p.maker ? `@${p.maker}` : t("No maker")} · {plural(reports, "{n} report", "{n} reports")} ·{" "}
                     {SAFETY[p.safety] ?? SAFETY.unchecked}
-                    {shown && ` · Hidden ${shown}`}
+                    {shown && ` · ${t("Hidden {date}", { date: shown })}`}
                   </span>
                 </div>
                 <div className={styles.actions}>
@@ -145,7 +145,7 @@ export function OwnerPuzzles() {
                     onClick={() => act(p, "restore")}
                     disabled={busy === p.code}
                   >
-                    Restore
+                    {t("Restore")}
                   </Button>
                   <Button
                     variant="secondary"
@@ -153,7 +153,7 @@ export function OwnerPuzzles() {
                     onClick={() => setRemoving(p)}
                     disabled={busy === p.code}
                   >
-                    Remove
+                    {t("Remove")}
                   </Button>
                 </div>
               </li>
@@ -165,13 +165,12 @@ export function OwnerPuzzles() {
       <Dialog
         open={removing != null}
         onClose={() => !busy && setRemoving(null)}
-        label="Remove puzzle"
+        label={t("Remove puzzle")}
       >
         <div className={styles.confirm}>
-          <h2 className={styles.confirmTitle}>Remove this puzzle?</h2>
+          <h2 className={styles.confirmTitle}>{t("Remove this puzzle?")}</h2>
           <p className={styles.muted}>
-            This deletes {removing?.title?.trim() || "it"} for good, with its
-            plays and thumbs. It cannot be undone.
+            {t("This deletes {title} for good, with its plays and thumbs. It cannot be undone.", { title: removing?.title?.trim() || t("it") })}
           </p>
           <div className={styles.actions}>
             <Button
@@ -179,14 +178,14 @@ export function OwnerPuzzles() {
               onClick={() => setRemoving(null)}
               disabled={busy !== ""}
             >
-              Keep it
+              {t("Keep it")}
             </Button>
             <Button
               variant="primary"
               onClick={() => removing && act(removing, "remove")}
               disabled={busy !== ""}
             >
-              Remove
+              {t("Remove")}
             </Button>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { useImperativeHandle, useLayoutEffect, useRef, type ReactNode, type Ref } from 'react';
 import { cssVar, durationMs, prefersReducedMotion } from '../lib/media';
+import { t, plural } from '../i18n';
 import styles from './WordList.module.css';
 
 export type WordRow = {
@@ -89,17 +90,17 @@ export function WordList({ title, count, rows, moreHiding, footer, ref }: Props)
                     <span key={k} className={styles.dot} />
                   ))}
                 </span>
-                <span className={styles.sr}>{r.length} letters, not found yet</span>
+                <span className={styles.sr}>{plural(r.length, '{n} letter, not found yet', '{n} letters, not found yet')}</span>
               </span>
             ) : (
               <span className={styles.chip} data-state={r.state}>
                 {r.label}
-                {r.state === 'missed' && <span className={styles.sr}>, missed</span>}
+                {r.state === 'missed' && <span className={styles.sr}>, {t('missed')}</span>}
               </span>
             )}
           </li>
         ))}
-        {moreHiding && <li className={styles.more}>More are hiding. How many? That is the game.</li>}
+        {moreHiding && <li className={styles.more}>{t('More are hiding. How many? That is the game.')}</li>}
       </ol>
       {footer}
     </aside>

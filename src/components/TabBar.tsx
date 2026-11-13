@@ -8,6 +8,7 @@ import { useTucked } from '../lib/useTucked';
 import { useUnread } from '../lib/useUnread';
 import { Avatar } from './Avatar';
 import { Icon } from './Icon';
+import { t } from '../i18n';
 import styles from './TabBar.module.css';
 
 /**
@@ -29,11 +30,11 @@ export function TabBar() {
   if (!hasTabBar(pathname)) return null;
   const onYou = pathname === '/me' || pathname.startsWith('/u/') || pathname === '/settings' || pathname === '/signin';
   return (
-    <nav ref={ref} className={[styles.bar, tucked && styles.tucked].filter(Boolean).join(' ')} aria-label="Tabs" data-tucked={tucked || undefined}>
-      <Tab to="/play" icon={<Icon icon={House} size={20} />} label="Home" hue="home" />
-      <Tab to="/players" icon={<Icon icon={Users} size={20} />} hue="people" label={news ? `Your People, ${unread} new` : 'Your People'} dot={news} />
-      <Tab to="/leaderboard" icon={<Icon icon={Trophy} size={20} />} label="Your League" hue="league" />
-      <Tab to="/me" icon={profile ? <Avatar handle={profile.handle} size={28} /> : <Avatar parts={starter} size={28} />} label="You" hue="you" active={onYou} />
+    <nav ref={ref} className={[styles.bar, tucked && styles.tucked].filter(Boolean).join(' ')} aria-label={t('Tabs')} data-tucked={tucked || undefined}>
+      <Tab to="/play" icon={<Icon icon={House} size={20} />} label={t('Home')} hue="home" />
+      <Tab to="/players" icon={<Icon icon={Users} size={20} />} hue="people" label={news ? t('Your People, {n} new', { n: unread }) : t('Your People')} dot={news} />
+      <Tab to="/leaderboard" icon={<Icon icon={Trophy} size={20} />} label={t('Your League')} hue="league" />
+      <Tab to="/me" icon={profile ? <Avatar handle={profile.handle} size={28} /> : <Avatar parts={starter} size={28} />} label={t('You')} hue="you" active={onYou} />
     </nav>
   );
 }

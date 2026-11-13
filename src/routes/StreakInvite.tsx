@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { Avatar } from '../components/Avatar';
 import { Button } from '../components/Button';
+import { t } from '../i18n';
 import { SkeletonPage } from '../components/Skeleton';
 import { joinStreakLink, streakLinkInfo, type PlayerRef } from '../lib/api';
 import { useAuth } from '../lib/auth';
@@ -34,10 +35,10 @@ export function StreakInvite() {
   if (!from) {
     return (
       <div className={styles.page}>
-        <h1 className={styles.title}>This link has run out.</h1>
-        <p className={styles.lead}>Ask your friend for a new one, or find a puzzle.</p>
+        <h1 className={styles.title}>{t('This link has run out.')}</h1>
+        <p className={styles.lead}>{t('Ask your friend for a new one, or find a puzzle.')}</p>
         <div>
-          <Button to="/play">Play</Button>
+          <Button to="/play">{t('Play')}</Button>
         </div>
       </div>
     );
@@ -49,31 +50,30 @@ export function StreakInvite() {
     const r = await joinStreakLink(code).catch(() => 'failed' as const);
     setBusy(false);
     if (r === 'started' || r === 'exists') return nav('/players#friend-streaks');
-    setNote(r === 'limit' ? 'One of you already keeps 5 friend streaks. End one to start another.' : 'That did not work. Try again.');
+    setNote(r === 'limit' ? t('One of you already keeps 5 friend streaks. End one to start another.') : t('That did not work. Try again.'));
   };
 
   return (
     <div className={styles.page}>
       <Avatar handle={from.handle} size={88} />
       <h1 className={styles.title}>
-        {own ? 'This is your own link.' : `${from.name} wants a streak with you.`}
+        {own ? t('This is your own link.') : t('{name} wants a streak with you.', { name: from.name })}
         <br />
-        <span className={styles.sub}>{own ? 'Send it to a friend.' : 'Play the daily, both of you.'}</span>
+        <span className={styles.sub}>{own ? t('Send it to a friend.') : t('Play the daily, both of you.')}</span>
       </h1>
       <p className={styles.lead}>
-        A friend streak grows each day you both play the daily. Miss a day, either of you, and it starts again. You each see when the other has
-        played.
+        {t('A friend streak grows each day you both play the daily. Miss a day, either of you, and it starts again. You each see when the other has played.')}
       </p>
       <div className={styles.actions}>
         {own ? (
-          <Button to="/players#friend-streaks">Your friend streaks</Button>
+          <Button to="/players#friend-streaks">{t('Your friend streaks')}</Button>
         ) : auth.profile ? (
           <Button variant="accent" onClick={start} disabled={busy}>
-            Start the streak
+            {t('Start the streak')}
           </Button>
         ) : (
           <Button variant="accent" to={`/signin?next=${encodeURIComponent(`/s/${code}`)}`}>
-            Sign in to start
+            {t('Sign in to start')}
           </Button>
         )}
       </div>

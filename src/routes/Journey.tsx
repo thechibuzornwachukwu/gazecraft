@@ -21,7 +21,9 @@ import { storage } from '../lib/storage';
 import { packHue } from '../lib/packHue';
 import { iconForTopic } from '../engine/topicIcon';
 import { TopicIcon } from '../components/TopicIcon';
+import { t, plural } from '../i18n';
 import styles from './Journey.module.css';
+import { titleOf } from '../i18n/gameNames';
 
 export type JourneyGame = CatalogueItem & { title: string };
 
@@ -64,7 +66,7 @@ function safePath(catalogue: readonly JourneyGame[]): Path {
  * line. A list of links in order. Done clues can be replayed, the next one carries the player's avatar, the rest
  * are locked. A closed case is a link to its whole puzzle.
  */
-export function Journey({ catalogue = games, path, done, stars, title = 'Your path', className }: Props) {
+export function Journey({ catalogue = games, path, done, stars, title = t('Your path'), className }: Props) {
   const { profile, enabled } = useAuth();
   const navigate = useNavigate();
   const headId = useId();
@@ -82,7 +84,7 @@ export function Journey({ catalogue = games, path, done, stars, title = 'Your pa
 
   const view = useMemo(() => {
     const list = Array.isArray(catalogue) ? (catalogue as readonly JourneyGame[]) : [];
-    const titles = new Map(list.map((g) => [g.id, g.title || g.id]));
+    const titles = new Map(list.map((g) => [g.id, titleOf(g.id, g.title || g.id)]));
     const built = path && Array.isArray(path.cases) ? path : safePath(list);
     const best = stars ?? browser.stars;
     const starOf = (id: string) => clampStars(best[id]);
@@ -102,7 +104,7 @@ export function Journey({ catalogue = games, path, done, stars, title = 'Your pa
       const clues = mine.map((s, i) => ({
         id: s.id,
         to: s.n ? `/play/${s.puzzle}/${s.n}` : `/play/${s.puzzle}`,
-        name: `Puzzle ${i + 1}`,
+        name: t('Puzzle {n}', { n: i + 1 }),
         state: s.state,
         stars: s.state === 'done' ? starOf(s.id) : 0,
         big: i === mine.length - 1,
@@ -136,7 +138,7 @@ export function Journey({ catalogue = games, path, done, stars, title = 'Your pa
       doneCount: walked.length,
       next: standing.next,
       complete: standing.complete,
-      lockedClue: next ? pick('journeyLocked', { title: `puzzle ${standing.clues.filter((s) => s.case === next.case).findIndex((s) => s.id === next.id) + 1}` }) : '',
+      lockedClue: next ? pick('journeyLocked', { title: t('puzzle {n}', { n: standing.clues.filter((s) => s.case === next.case).findIndex((s) => s.id === next.id) + 1 }) }) : '',
       lockedCase: next ? pick('journeyLocked', { title: titles.get(next.puzzle) ?? next.puzzle }) : '',
       line: standing.complete ? pick('journeyDone') : total === 0 ? pick('journeyEmpty') : '',
     };
@@ -161,7 +163,7 @@ export function Journey({ catalogue = games, path, done, stars, title = 'Your pa
                   {c.state === 'done' ? (
                     <Link to={`/play/${c.id}`} className={styles.caseLink}>
                       {c.title}
-                      <span className={styles.srOnly}>. Done. Play again.</span>
+                      <span className={styles.srOnly}>. {t('Done. Play again.')}</span>
                     </Link>
                   ) : (
                     c.title
@@ -181,13 +183,13 @@ export function Journey({ catalogue = games, path, done, stars, title = 'Your pa
               {enabled && c.state === 'open' && getGameDef(c.id) && (
                 <button type="button" className={styles.together} data-case-together onClick={() => navigate(`/play/${c.id}?room=${newRoomCode()}`)}>
                   <Icon icon={UsersRound} size={16} />
-                  Play together
+                  {t('Play together')}
                 </button>
               )}
               {c.state === 'locked' && (
                 <p className={styles.lock} data-case-lock>
                   <Icon icon={Lock} size={20} />
-                  <span className={styles.srOnly}>Locked. {view.lockedCase}</span>
+                  <span className={styles.srOnly}>{t('Locked.')} {view.lockedCase}</span>
                 </p>
               )}
             </header>
@@ -214,7 +216,7 @@ export function Journey({ catalogue = games, path, done, stars, title = 'Your pa
                 )}
                 <ol className={styles.clues}>
                   {c.clues.map((s, i) => {
-                    const last = s.big ? 'The last puzzle of the pack. ' : '';
+                    const last = s.big ? `${t('The last puzzle of the pack.')} ` : '';
                     const prev = c.clues[i - 1];
                     const slot = (inside: ReactNode) => (
                       <span className={styles.slot}>
@@ -231,10 +233,10 @@ export function Journey({ catalogue = games, path, done, stars, title = 'Your pa
                       body = (
                         <span className={styles.link} aria-disabled="true">
                           {slot(<Icon icon={Lock} size={20} />)}
-                          {s.big && tag('Last puzzle')}
+                          {s.big && tag(t('Last puzzle'))}
                           <span className={styles.name}>{s.name}</span>
                           <span className={styles.srOnly}>
-                            . Locked. {last}
+                            . {t('Locked.')} {last}
                             {view.lockedClue}
                           </span>
                         </span>
@@ -250,25 +252,25 @@ export function Journey({ catalogue = games, path, done, stars, title = 'Your pa
                               {me(s.big ? AVATAR.big : AVATAR.clue)}
                             </span>,
                           )}
-                          {tag('Next puzzle')}
+                          {tag(t('Next puzzle'))}
                           <span className={styles.name}>{s.name}</span>
-                          <span className={styles.srOnly}>. Next puzzle. {last}Play.</span>
+                          <span className={styles.srOnly}>. {t('Next puzzle.')} {last}{t('Play.')}</span>
                         </Link>
                       );
                     } else {
                       body = (
                         <Link to={s.to} className={styles.link}>
                           {slot(<Icon icon={Check} size={20} />)}
-                          {s.big && tag('Last puzzle')}
+                          {s.big && tag(t('Last puzzle'))}
                           <span className={styles.name}>{s.name}</span>
-                          <span className={styles.srOnly}>. Done. {last}</span>{' '}
+                          <span className={styles.srOnly}>. {t('Done.')} {last}</span>{' '}
                           {s.stars > 0 && (
                             <>
                               <Stars value={s.stars} pop={s.id === cameFrom} />
                               <span className={styles.srOnly}>.</span>{' '}
                             </>
                           )}
-                          <span className={styles.srOnly}>Play again.</span>
+                          <span className={styles.srOnly}>{t('Play again.')}</span>
                         </Link>
                       );
                     }
@@ -293,7 +295,7 @@ export function Journey({ catalogue = games, path, done, stars, title = 'Your pa
         </h2>
         {view.total > 0 && (
           <p className={styles.count}>
-            <Ring value={view.doneCount / view.total} label="Path progress" />
+            <Ring value={view.doneCount / view.total} label={t('Path progress')} />
             {pick('journeyCount', { n: view.doneCount, t: view.total })}
           </p>
         )}
@@ -318,7 +320,7 @@ export function Journey({ catalogue = games, path, done, stars, title = 'Your pa
         <details className={styles.closedCases} open={view.complete || undefined} data-closed-cases>
           <summary className={styles.closedSummary}>
             <Icon icon={Award} size={20} />
-            {closed.length === 1 ? '1 pack done' : `${closed.length} packs done`}
+            {plural(closed.length, '{n} pack done', '{n} packs done')}
           </summary>
           {closed.map(card)}
         </details>

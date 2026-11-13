@@ -5,6 +5,7 @@
 // remove), then give it a line in EARNED. They are drawn last, on top of everything.
 // The head is a 38 by 45 rounded box from (29, 25); the chest is below y 80; the window shows x -7 to 103.
 
+import { t } from '../../i18n';
 import { c, GOLD, INK, line, p, rect, WHITE, type Shape } from '../shapes';
 import type { Part } from './face';
 import { star } from './festive';
@@ -27,10 +28,10 @@ const crown = (): Shape[] => [
 ];
 
 export const KIT_STYLES: readonly Part[] = [
-  { name: 'none', draw: () => [] },
+  { name: t('none'), draw: () => [] },
   // Positions are what a saved avatar stores: these 4 keep the slots the first earned pieces held.
-  { name: 'star pin', draw: pin },
-  { name: 'headphones', draw: phones },
-  { name: 'crown', draw: crown },
-  { name: 'gold set', draw: () => [...crown(), ...pin()] },
+  { name: t('star pin'), draw: pin },
+  { name: t('headphones'), draw: phones },
+  { name: t('crown'), draw: crown },
+  { name: t('gold set'), draw: () => [...crown(), ...pin()] },
 ];

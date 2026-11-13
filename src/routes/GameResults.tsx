@@ -6,6 +6,7 @@ import { Icon } from '../components/Icon';
 import { Partner } from '../components/Partner';
 import { clampStars, Stars } from '../components/Stars';
 import { formatTime } from '../engine/time';
+import { t, num } from '../i18n';
 import styles from './GameResults.module.css';
 
 type Props = {
@@ -25,14 +26,10 @@ type Props = {
   /** Where this game's board lives, if it has one. */
   boardPath?: string;
   guest: boolean;
-  /** For a guest, in place of the plain ask: their place today, or where their run lives. */
+  /** For a guest, in place of the plain ask: where their run lives. */
   guestLine?: string;
   /** What the guest's link says, in place of "Keep this score": after a first result, the way to their detective and partner. */
   guestAction?: string;
-  /** Your run of dailies, said once after a daily. */
-  streak?: string;
-  /** "Only 8% found Habakkuk." */
-  rare?: string;
   /** Stars for a catalogue puzzle played alone. 0 or missing: no stars shown. */
   stars?: number;
   /** Said beside the stars when this play raised them. */
@@ -41,10 +38,6 @@ type Props = {
   skills?: readonly string[];
   /** One line per personal record this play beat. */
   records?: readonly string[];
-  /** After today's daily: "Today hid 11. Most days hide 8." */
-  day?: string;
-  /** After today's daily: one calm line that the day is done. */
-  done?: string;
   /** A sponsored puzzle: "With NAME" and, when there is one, the sponsor's link and its site name. */
   sponsor?: { line: string; url?: string; host?: string; /** The link was opened. */ onVisit?: () => void };
   /** Extra actions under the result (the reminder ask). */
@@ -54,7 +47,7 @@ type Props = {
 /** Lines worth a paragraph: no blanks, none twice. */
 const lines = (l?: readonly string[]) => [...new Set((l ?? []).filter((x) => typeof x === 'string' && x.trim() !== ''))];
 
-export function GameResults({ title, line, score, found, total, secs, canReplay, onReplay, onShare, onText, next, boardPath, guest, guestLine, guestAction, streak, rare, stars, starsUp, skills, records, day, done, sponsor, children }: Props) {
+export function GameResults({ title, line, score, found, total, secs, canReplay, onReplay, onShare, onText, next, boardPath, guest, guestLine, guestAction, stars, starsUp, skills, records, sponsor, children }: Props) {
   const { pathname } = useLocation();
   const [note, setNote] = useState('');
   const [more, setMore] = useState(false);
@@ -99,45 +92,45 @@ export function GameResults({ title, line, score, found, total, secs, canReplay,
               <Icon icon={ArrowRight} size={16} />
             </Button>
             {/* Beside the way on, sharing is an icon: one thing to read, one thing to tap. */}
-            <Button variant="secondary" onClick={onShare} aria-label="Share" title="Share">
+            <Button variant="secondary" onClick={onShare} aria-label={t('Share')} title={t('Share')}>
               <Icon icon={Share2} size={18} />
             </Button>
           </>
         ) : (
           <>
-            <Button variant="accent" size="icon" onClick={onShare} aria-label="Share">
+            <Button variant="accent" size="icon" onClick={onShare} aria-label={t('Share')}>
               <Icon icon={Share2} size={20} />
             </Button>
             <Button variant="secondary" to="/play">
-              Packs
+              {t('Packs')}
             </Button>
           </>
         )}
       </div>
       {/* Everything else about this play is one tap away, and never in the way of the next thing. */}
       <button type="button" className={styles.moreToggle} aria-expanded={more} aria-controls="results-more" onClick={() => setMore((m) => !m)}>
-        {more ? 'Less' : 'More'}
+        {more ? t('Less') : t('More')}
         <Icon icon={more ? ChevronUp : ChevronDown} size={16} />
       </button>
       {more && (
         <div id="results-more" className={styles.more}>
           <dl className={styles.stats}>
             <div className={styles.stat}>
-              <dt className={styles.statLabel}>Score</dt>
-              <dd className={styles.statValue}>{score.toLocaleString('en-US')}</dd>
+              <dt className={styles.statLabel}>{t('Score')}</dt>
+              <dd className={styles.statValue}>{num(score)}</dd>
             </div>
             <div className={styles.stat}>
-              <dt className={styles.statLabel}>Found</dt>
+              <dt className={styles.statLabel}>{t('Found')}</dt>
               <dd className={styles.statValue}>
                 {found}/{total}
               </dd>
             </div>
             <div className={styles.stat}>
-              <dt className={styles.statLabel}>Time</dt>
+              <dt className={styles.statLabel}>{t('Time')}</dt>
               <dd className={styles.statValue}>{formatTime(secs)}</dd>
             </div>
           </dl>
-          {lines([...(skills ?? []), ...(records ?? []), rare ?? '', day ?? '', streak ?? '', done ?? '']).map((l) => (
+          {lines([...(skills ?? []), ...(records ?? [])]).map((l) => (
             <p key={l} className={styles.streak}>
               {l}
             </p>
@@ -145,20 +138,20 @@ export function GameResults({ title, line, score, found, total, secs, canReplay,
           <div className={styles.actions}>
             {canReplay && (
               <Button variant="secondary" onClick={onReplay}>
-                Play again
+                {t('Play again')}
               </Button>
             )}
-            <Button variant="secondary" size="icon" onClick={() => void onText().then(setNote)} aria-label="Copy result">
+            <Button variant="secondary" size="icon" onClick={() => void onText().then(setNote)} aria-label={t('Copy result')}>
               <Icon icon={Copy} size={20} />
             </Button>
             {boardPath && (
               <Button variant="secondary" to={boardPath}>
-                See the leaderboard
+                {t('See the leaderboard')}
               </Button>
             )}
             {next && (
               <Button variant="secondary" to="/play">
-                Packs
+                {t('Packs')}
               </Button>
             )}
           </div>
@@ -171,11 +164,11 @@ export function GameResults({ title, line, score, found, total, secs, canReplay,
       {guest && (
         <div className={styles.guest}>
           <span className={styles.guestText}>
-            {guestLine || 'You are playing as a guest. Sign in and this score goes with you, with your streak and your name on shared cards.'}
+            {guestLine || t('Sign in to keep this score on every device.')}
           </span>
           {/* The first time sign in is offered (SPEC section 6, The first minute). /welcome sends an existing player straight on. */}
           <Link className={styles.signin} to={`/welcome?from=${encodeURIComponent(pathname)}`}>
-            {guestAction || 'Keep this score'}
+            {guestAction || t('Sign in')}
           </Link>
         </div>
       )}

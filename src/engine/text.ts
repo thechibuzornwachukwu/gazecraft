@@ -1,6 +1,22 @@
 // Letter stream and sentence splitting. Shared by hiddenWords, excerpt and paginate.
 
 const LETTER = /[a-z]/i;
+/** Any letter of any alphabet: puzzles in other languages read by this. */
+const WIDE = /\p{L}/u;
+
+/** The languages a puzzle can be written in, besides English. Its id says which: `es-animales`. */
+export const PUZZLE_LANGS = ['es', 'fr', 'de'] as const;
+export type PuzzleLang = (typeof PUZZLE_LANGS)[number];
+export const langOf = (id: string): PuzzleLang | undefined => PUZZLE_LANGS.find((l) => id.startsWith(`${l}-`));
+
+/** A letter as a puzzle in another language matches it: lowercase, accents dropped (é is e, ñ is n). ß and œ stay. */
+export function foldLetter(ch: string): string {
+  const f = ch.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
+  return [...f][0] ?? ch;
+}
+
+/** A word folded the same way, with anything that is not a letter left out. */
+export const foldWord = (s: string): string => [...String(s)].filter((c) => WIDE.test(c)).map(foldLetter).join('');
 
 /**
  * One entry per character of the source text.
@@ -20,13 +36,14 @@ export type Sentence = {
   len: number;
 };
 
-export function toChars(text: string): { chars: Char[]; S: string } {
+/** `wide`: every letter of every alphabet counts, folded (a puzzle in another language). Else a to z only. */
+export function toChars(text: string, wide = false): { chars: Char[]; S: string } {
   const chars: Char[] = [];
   let S = '';
   for (const ch of text) {
-    if (LETTER.test(ch)) {
+    if ((wide ? WIDE : LETTER).test(ch)) {
       chars.push({ ch, li: S.length });
-      S += ch.toLowerCase();
+      S += wide ? foldLetter(ch) : ch.toLowerCase();
     } else chars.push({ ch, li: -1 });
   }
   let last = -1;

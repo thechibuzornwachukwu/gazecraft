@@ -1,5 +1,5 @@
 import { useState, useSyncExternalStore, type FormEvent } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { Download } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Icon } from '../components/Icon';
@@ -14,8 +14,10 @@ import { useAuth } from '../lib/auth';
 import { checkProfile } from '../lib/streak';
 import { setSound, soundOn, subscribeSound } from '../lib/sound';
 import { currentTheme, setTheme, type Theme } from '../lib/theme';
+import { t } from '../i18n';
 import { Reminders } from './Reminders';
 import styles from './Settings.module.css';
+import { LanguagePicker } from '../components/LanguagePicker';
 
 /** /settings. Private account housekeeping. The public side of a player lives on /u/:handle. */
 export function Settings() {
@@ -54,10 +56,10 @@ export function Settings() {
     setSaving(true);
     const r = await saveProfile({ id: p.id, ...c }, true);
     setSaving(false);
-    if (r === 'taken') return setSaveNote('That handle is taken. Try another.');
-    if (r) return setSaveNote('We could not save that. Try again.');
+    if (r === 'taken') return setSaveNote(t('That handle is taken. Try another.'));
+    if (r) return setSaveNote(t('We could not save that. Try again.'));
     await auth.refreshProfile();
-    setSaveNote('Saved.');
+    setSaveNote(t('Saved.'));
   };
 
   const onDelete = async () => {
@@ -70,26 +72,23 @@ export function Settings() {
     } catch {
       setLeaving(false);
       setBusy(false);
-      setErr('We could not delete your account. Try again.');
+      setErr(t('We could not delete your account. Try again.'));
     }
   };
 
   return (
     <div className={styles.page}>
       <div className={styles.head}>
-        <h1 className={styles.title}>Your settings.</h1>
-        <Link to={`/u/${p.handle}`} className={styles.back}>
-          View your profile
-        </Link>
+        <h1 className={styles.title}>{t('Settings')}</h1>
       </div>
 
       <section className={styles.section} aria-labelledby="s-profile">
         <h2 id="s-profile" className={styles.h2}>
-          Profile
+          {t('Profile')}
         </h2>
         <form className={styles.form} onSubmit={save} noValidate>
           <Field
-            label="Name"
+            label={t('Name')}
             autoComplete="name"
             maxLength={40}
             value={name}
@@ -99,7 +98,7 @@ export function Settings() {
             }}
           />
           <Field
-            label="Handle"
+            label={t('Handle')}
             prefix="@"
             autoCapitalize="none"
             autoCorrect="off"
@@ -113,7 +112,7 @@ export function Settings() {
           />
           <div className={styles.row}>
             <Button type="submit" variant="primary" disabled={!changed || saving}>
-              {saving ? 'Saving...' : 'Save'}
+              {saving ? t('Saving...') : t('Save')}
             </Button>
             <span className={styles.note} role="status">
               {saveNote}
@@ -122,44 +121,42 @@ export function Settings() {
         </form>
       </section>
 
-      {/* Your character, partner and gear are not settings: they live on the You tab. */}
-      <p className={styles.pointer}>
-        Your character, pet and gear are on <TextLink to="/me">You</TextLink>.
-      </p>
-
       <section className={styles.section} aria-labelledby="s-account">
         <h2 id="s-account" className={styles.h2}>
-          Account
+          {t('Account')}
         </h2>
         <dl className={styles.facts}>
           <div>
-            <dt>Email</dt>
+            <dt>{t('Email')}</dt>
             <dd>{auth.email}</dd>
           </div>
           <div>
-            <dt>Sign in</dt>
-            <dd>Email code{auth.session.user.app_metadata?.provider === 'google' ? ' and Google' : ''}</dd>
+            <dt>{t('Sign in')}</dt>
+            <dd>
+              {t('Email code')}
+              {auth.session.user.app_metadata?.provider === 'google' ? ` ${t('and Google')}` : ''}
+            </dd>
           </div>
         </dl>
       </section>
 
       <section className={styles.section} aria-labelledby="s-remind">
         <h2 id="s-remind" className={styles.h2}>
-          Reminders
+          {t('Reminders')}
         </h2>
         <Reminders />
       </section>
 
       <section className={styles.section} aria-labelledby="s-look">
         <h2 id="s-look" className={styles.h2}>
-          Appearance
+          {t('Appearance')}
         </h2>
         <div className={styles.narrow}>
           <Segmented
-            label="Theme"
+            label={t('Theme')}
             options={[
-              ['dark', 'Dark'],
-              ['light', 'Light'],
+              ['dark', t('Dark')],
+              ['light', t('Light')],
             ]}
             value={theme}
             onChange={(t) => {
@@ -168,12 +165,13 @@ export function Settings() {
             }}
           />
           <SoundSetting />
+          <LanguagePicker />
         </div>
       </section>
 
       <section className={styles.section} aria-labelledby="s-session">
         <h2 id="s-session" className={styles.h2}>
-          Session
+          {t('Session')}
         </h2>
         <div className={styles.row}>
           <Button
@@ -184,9 +182,9 @@ export function Settings() {
               nav('/', { replace: true });
             }}
           >
-            Sign out
+            {t('Sign out')}
           </Button>
-          <TextLink to="/help">Help</TextLink>
+          <TextLink to="/help">{t('Help')}</TextLink>
         </div>
       </section>
 
@@ -194,28 +192,28 @@ export function Settings() {
 
       <section className={styles.danger} aria-labelledby="s-danger">
         <h2 id="s-danger" className={styles.h2}>
-          Delete account
+          {t('Delete account')}
         </h2>
         <div>
           <Button variant="secondary" onClick={() => setConfirm(true)}>
-            Delete account
+            {t('Delete account')}
           </Button>
         </div>
       </section>
 
-      <Dialog open={confirm} onClose={() => !busy && setConfirm(false)} label="Delete account">
+      <Dialog open={confirm} onClose={() => !busy && setConfirm(false)} label={t('Delete account')}>
         <div className={styles.confirm}>
-          <h2 className={styles.confirmTitle}>Delete your account?</h2>
-          <p className={styles.help}>This removes your profile, scores and shared cards. It cannot be undone.</p>
+          <h2 className={styles.confirmTitle}>{t('Delete your account?')}</h2>
+          <p className={styles.help}>{t('This removes your profile, scores and shared cards. It cannot be undone.')}</p>
           <p className={styles.note} role="alert">
             {err}
           </p>
           <div className={styles.row}>
             <Button variant="secondary" onClick={() => setConfirm(false)} disabled={busy}>
-              Keep my account
+              {t('Keep my account')}
             </Button>
             <Button variant="primary" onClick={onDelete} disabled={busy}>
-              Delete account
+              {t('Delete account')}
             </Button>
           </div>
         </div>
@@ -226,7 +224,7 @@ export function Settings() {
 
 function SoundSetting() {
   const on = useSyncExternalStore(subscribeSound, soundOn, () => true);
-  return <Toggle label="Sounds" note="A soft tick per letter as you select, a chime when you find a word." checked={on} onChange={setSound} />;
+  return <Toggle label={t('Sounds')} note={t('A soft tick per letter as you select, a chime when you find a word.')} checked={on} onChange={setSound} />;
 }
 
 /** Download my data: everything kept about this player, saved as a JSON file named for them and the day. */
@@ -250,16 +248,16 @@ function MyData({ handle }: { handle: string }) {
   return (
     <section className={styles.section} aria-labelledby="s-data">
       <h2 id="s-data" className={styles.h2}>
-        Your data
+        {t('Your data')}
       </h2>
       <div className={styles.row}>
         <Button variant="secondary" onClick={download} disabled={state === 'busy'}>
           <Icon icon={Download} size={18} />
-          Download my data
+          {t('Download my data')}
         </Button>
         {state === 'failed' && (
           <span className={styles.help} role="alert">
-            That did not download. Try again.
+            {t('That did not download. Try again.')}
           </span>
         )}
       </div>

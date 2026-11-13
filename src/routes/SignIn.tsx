@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
-import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, Navigate, useSearchParams } from 'react-router-dom';
 import { Button } from '../components/Button';
 import { Field } from '../components/Field';
 import { TextLink } from '../components/TextLink';
@@ -9,6 +9,7 @@ import { useAuth } from '../lib/auth';
 import { withTail } from '../lib/onboarding';
 import { checkProfile, handleFromName, safeNext } from '../lib/streak';
 import { getSupabase } from '../lib/supabase';
+import { t } from '../i18n';
 import styles from './SignIn.module.css';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -18,7 +19,7 @@ const GOOGLE = import.meta.env.VITE_GOOGLE_AUTH === '1';
 
 function authError(e: { status?: number; message?: string } | null): string {
   if (!e) return '';
-  if (e.status === 429) return 'Too many tries. Wait a few minutes and try again.';
+  if (e.status === 429) return t('Too many tries. Wait a few minutes and try again.');
   return '';
 }
 
@@ -58,7 +59,7 @@ export function EmailSignIn({ next, head, foot }: EmailProps) {
   const sendCode = async (e?: FormEvent) => {
     e?.preventDefault();
     const addr = email.trim();
-    if (!EMAIL_RE.test(addr)) return setErr('That email looks off. Check it and try again.');
+    if (!EMAIL_RE.test(addr)) return setErr(t('That email looks off. Check it and try again.'));
     setBusy(true);
     setErr('');
     // The email carries a code; until custom SMTP is set up it may carry a link instead, which lands back here.
@@ -67,7 +68,7 @@ export function EmailSignIn({ next, head, foot }: EmailProps) {
       .then((r) => r.error)
       .catch(() => ({ status: 0 }));
     setBusy(false);
-    if (error) return setErr(authError(error) || 'We could not send a code. Try again in a moment.');
+    if (error) return setErr(authError(error) || t('We could not send a code. Try again in a moment.'));
     setCode('');
     setWait(RESEND_AFTER);
     setStep('code');
@@ -84,7 +85,7 @@ export function EmailSignIn({ next, head, foot }: EmailProps) {
     if (error) {
       setCode('');
       codeRef.current?.focus();
-      return setErr(authError(error) || 'That code did not work. Check it or send a new one.');
+      return setErr(authError(error) || t('That code did not work. Check it or send a new one.'));
     }
     // The auth listener loads the profile; with none, the player is sent on to the first minute.
   };
@@ -102,27 +103,27 @@ export function EmailSignIn({ next, head, foot }: EmailProps) {
       .then((sb) => sb!.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: back } }))
       .then((r) => r.error)
       .catch(() => ({ status: 0 }));
-    if (error) setErr(authError(error) || 'Google sign in is not available right now.');
+    if (error) setErr(authError(error) || t('Google sign in is not available right now.'));
   };
 
   if (step === 'code') {
     return (
       <>
         <div className={styles.head}>
-          <h1 className={styles.title}>Check your inbox.</h1>
+          <h1 className={styles.title}>{t('Check your inbox.')}</h1>
           <p className={styles.lead}>
-            We sent an email to <strong className={styles.strong}>{email.trim()}</strong>. Open the link in it on this
-            device, or type the 6 digit code if it has one.
+            {t('We sent an email to')} <strong className={styles.strong}>{email.trim()}</strong>
+            {t('. Open the link in it on this device, or type the 6 digit code if it has one.')}
           </p>
         </div>
         <div className={styles.fields}>
           <Field
             ref={codeRef}
-            label="Code"
+            label={t('Code')}
             size="code"
             inputMode="numeric"
             autoComplete="one-time-code"
-            placeholder="000000"
+            placeholder={t('000000')}
             maxLength={6}
             value={code}
             disabled={busy}
@@ -134,7 +135,7 @@ export function EmailSignIn({ next, head, foot }: EmailProps) {
         </div>
         <div className={styles.links}>
           <TextLink onClick={() => (wait > 0 || busy ? undefined : void sendCode())}>
-            {wait > 0 ? `Send a new code in ${wait}s` : 'Send a new code'}
+            {wait > 0 ? t('Send a new code in {secs}s', { secs: wait }) : t('Send a new code')}
           </TextLink>
           <TextLink
             onClick={() => {
@@ -143,7 +144,7 @@ export function EmailSignIn({ next, head, foot }: EmailProps) {
               setErr('');
             }}
           >
-            Use a different email
+            {t('Use a different email')}
           </TextLink>
         </div>
       </>
@@ -157,20 +158,20 @@ export function EmailSignIn({ next, head, foot }: EmailProps) {
         {GOOGLE && (
           <>
             <Button variant="secondary" onClick={google} className={styles.tall}>
-              Continue with Google
+              {t('Continue with Google')}
             </Button>
             <div className={styles.or}>
               <span />
-              or
+              {t('or')}
               <span />
             </div>
           </>
         )}
         <Field
-          label="Email"
+          label={t('Email')}
           type="email"
           autoComplete="email"
-          placeholder="you@example.com"
+          placeholder={t('you@example.com')}
           value={email}
           onChange={(e) => {
             setEmail(e.target.value);
@@ -178,7 +179,7 @@ export function EmailSignIn({ next, head, foot }: EmailProps) {
           }}
         />
         <Button type="submit" variant="primary" disabled={busy} className={styles.tall}>
-          Email me a code
+          {t('Email me a code')}
         </Button>
         <p className={styles.err} role="alert">
           {err}
@@ -244,8 +245,8 @@ export function ProfileForm({ userId, exists, name: name0, handle: handle0, hand
     setBusy(true);
     const res = await saveProfile({ id: userId, name: c.name, handle: c.handle }, exists).catch(() => 'failed' as const);
     if (res) setBusy(false);
-    if (res === 'taken') return setErr('That handle is taken. Try another.');
-    if (res) return setErr('We could not save that. Try again.');
+    if (res === 'taken') return setErr(t('That handle is taken. Try another.'));
+    if (res) return setErr(t('We could not save that. Try again.'));
     await onSaved();
   };
 
@@ -253,11 +254,11 @@ export function ProfileForm({ userId, exists, name: name0, handle: handle0, hand
     <form className={styles.form} onSubmit={save} noValidate>
       {head}
       <div className={styles.fields}>
-        <Field label="Name" autoComplete="name" placeholder="Ada Obi" value={name} maxLength={40} onChange={(e) => onName(e.target.value)} />
+        <Field label={t('Name')} autoComplete="name" placeholder={t('Ada Obi')} value={name} maxLength={40} onChange={(e) => onName(e.target.value)} />
         <Field
-          label="Handle"
+          label={t('Handle')}
           prefix="@"
-          placeholder="ada"
+          placeholder={t('ada')}
           autoCapitalize="none"
           autoCorrect="off"
           spellCheck={false}
@@ -284,55 +285,25 @@ export function ProfileForm({ userId, exists, name: name0, handle: handle0, hand
 
 export function SignIn() {
   const auth = useAuth();
-  const nav = useNavigate();
   const [params] = useSearchParams();
   const asked = params.get('next');
   const next = safeNext(asked);
-  const editing = params.get('edit') === '1';
 
   if (!auth.enabled) {
     return (
       <div className={styles.screen}>
-        <h1 className={styles.title}>Sign in is not set up yet.</h1>
-        <p className={styles.lead}>You can play every game as a guest.</p>
-        <TextLink to={next}>Keep playing as a guest</TextLink>
+        <h1 className={styles.title}>{t('Sign in is not set up yet.')}</h1>
+        <p className={styles.lead}>{t('You can play every game as a guest.')}</p>
+        <TextLink to={next}>{t('Keep playing as a guest')}</TextLink>
       </div>
     );
   }
   // A stored session, or a profile on its way: wait, so an existing player is never sent to the first minute.
   if (auth.loading || (auth.session && !auth.profile && auth.checking)) return <SkeletonPage />;
 
-  if (auth.session && auth.profile) {
-    if (!editing) return <Navigate to={next} replace />;
-    return (
-      <div className={styles.screen}>
-        <ProfileForm
-          userId={auth.session.user.id}
-          exists
-          name={auth.profile.name}
-          handle={auth.profile.handle}
-          handleEdited
-          submit="Save"
-          head={
-            <div className={styles.head}>
-              <h1 className={styles.title}>
-                What should
-                <br />
-                we call you?
-              </h1>
-            </div>
-          }
-          onSaved={async () => {
-            await auth.refreshProfile();
-            nav('/settings', { replace: true });
-          }}
-        />
-      </div>
-    );
-  }
+  if (auth.session && auth.profile) return <Navigate to={next} replace />;
 
-  // Signed in with no profile: a new player. The first minute asks the rest, one question per screen, and ends
-  // on the page they asked for, or on today's daily.
+  // Signed in with no profile: a new player. Welcome asks their name, then sends them on.
   if (auth.session) {
     const to = next.startsWith('/welcome') ? next : asked ? `/welcome?next=${encodeURIComponent(next)}` : '/welcome';
     return <Navigate to={to} replace />;
@@ -345,22 +316,20 @@ export function SignIn() {
         head={
           <div className={styles.head}>
             <h1 className={styles.title}>
-              Sign in.
-              <br />
-              <span className={styles.sub}>Keep your streak.</span>
+              {t('Sign in.')}
             </h1>
             <p className={styles.lead}>
-              Save scores, keep daily streaks and put your name on shared cards. See what we keep in{' '}
+              {t('Your scores and run, on every device. See what we keep in')}{' '}
               <Link to="/privacy" className={styles.inline}>
-                Privacy
+                {t('Privacy')}
               </Link>
-              . Accounts are for players aged 13 and over.
+              {t('. Accounts are for players aged 13 and over.')}
             </p>
           </div>
         }
         foot={
           <Link to={next} className={styles.guest}>
-            Keep playing as a guest
+            {t('Keep playing as a guest')}
           </Link>
         }
       />

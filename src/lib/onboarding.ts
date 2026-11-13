@@ -3,8 +3,10 @@
 //
 // Play first, account later. An account with a profile never sees a step.
 
+import { t } from '../i18n';
+
 /** The steps, in the order they are asked. */
-export const STEPS = ['character', 'signin', 'look', 'name'] as const;
+export const STEPS = ['signin', 'name'] as const;
 export type Step = (typeof STEPS)[number];
 
 /** How a step was left. No entry means it has not been answered. */
@@ -33,9 +35,9 @@ export type LookChoice = (typeof LOOKS)[number];
 
 /** The 3 choices, in the order they are shown. The wording was agreed with the owner on 9 Oct 2026. */
 export const LOOK_CHOICES: ReadonlyArray<{ value: LookChoice; label: string }> = [
-  { value: 'feminine', label: 'A woman' },
-  { value: 'masculine', label: 'A man' },
-  { value: 'mixed', label: "I'd rather not say" },
+  { value: 'feminine', label: t('A woman') },
+  { value: 'masculine', label: t('A man') },
+  { value: 'mixed', label: t("I'd rather not say") },
 ];
 
 /** A stored look. Anything that is not one of the 3 reads as no answer. */
@@ -66,8 +68,8 @@ export function answer(flow: Flow, step: Step, how: Answer): Flow {
  */
 export function stepsFor(flow: Flow, account: Account): Step[] {
   const f = parseFlow(flow);
-  if (!account.enabled) return ['character', 'look'];
-  if (!account.signedIn && f.signin === 'skipped') return ['character', 'signin', 'look'];
+  if (!account.enabled) return [];
+  if (!account.signedIn && f.signin === 'skipped') return ['signin'];
   return [...STEPS];
 }
 
@@ -107,9 +109,9 @@ export function progress(flow: Flow, account: Account): Progress {
   const steps = stepsFor(flow, account);
   const at = nextStep(flow, account);
   const of = steps.length;
-  if (!at) return { step: 0, of, value: 1, label: 'All steps done' };
+  if (!at) return { step: 0, of, value: 1, label: t('All steps done') };
   const i = steps.indexOf(at);
-  return { step: i + 1, of, value: i / of, label: `Step ${i + 1} of ${of}` };
+  return { step: i + 1, of, value: i / of, label: t('Step {n} of {m}', { n: i + 1, m: of }) };
 }
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);

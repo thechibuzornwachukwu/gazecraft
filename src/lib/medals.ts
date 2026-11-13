@@ -1,6 +1,8 @@
 // Badges as medals (SPEC section 6, Medals). A badge code from the server is a tier of a medal: 1 medal a kind,
 // worn at the highest tier earned, with the way to the next. Pure.
 
+import { num, plural, t } from '../i18n';
+
 export type MedalKey = 'clean' | 'nohint' | 'long' | 'deep' | 'rare' | 'run' | 'cases' | 'points' | 'first';
 
 /** The metal a tier is struck in, lowest first. A medal with more tiers than metals stays in the last one. */
@@ -13,15 +15,15 @@ const short = (n: number): string => (n >= 1000 ? `${n / 1000}K` : String(n));
 
 /** Skill medals first (BUILD_PLAN set 3b), then the rest. */
 export const MEDAL_KINDS: readonly Kind[] = [
-  { key: 'clean', tiers: [1], code: () => 'clean_read', name: () => 'Clean read' },
-  { key: 'nohint', tiers: [1], code: () => 'no_hint_perfect', name: () => 'No-hint perfect' },
-  { key: 'long', tiers: [1], code: () => 'long_word', name: () => 'Long word' },
-  { key: 'deep', tiers: [1], code: () => 'deep_find', name: () => 'Deep find' },
-  { key: 'rare', tiers: [1], code: () => 'rare_eye', name: () => 'Rare eye' },
-  { key: 'run', tiers: [7, 30, 50, 100, 365], code: (n) => `streak_${n}`, name: (n) => `${n} day run` },
-  { key: 'cases', tiers: [1, 5, 10, 25], code: (n) => `cases_${n}`, name: (n) => (n === 1 ? 'First pack' : `${n} packs`) },
-  { key: 'points', tiers: [1000, 5000, 10000, 25000, 50000, 100000], code: (n) => `points_${n}`, name: (n) => `${short(n)} points` },
-  { key: 'first', tiers: [1], code: () => 'first_game', name: () => 'First puzzle' },
+  { key: 'clean', tiers: [1], code: () => 'clean_read', name: () => t('Clean read') },
+  { key: 'nohint', tiers: [1], code: () => 'no_hint_perfect', name: () => t('No-hint perfect') },
+  { key: 'long', tiers: [1], code: () => 'long_word', name: () => t('Long word') },
+  { key: 'deep', tiers: [1], code: () => 'deep_find', name: () => t('Deep find') },
+  { key: 'rare', tiers: [1], code: () => 'rare_eye', name: () => t('Rare eye') },
+  { key: 'run', tiers: [7, 30, 50, 100, 365], code: (n) => `streak_${n}`, name: (n) => t('{n} day run', { n }) },
+  { key: 'cases', tiers: [1, 5, 10, 25], code: (n) => `cases_${n}`, name: (n) => plural(n, 'First pack', '{n} packs') },
+  { key: 'points', tiers: [1000, 5000, 10000, 25000, 50000, 100000], code: (n) => `points_${n}`, name: (n) => t('{n} points', { n: short(n) }) },
+  { key: 'first', tiers: [1], code: () => 'first_game', name: () => t('First puzzle') },
 ];
 
 export type Medal = {
@@ -61,7 +63,7 @@ export function medalsOf(codes: readonly string[], counts: MedalCounts = {}): Me
       face: k.key === 'first' ? '1' : short(shown),
       name: k.name(shown),
       progress: known ? Math.min(1, count / next) : null,
-      toward: known ? `${Math.min(count, next).toLocaleString('en-US')} of ${next.toLocaleString('en-US')}` : '',
+      toward: known ? t('{n} of {total}', { n: num(Math.min(count, next)), total: num(next) }) : '',
     };
   });
 }

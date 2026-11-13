@@ -35,6 +35,6 @@ describe('Made by players', () => {
     second.unmount();
     world.fail = true;
     show();
-    expect(await screen.findByText('The list did not load. Try again in a moment.')).toBeInTheDocument();
+    expect(await screen.findByText('This did not load. Try again in a moment.')).toBeInTheDocument();
   });
 });

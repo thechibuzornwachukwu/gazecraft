@@ -2,6 +2,7 @@
 // which a pack has and what each is, and the client's path, the catalog and the server's replay all ask it, so
 // they can never disagree about what a pack holds. Pure.
 
+import { t } from '../i18n';
 import { groupsClue, type GroupBoard } from './groups';
 import type { HiddenWordsDef, HiddenWordsPuzzle } from './hiddenWords';
 import { liarClue, type Statement } from './liar';
@@ -31,20 +32,20 @@ export const NO_SOURCES: SpecialSources = { mirrorWords: new Set(), relayWords: 
 
 /** The noun each special shows in its header and list. */
 export const SPECIAL_NOUN: Record<SpecialType, string> = {
-  mirror: 'words that read right to left',
-  relay: 'word chains',
-  series: 'runs that step evenly',
-  liar: 'false statements',
-  groups: 'sets of 4',
+  mirror: t('words that read right to left'),
+  relay: t('word chains'),
+  series: t('runs that step evenly'),
+  liar: t('false statements'),
+  groups: t('sets of 4'),
 };
 
 /** The same, for one. A Liar clue often hides a single lie: "Find 1 false statement". */
 const SPECIAL_NOUN_ONE: Record<SpecialType, string> = {
-  mirror: 'word that reads right to left',
-  relay: 'word chain',
-  series: 'run that steps evenly',
-  liar: 'false statement',
-  groups: 'set of 4',
+  mirror: t('word that reads right to left'),
+  relay: t('word chain'),
+  series: t('run that steps evenly'),
+  liar: t('false statement'),
+  groups: t('set of 4'),
 };
 
 /** "2 false statements", "1 false statement". A pack's own noun ("Bible words") is never 1: a clue hides 3 or more. */

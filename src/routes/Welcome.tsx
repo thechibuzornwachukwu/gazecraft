@@ -1,30 +1,21 @@
-import { useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 import { Navigate, useLocation, useSearchParams } from 'react-router-dom';
-import { Pencil } from 'lucide-react';
-import { avatarCode, type Avatar as Parts } from '../avatar/draw';
-import { guestAvatar, guestAvatarCode, guestSeed, setGuestAvatarCode } from '../avatar/guest';
-import { Avatar } from '../components/Avatar';
-import { Button } from '../components/Button';
-import { Icon } from '../components/Icon';
-import { Partner } from '../components/Partner';
 import { SkeletonPage } from '../components/Skeleton';
 import { Ring } from '../components/Ring';
 import { TextLink } from '../components/TextLink';
-import { PARTNERS } from '../engine/partners';
 import { playNext } from '../lib/playNext';
 import { saveProfile } from '../lib/api';
 import { useAuth } from '../lib/auth';
-import { keepLook, loadFlow, loadLook, saveFlow } from '../lib/firstMinute';
-import { answer, endOf, LOOK_CHOICES, NEUTRAL_NAME, nextStep, progress, suggestName, withTail, type Account, type Answer, type Flow, type LookChoice, type Step } from '../lib/onboarding';
-import { choosePartner, usePartner } from '../lib/partner';
+import { loadFlow, saveFlow } from '../lib/firstMinute';
+import { answer, endOf, NEUTRAL_NAME, nextStep, progress, suggestName, withTail, type Account, type Answer, type Flow, type Step } from '../lib/onboarding';
 import { handleFromName, RESERVED_HANDLES, safeNext } from '../lib/streak';
-import { CharacterEditor } from './AvatarDesigner';
+import { t } from '../i18n';
 import { EmailSignIn, ProfileForm } from './SignIn';
 import styles from './Welcome.module.css';
 
 /**
- * /welcome. The first minute for a new player (BUILD_PLAN 3b, SPEC section 6): character, sign in, the outfit
- * question, then a name. One question per screen, each with Skip, and a ring that fills across them.
+ * /welcome. The first minute for a new player (BUILD_PLAN 3b, SPEC section 6): sign in, then a name. One question per
+ * screen, each with Skip. The character, pet and outfits are chosen on You.
  * Which step shows is decided by `nextStep` in src/lib/onboarding.ts. An account with a profile never sees one.
  */
 export function Welcome() {
@@ -86,25 +77,7 @@ export function Welcome() {
       <span aria-hidden="true">{p.label}</span>
     </p>
   );
-  const skip = (at: Step) => <TextLink onClick={() => advance(at, 'skipped')}>Skip</TextLink>;
-
-  if (step === 'character') {
-    return (
-      <div className={styles.screen}>
-        {top}
-        <CharacterStep
-          heading={heading}
-          onKeep={() => advance('character', 'done')}
-          foot={
-            <div className={styles.links}>
-              {skip('character')}
-              {auth.enabled && !account.signedIn && <TextLink to={`/signin${from ? `?next=${encodeURIComponent(from)}` : ''}`}>Already have an account? Sign in</TextLink>}
-            </div>
-          }
-        />
-      </div>
-    );
-  }
+  const skip = (at: Step) => <TextLink onClick={() => advance(at, 'skipped')}>{t('Skip')}</TextLink>;
 
   if (step === 'signin') {
     return (
@@ -115,39 +88,13 @@ export function Welcome() {
           head={
             <div className={styles.head}>
               <h1 ref={heading} tabIndex={-1} className={styles.title}>
-                Sign in to keep it.
+                {t('Sign in to keep your score.')}
               </h1>
-              <p className={styles.lead}>We send a code to your email. No password.</p>
+              <p className={styles.lead}>{t('We email you a code. No password.')}</p>
             </div>
           }
         />
         <div className={styles.links}>{skip('signin')}</div>
-      </div>
-    );
-  }
-
-  if (step === 'look') {
-    const choose = (look: LookChoice) => {
-      keepLook(look);
-      advance('look', 'done');
-    };
-    return (
-      <div className={styles.screen}>
-        {top}
-        <div className={styles.head}>
-          <h1 ref={heading} tabIndex={-1} className={styles.title}>
-            We believe you should look good.
-          </h1>
-        </div>
-        <fieldset className={styles.choices}>
-          <legend className={styles.question}>Who are we dressing?</legend>
-          {LOOK_CHOICES.map((c) => (
-            <Button key={c.value} variant="secondary" className={styles.choice} onClick={() => choose(c.value)}>
-              {c.label}
-            </Button>
-          ))}
-        </fieldset>
-        <div className={styles.links}>{skip('look')}</div>
       </div>
     );
   }
@@ -171,76 +118,9 @@ export function Welcome() {
 
 type HeadingRef = RefObject<HTMLHeadingElement | null>;
 
-/** Step 1. The character as it is now, the way into the editor, and one button to keep it. */
-function CharacterStep({ heading, onKeep, foot }: { heading: HeadingRef; onKeep: () => void; foot: ReactNode }) {
-  const [open, setOpen] = useState(false);
-  const [code, setCode] = useState<string | null>(guestAvatarCode);
-  const [look, setLook] = useState<LookChoice | null>(loadLook);
-  // Their design, else the starter drawn from this browser's seed. Never an empty circle.
-  const [parts, setParts] = useState<Parts>(guestAvatar);
-  const partner = usePartner();
-
-  return (
-    <>
-      <div className={styles.head}>
-        <h1 ref={heading} tabIndex={-1} className={styles.title}>
-          This is you.
-        </h1>
-      </div>
-      <div className={styles.character}>
-        <Avatar parts={parts} size={120} />
-        <Button variant="secondary" onClick={() => setOpen(true)}>
-          <Icon icon={Pencil} size={16} />
-          Change it
-        </Button>
-      </div>
-      {/* The pet who plays beside them. One tap, free. Left alone, it is Mochi. */}
-      <fieldset className={styles.partners}>
-        <legend className={styles.partnerAsk}>And your pet. Pick 1, change it any time.</legend>
-        {PARTNERS.map((p) => (
-          <button key={p.id} type="button" className={styles.partner} aria-pressed={p.id === partner.current} onClick={() => void choosePartner(p.id, false)}>
-            <Partner who={p.id} moment="hello" size={72} />
-            <span>{p.name}</span>
-          </button>
-        ))}
-      </fieldset>
-      <Button
-        variant="accent"
-        className={styles.full}
-        onClick={() => {
-          // Keeping the starter makes it theirs, so it does not change if the seed ever does.
-          if (!code) setGuestAvatarCode(avatarCode(parts));
-          onKeep();
-        }}
-      >
-        Keep this look
-      </Button>
-      {foot}
-      <CharacterEditor
-        open={open}
-        seed={guestSeed()}
-        code={code}
-        look={look}
-        onSave={async (next) => {
-          setGuestAvatarCode(next);
-          setCode(next);
-          setParts(guestAvatar());
-          return true;
-        }}
-        onLook={async (next) => {
-          keepLook(next);
-          setLook(next);
-          return true;
-        }}
-        onClose={() => setOpen(false)}
-      />
-    </>
-  );
-}
-
 type NameProps = { userId: string; suggested: string; heading: HeadingRef; onSaved: () => Promise<void>; onGiveUp: () => void };
 
-/** Step 4. Name and @handle, prefilled: one tap accepts. Skip gives a neutral name, said on the screen first. */
+/** Step 2. Name and @handle, prefilled: one tap accepts. Skip gives a neutral name, said on the screen first. */
 function NameStep({ userId, suggested, heading, onSaved, onGiveUp }: NameProps) {
   // Worked out once, so the fields do not change under the player.
   const [first] = useState(() => {
@@ -269,20 +149,20 @@ function NameStep({ userId, suggested, heading, onSaved, onGiveUp }: NameProps) 
       name={first.name}
       handle={first.handle}
       suggest
-      submit="Start finding"
+      submit={t('Start finding')}
       head={
         <div className={styles.head}>
           <h1 ref={heading} tabIndex={-1} className={styles.title}>
-            What should
+            {t('What should')}
             <br />
-            we call you?
+            {t('we call you?')}
           </h1>
         </div>
       }
       foot={
         <div className={styles.links}>
-          <TextLink onClick={() => void skip()}>Skip</TextLink>
-          <span className={styles.aside}>Skip and you are @{neutral} for now.</span>
+          <TextLink onClick={() => void skip()}>{t('Skip')}</TextLink>
+          <span className={styles.aside}>{t('Skip and you are @{handle} for now.', { handle: neutral })}</span>
         </div>
       }
       onSaved={onSaved}

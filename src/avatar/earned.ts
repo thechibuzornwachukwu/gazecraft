@@ -2,17 +2,18 @@
 // Only these few are earned. Everything that helps someone look like themselves stays free, always.
 
 import { levelFor, RANKS, type Rank } from '../engine/level';
+import { plural, t } from '../i18n';
 
 /** What a piece asks for: so many packs done (`cases` in code), or a rank reached. */
 export type Need = { cases: number } | { rank: Rank };
 
 /** Every earned piece, by the part it belongs to and its name there. Append only, like the parts. */
 export const EARNED: ReadonlyArray<{ part: 'kit' | 'outfit'; name: string; need: Need }> = [
-  { part: 'kit', name: 'star pin', need: { cases: 1 } },
-  { part: 'kit', name: 'headphones', need: { cases: 5 } },
-  { part: 'kit', name: 'crown', need: { rank: 'Keen' } },
-  { part: 'kit', name: 'gold set', need: { cases: 10 } },
-  { part: 'outfit', name: 'bomber jacket', need: { rank: 'Sharp' } },
+  { part: 'kit', name: t('star pin'), need: { cases: 1 } },
+  { part: 'kit', name: t('headphones'), need: { cases: 5 } },
+  { part: 'kit', name: t('crown'), need: { rank: 'Keen' } },
+  { part: 'kit', name: t('gold set'), need: { cases: 10 } },
+  { part: 'outfit', name: t('bomber jacket'), need: { rank: 'Sharp' } },
 ];
 
 /** Where a player stands: packs done, and lifetime points (which set the rank). */
@@ -30,4 +31,4 @@ export function isEarned(need: Need, standing: Standing): boolean {
 
 /** How to earn it, said once under the locked piece. */
 export const howTo = (need: Need): string =>
-  'cases' in need ? (need.cases === 1 ? 'Finish 1 pack.' : `Finish ${need.cases} packs.`) : `Reach the rank of ${need.rank}.`;
+  'cases' in need ? plural(need.cases, 'Finish {n} pack.', 'Finish {n} packs.') : t('Reach the rank of {rank}.', { rank: need.rank });

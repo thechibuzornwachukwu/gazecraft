@@ -2,6 +2,7 @@ import { useId, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Icon } from '../components/Icon';
 import type { RevealItem } from '../games/registry';
+import { t } from '../i18n';
 import styles from './GameReveal.module.css';
 
 type Props = {
@@ -24,17 +25,17 @@ export function GameReveal({ items, past }: Props) {
     <section className={styles.reveal} aria-labelledby={id}>
       <div className={styles.head}>
         <h3 id={id} className={styles.title}>
-          What you missed
+          {t('What you missed')}
         </h3>
         {n > 1 && (
           <div className={styles.nav}>
             <span className={styles.count}>
-              {i + 1} of {n}
+              {t('{i} of {n}', { i: i + 1, n })}
             </span>
-            <button type="button" className={styles.step} aria-label="Previous missed word" onClick={() => step(-1)}>
+            <button type="button" className={styles.step} aria-label={t('Previous missed word')} onClick={() => step(-1)}>
               <Icon icon={ChevronLeft} size={18} />
             </button>
-            <button type="button" className={styles.step} aria-label="Next missed word" onClick={() => step(1)}>
+            <button type="button" className={styles.step} aria-label={t('Next missed word')} onClick={() => step(1)}>
               <Icon icon={ChevronRight} size={18} />
             </button>
           </div>

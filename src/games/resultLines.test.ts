@@ -1,7 +1,6 @@
 import { createCopy, POOLS, type PoolKey } from '../copy';
 import { buildHiddenWords } from '../engine/hiddenWords';
-import { dailyPool, getPuzzle } from './catalog';
-import { dayHidLine, playFacts, rareLine, recordLines, skillLines, starsUpLine, todayHoldsLine, type Picker } from './resultLines';
+import { playFacts, recordLines, skillLines, starsUpLine, type Picker } from './resultLines';
 
 /** Always the first line of a pool. */
 const first: Picker = (key, vars) => createCopy(() => 0).pick(key, vars);
@@ -100,79 +99,6 @@ describe('starsUpLine', () => {
   });
 });
 
-describe('dayHidLine', () => {
-  const sized = (n: number) =>
-    buildHiddenWords({ text: 'Pat omitted a most odd note, a cat sat.', dict: ['atom', 'amos', 'cats', 'stod'].slice(0, n) });
-
-  it('sets today against a usual day', () => {
-    const [two, three, four] = [sized(2), sized(3), sized(4)];
-    expect([two, three, four].map((p) => p.answers.length)).toEqual([2, 3, 4]);
-    expect(dayHidLine(four, [two, three, four], first)).toBe('Today hid 4. Most days hide 3.');
-    expect(dayHidLine(three, [two, three, four], first)).toBe('Today hid 3. That is a usual day.');
-  });
-
-  it('counts today as one of the days when the pool does not hold it', () => {
-    const [two, three, four] = [sized(2), sized(3), sized(4)];
-    expect(dayHidLine(four, [two, three], first)).toBe('Today hid 4. Most days hide 3.');
-  });
-
-  it('a pool too small for a usual count is no line', () => {
-    const [two, four] = [sized(2), sized(4)];
-    expect(dayHidLine(four, [], first)).toBe('');
-    expect(dayHidLine(four, [four], first)).toBe('');
-    expect(dayHidLine(four, [two, four], first)).toBe('');
-    expect(dayHidLine(four, [two], first)).toBe('');
-  });
-
-  it('a day that hides nothing is no line', () => {
-    const none = buildHiddenWords({ text: 'Nothing here.', dict: [] });
-    expect(dayHidLine(none, [sized(2), sized(3), none], first)).toBe('');
-    expect(dayHidLine(sized(2), [none, none, none], first)).toBe('');
-  });
-
-  it('every daily in the catalogue gets a whole line', () => {
-    const pool = dailyPool.map((id) => getPuzzle(id)!);
-    for (const p of pool) {
-      const line = dayHidLine(p, pool, first);
-      expect(line).toMatch(/^Today hid \d+\. (Most days hide \d+|That is a usual day)\.$/);
-    }
-  });
-});
-
-describe('todayHoldsLine', () => {
-  it('says what today holds, never how much, the deep one first', () => {
-    expect(todayHoldsLine({ longWord: true, deepWord: false }, first)).toBe('Today hides a long one.');
-    expect(todayHoldsLine({ longWord: false, deepWord: true }, first)).toBe('Today hides a deep one.');
-    expect(todayHoldsLine({ longWord: true, deepWord: true }, first)).toBe('Today hides a deep one.');
-    for (const k of ['todayLong', 'todayDeep'] as const) for (const l of POOLS[k]) expect(l).not.toMatch(/\d|\{/);
-  });
-
-  it('a puzzle with no long or deep word says nothing', () => {
-    expect(todayHoldsLine({ longWord: false, deepWord: false }, first)).toBe('');
-  });
-});
-
-describe('rareLine', () => {
-  it('says "Only" when half or fewer found it, and the share plainly above that', () => {
-    expect(rareLine({ pct: 8 }, 'Habakkuk', first)).toBe('Only 8% found Habakkuk. You did.');
-    expect(rareLine({ pct: 50 }, 'Amos', first)).toBe('Only 50% found Amos. You did.');
-    expect(rareLine({ pct: 51 }, 'Amos', first)).toBe('Your rarest find: Amos. 51% of players found it.');
-    expect(rareLine({ pct: 100 }, 'Amos', first)).toBe('Your rarest find: Amos. 100% of players found it.');
-    for (const l of POOLS.rarestFind) expect(l).not.toMatch(/only/i);
-  });
-
-  it('no stats, no word or a share that is not one: no line at all', () => {
-    expect(rareLine(null, 'Amos', first)).toBe('');
-    expect(rareLine({ pct: 8 }, undefined, first)).toBe('');
-    expect(rareLine({ pct: 8 }, null, first)).toBe('');
-    expect(rareLine({ pct: 8 }, ' ', first)).toBe('');
-    expect(rareLine({ pct: 0 }, 'Amos', first)).toBe('');
-    expect(rareLine({ pct: NaN }, 'Amos', first)).toBe('');
-    expect(rareLine({ pct: 140 }, 'Amos', first)).toBe('');
-    expect(rareLine({} as never, 'Amos', first)).toBe('');
-  });
-});
-
 describe('recordLines', () => {
   it('gives each new record its own line', () => {
     expect(recordLines([{ kind: 'clean', pack: 'Bible', secs: 75 }], first)).toEqual(['Your fastest clean read in Bible: 1:15.']);
@@ -211,11 +137,6 @@ describe('no line is ever half filled', () => {
       ...skillLines(playFacts(deep, found('igoat'), 0, 1), pick),
       starsUpLine(1, true, pick),
       starsUpLine(3, true, pick),
-      dayHidLine(getPuzzle(dailyPool[0]!)!, dailyPool.map((id) => getPuzzle(id)!), pick),
-      todayHoldsLine({ longWord: true, deepWord: false }, pick),
-      todayHoldsLine({ longWord: false, deepWord: true }, pick),
-      rareLine({ pct: 1 }, 'Habakkuk', pick),
-      rareLine({ pct: 100 }, 'Amos', pick),
       ...recordLines([{ kind: 'clean', pack: 'Bible', secs: 0 }, { kind: 'daily', found: 1 }], pick),
       ...recordLines([{ kind: 'long', word: 'Amos', len: 4 }], pick),
     ]);
@@ -225,8 +146,7 @@ describe('no line is ever half filled', () => {
 
   it('the pools the helpers use carry only the values they are given', () => {
     const used: Record<string, string[]> = {
-      starsUp: ['n'], skillNoHint: [], skillDeep: ['w', 'n'], skillLong: ['w', 'n'], dayHid: ['n', 'm'],
-      dayHidSame: ['n'], todayLong: [], todayDeep: [], rareFind: ['p', 'w'], rarestFind: ['p', 'w'], recordClean: ['w', 't'],
+      starsUp: ['n'], skillNoHint: [], skillDeep: ['w', 'n'], skillLong: ['w', 'n'], recordClean: ['w', 't'],
       recordDaily: ['n'], recordLong: ['w', 'n'], cleanRead: [],
     };
     for (const [key, vars] of Object.entries(used)) {

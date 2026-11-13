@@ -15,6 +15,7 @@ import {
 } from '../lib/api';
 import { useAuth } from '../lib/auth';
 import { copyText } from '../lib/share';
+import { plural, t } from '../i18n';
 import { Avatar } from '../components/Avatar';
 import { useFriendStreaks } from './FriendStreaks';
 import styles from './Profile.module.css';
@@ -75,14 +76,14 @@ export function SocialActions({
     setBusy(false);
     onNote(
       r === 'asked'
-        ? `Asked. The streak starts when ${name} says yes.`
+        ? t('Asked. The streak starts when {name} says yes.', { name })
         : r === 'started'
-          ? 'Streak started. It grows each day you both play the daily.'
+          ? t('Streak started. It grows each day you both play the daily.')
           : r === 'limit'
-            ? 'You can keep 5 friend streaks at once. End one to start another.'
+            ? t('You can keep 5 friend streaks at once. End one to start another.')
             : r === 'exists'
               ? ''
-              : 'That did not work. Try again.',
+              : t('That did not work. Try again.'),
     );
     friends.reload();
   };
@@ -92,13 +93,13 @@ export function SocialActions({
     const nav = navigator as Navigator & { share?: (d: ShareData) => Promise<void> };
     if (nav.share && window.matchMedia('(pointer: coarse)').matches) {
       try {
-        await nav.share({ title: `${name} on Gazecraft`, text: `Find hidden words with @${handle} on Gazecraft.`, url });
+        await nav.share({ title: t('{name} on Gazecraft', { name }), text: t('Find hidden words with @{handle} on Gazecraft.', { handle }), url });
         return;
       } catch {
         /* cancelled: fall back to copy */
       }
     }
-    onNote((await copyText(url)) ? 'Link copied.' : url);
+    onNote((await copyText(url)) ? t('Link copied.') : url);
   };
 
   const toggle = async () => {
@@ -106,7 +107,7 @@ export function SocialActions({
     setBusy(true);
     const ok = social.iFollow ? await unfollow(social.me, handle) : await follow(social.me, handle);
     setBusy(false);
-    if (!ok) return onNote('That did not work. Try again.');
+    if (!ok) return onNote(t('That did not work. Try again.'));
     social.reload();
   };
 
@@ -115,7 +116,7 @@ export function SocialActions({
       {/* Your own page: Settings is the one action in the page header. */}
       {own ? null : !auth.profile ? (
         <Button variant="primary" size="sm" to={`/signin?next=${encodeURIComponent(`/u/${handle}`)}`}>
-          Follow
+          {t('Follow')}
         </Button>
       ) : (
         <Button
@@ -125,7 +126,7 @@ export function SocialActions({
           disabled={busy || !social.ready}
           aria-pressed={social.iFollow}
         >
-          {social.iFollow ? 'Following' : 'Follow'}
+          {social.iFollow ? t('Following') : t('Follow')}
         </Button>
       )}
       {!own &&
@@ -133,14 +134,14 @@ export function SocialActions({
         friends.rows &&
         (mine?.state === 'active' ? (
           <Button variant="secondary" size="sm" to="/players#friend-streaks">
-            {mine.streak === 1 ? '1 day streak' : `${mine.streak} day streak`}
+            {plural(mine.streak, '1 day streak', '{n} day streak')}
           </Button>
         ) : (
           <Button variant="secondary" size="sm" onClick={askStreak} disabled={busy || mine?.state === 'outgoing'}>
-            {mine?.state === 'outgoing' ? 'Streak asked' : mine?.state === 'incoming' ? 'Accept streak' : 'Start a streak'}
+            {mine?.state === 'outgoing' ? t('Streak asked') : mine?.state === 'incoming' ? t('Accept streak') : t('Start a streak')}
           </Button>
         ))}
-      <Button variant="secondary" size="icon" onClick={share} aria-label="Share">
+      <Button variant="secondary" size="icon" onClick={share} aria-label={t('Share')}>
         <Icon icon={Share2} size={20} />
       </Button>
     </div>
@@ -151,10 +152,10 @@ export function SocialCounts({ social }: { social: Social }) {
   return (
     <span className={styles.counts}>
       <a href="#followers">
-        <strong>{social.followers.length}</strong> {social.followers.length === 1 ? 'follower' : 'followers'}
+        <strong>{social.followers.length}</strong> {plural(social.followers.length, 'follower', 'followers')}
       </a>
       <a href="#following">
-        <strong>{social.following.length}</strong> following
+        <strong>{social.following.length}</strong> {t('following')}
       </a>
     </span>
   );
@@ -190,9 +191,9 @@ export function SocialLists({ own, social }: { own: boolean; social: ReturnType<
                 className={styles.remove}
                 onClick={() => remove(p.handle)}
                 disabled={removing === p.handle}
-                aria-label={`Remove @${p.handle} from your followers`}
+                aria-label={t('Remove @{handle} from your followers', { handle: p.handle })}
               >
-                Remove
+                {t('Remove')}
               </button>
             )}
           </li>
@@ -204,15 +205,15 @@ export function SocialLists({ own, social }: { own: boolean; social: ReturnType<
     <div className={styles.socialGrid}>
       <section id="followers" className={styles.section} aria-labelledby="followers-title">
         <h2 id="followers-title" className={styles.h2}>
-          Followers
+          {t('Followers')}
         </h2>
-        {list(social.followers, own, own ? 'Nobody yet. Share your profile to get followers.' : 'No followers yet.')}
+        {list(social.followers, own, own ? t('Nobody yet. Share your profile to get followers.') : t('No followers yet.'))}
       </section>
       <section id="following" className={styles.section} aria-labelledby="following-title">
         <h2 id="following-title" className={styles.h2}>
-          Following
+          {t('Following')}
         </h2>
-        {list(social.following, false, own ? 'You follow nobody yet. Find players on the leaderboard.' : 'Follows nobody yet.')}
+        {list(social.following, false, own ? t('You follow nobody yet. Find players on the leaderboard.') : t('Follows nobody yet.'))}
       </section>
     </div>
   );

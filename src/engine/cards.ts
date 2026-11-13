@@ -1,6 +1,7 @@
 // Share card data builders. Pure. Port of design/reference/cards.js.
 // Returns semantic view models; ShareCard (M7) maps states to tokens.
 
+import { num, plural, t } from '../i18n';
 import tokens from '../styles/tokens.json';
 import { excerptRange, inside, type SpanAnswer } from './excerpt';
 import { paginate, type Range } from './paginate';
@@ -100,7 +101,7 @@ function base(o: CardInput, r: Layout) {
     sponsorHost: o.sponsor?.trim() ? (o.sponsorHost?.trim() ?? '') : '',
     guest,
     initial: guest ? 'f' : name.charAt(0).toUpperCase(),
-    first: guest ? 'A guest' : name.split(/\s+/)[0]!,
+    first: guest ? t('A guest') : name.split(/\s+/)[0]!,
   };
 }
 
@@ -136,15 +137,15 @@ export function resultCard(o: ResultCardInput) {
     titleSize: title.length > 22 ? Math.round(r.title * 0.72) : r.title,
     scoreSize: r.score,
     title,
-    score: score.toLocaleString('en-US'),
-    badge: perfect ? ('Perfect' as const) : fcount === 0 ? ('Gave up' as const) : ('' as const),
-    found: o.hideCount ? fcount + ' found' : fcount + '/' + total + ' found',
+    score: num(score),
+    badge: perfect ? t('Perfect') : fcount === 0 ? t('Gave up') : '',
+    found: o.hideCount ? t('{n} found', { n: fcount }) : t('{n}/{total} found', { n: fcount, total }),
     time: formatTime(o.secs),
-    hints: hints === 0 ? 'No tip-offs' : hints === 1 ? '1 tip-off' : hints + ' tip-offs',
+    hints: hints === 0 ? t('No tip-offs') : plural(hints, '{n} tip-off', '{n} tip-offs'),
     cells,
-    name: b.guest ? 'Guest player' : o.name!.trim(),
-    handle: b.guest ? 'Not signed in' : (o.handle ?? ''),
-    cta: fcount === 0 ? 'Can you find them?' : 'Can you beat it?',
+    name: b.guest ? t('Guest player') : o.name!.trim(),
+    handle: b.guest ? t('Not signed in') : (o.handle ?? ''),
+    cta: fcount === 0 ? t('Can you find them?') : t('Can you beat it?'),
   };
 }
 
@@ -197,7 +198,7 @@ export function puzzleCards(o: PuzzleCardInput) {
   };
 
   const b0 = base(o, r);
-  const noun = o.noun ?? 'words';
+  const noun = o.noun ?? t('words');
 
   return ranges.map(([s0, s1], p) => {
     const cs = sents[s0]!.cs;
@@ -219,11 +220,11 @@ export function puzzleCards(o: PuzzleCardInput) {
     const here = answers.filter((a) => inside(a, sents, s0, s1)).length;
     const firstPage = p === 0;
     let pline2: string;
-    if (show) pline2 = 'Highlighted words are answers';
-    else if (o.hideCount) pline2 = whole ? 'How many can you find?' : 'Some hide here. More inside.';
-    else if (o.mode === 'full') pline2 = pages > 1 ? 'Swipe for the rest' : 'Words hide across spaces';
-    else pline2 = whole ? total + ' hiding in here' : here + ' hiding here. ' + (total - here) + ' more inside.';
-    if (o.mode === 'full' && p === pages - 1 && pages > 1 && !show) pline2 = 'Now go find them';
+    if (show) pline2 = t('Highlighted words are answers');
+    else if (o.hideCount) pline2 = whole ? t('How many can you find?') : t('Some hide here. More inside.');
+    else if (o.mode === 'full') pline2 = pages > 1 ? t('Swipe for the rest') : t('Words hide across spaces');
+    else pline2 = whole ? t('{total} hiding in here', { total }) : t('{here} hiding here. {more} more inside.', { here, more: total - here });
+    if (o.mode === 'full' && p === pages - 1 && pages > 1 && !show) pline2 = t('Now go find them');
 
     return {
       ...b0,
@@ -235,16 +236,20 @@ export function puzzleCards(o: PuzzleCardInput) {
       textSize: r.text,
       showTitle: firstPage,
       titleSize: Math.round(r.title * r.ptitle),
-      kicker: firstPage ? b0.kicker : 'Continued',
+      kicker: firstPage ? b0.kicker : t('Continued'),
       ptitle: show
-        ? 'I found ' + fcount + (o.hideCount ? ' ' : ' of ' + total + ' ') + noun + '.'
+        ? o.hideCount
+          ? t('I found {n} {noun}.', { n: fcount, noun })
+          : t('I found {n} of {total} {noun}.', { n: fcount, total, noun })
         : o.hideCount
-          ? 'How many ' + noun + ' can you find?'
-          : 'Can you find ' + total + ' ' + noun + '?',
+          ? t('How many {noun} can you find?', { noun })
+          : t('Can you find {total} {noun}?', { total, noun }),
       segs,
       pline: show
-        ? b0.first + ' · ' + fcount + (o.hideCount ? ' found' : '/' + total) + ' in ' + formatTime(o.secs)
-        : b0.first + ' found ' + fcount + ' in ' + formatTime(o.secs),
+        ? o.hideCount
+          ? t('{first} · {n} found in {time}', { first: b0.first, n: fcount, time: formatTime(o.secs) })
+          : t('{first} · {n}/{total} in {time}', { first: b0.first, n: fcount, total, time: formatTime(o.secs) })
+        : t('{first} found {n} in {time}', { first: b0.first, n: fcount, time: formatTime(o.secs) }),
       pline2,
     };
   });

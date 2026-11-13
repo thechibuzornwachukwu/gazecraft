@@ -5,6 +5,7 @@
 // neckline. `behind(k)` is for anything that sits behind the neck (a hood, a cape).
 // The neck is 14 wide, centred on x 48, and meets the shoulders at about y 78.
 
+import { t } from '../../i18n';
 import { BACKS, c, CORAL, CREAM, ellipse, EMBROIDERY, INK, LIME, line, NAVY, p, rect, ROSE, STAR, VIOLET, WHITE, type Kit, type Look, type Shape } from '../shapes';
 
 export type Outfit = { name: string; look?: Look; behind?: (k: Kit) => Shape[]; draw: (k: Kit) => Shape[] };
@@ -21,11 +22,11 @@ const BOMBER = '#2f6fdf';
 const BOMBER_DARK = '#1f4fa8';
 
 export const OUTFIT_STYLES: readonly Outfit[] = [
-  { name: 'tee', draw: (k) => [torso(k.body), scoop(k, 5)] },
+  { name: t('tee'), draw: (k) => [torso(k.body), scoop(k, 5)] },
   {
     // A very wide robe, sleeves folded up onto the shoulders in pleats, a deep V over an inner tunic, and
     // gold embroidery: down the V and in the square panel on the chest.
-    name: 'agbada',
+    name: t('agbada'),
     look: 'masculine',
     draw: (k) => {
       const robe = k.back === CREAM ? WHITE : CREAM;
@@ -44,16 +45,16 @@ export const OUTFIT_STYLES: readonly Outfit[] = [
     },
   },
   {
-    name: 'kaftan',
+    name: t('kaftan'),
     look: 'masculine',
     draw: (k) => [torso(k.body), scoop(k, 3), line('M40.5 80q7.5 4 15 0', k.trim, 1.6), line('M48 82.5v13', k.trim, 1.3), c(48, 86, 0.9, k.trim), c(48, 90, 0.9, k.trim)],
   },
   {
-    name: 'dashiki',
+    name: t('dashiki'),
     draw: (k) => [torso(k.body), p('M39.5 79l8.5 14 8.5-14z', { fill: LIME }), p('M43 79l5 8 5-8z', { fill: k.skin }), line('M41.5 80.5l6.5 10.5 6.5-10.5', INK, 0.9)],
   },
   {
-    name: 'ankara',
+    name: t('ankara'),
     draw: (k) => [
       torso(NAVY),
       scoop(k, 5),
@@ -61,7 +62,7 @@ export const OUTFIT_STYLES: readonly Outfit[] = [
     ],
   },
   {
-    name: 'buba and beads',
+    name: t('buba and beads'),
     look: 'feminine',
     draw: (k) => [
       torso(k.body),
@@ -70,30 +71,30 @@ export const OUTFIT_STYLES: readonly Outfit[] = [
     ],
   },
   {
-    name: 'suit',
+    name: t('suit'),
     draw: (k) => [torso(k.body), p('M40.5 79l7.5 13 7.5-13z', { fill: k.trim }), p('M46.6 82h2.8l1.4 11h-5.6z', { fill: LIME }), line('M40.5 79l5 12M55.5 79l-5 12', k.seam, 1.2)],
   },
   {
-    name: 'hoodie',
+    name: t('hoodie'),
     behind: (k) => [p('M27 84c-2-16 7-24 21-24s23 8 21 24z', { fill: k.body })],
     draw: (k) => [torso(k.body), scoop(k, 4), line('M44.5 83v8M51.5 83v8', k.trim, 1.2), c(44.5, 91.5, 0.9, k.trim), c(51.5, 91.5, 0.9, k.trim)],
   },
   {
-    name: 'jersey',
+    name: t('jersey'),
     draw: (k) => [torso(k.back === BACKS[0] ? WHITE : LIME), rect({ x: 44, y: 79, width: 8, height: 18, fill: INK }), scoop(k, 4), line('M40.5 80q7.5 5.5 15 0', INK, 1.6)],
   },
   {
     // A rolled collar that hugs the neck and widens into the shoulders, with one soft fold.
-    name: 'turtleneck',
+    name: t('turtleneck'),
     draw: (k) => [torso(k.body), p('M34 84c4-3 6-7 6.5-12.5q7.5 3 15 0c.5 5.5 2.5 9.5 6.5 12.5z', { fill: k.body }), line('M41 75.5q7 2.6 14 0', k.seam, 1.1)],
   },
   {
-    name: 'hero cape',
+    name: t('hero cape'),
     behind: () => [ellipse({ cx: 48, cy: 103, rx: 43, ry: 27, fill: '#c2453c' })],
     draw: (k) => [torso(NAVY), scoop(k, 4), p('M48 83.5l1.5 3.1 3.4.5-2.5 2.4.6 3.4-3-1.6-3 1.6.6-3.4-2.5-2.4 3.4-.5z', { fill: STAR })],
   },
   {
-    name: 'wizard robe',
+    name: t('wizard robe'),
     draw: (k) => [
       torso(VIOLET),
       p('M40.5 79l7.5 9 7.5-9z', { fill: k.skin }),
@@ -102,7 +103,7 @@ export const OUTFIT_STYLES: readonly Outfit[] = [
     ],
   },
   {
-    name: 'space suit',
+    name: t('space suit'),
     draw: (k) => [
       torso('#f4f4f5'),
       ellipse({ cx: 48, cy: 79.5, rx: 10.5, ry: 3.6, fill: '#9ca3af' }),
@@ -112,7 +113,7 @@ export const OUTFIT_STYLES: readonly Outfit[] = [
   },
   {
     // A shirt with a tall collar standing up around the neck, open at the front.
-    name: 'high collar shirt',
+    name: t('high collar shirt'),
     draw: (k) => [
       torso(k.trim),
       scoop(k, 5),
@@ -125,7 +126,7 @@ export const OUTFIT_STYLES: readonly Outfit[] = [
   },
   {
     // Earned, not chosen (see ../earned.ts): a bright bomber jacket, collar up, over a dark shirt.
-    name: 'bomber jacket',
+    name: t('bomber jacket'),
     draw: (k) => [
       torso(BOMBER, 33),
       p('M41 79.5l7 12 7-12z', { fill: INK }),

@@ -17,31 +17,32 @@ import { readBox, surprise } from '../engine/makeBox';
 import { iconForTopic } from '../engine/topicIcon';
 import { fetchCustomGame, getGenerateJob, myPuzzles, publishPuzzle, runGenerateJob, startGenerate, type GenerateJobResult, type MyPuzzle } from '../lib/api';
 import { useAuth } from '../lib/auth';
+import { t, plural } from '../i18n';
 import { clearMakeJob, loadMakeJob, saveMakeJob, type MakeJob } from '../lib/makeJob';
 import styles from './Make.module.css';
 
 const WHY: Record<WordState, string> = {
-  hidden: 'Hidden',
-  missing: 'Not in your paragraph',
-  plain: 'In plain sight. It must run across two words',
-  bad: 'Use 3 to 12 letters, no spaces',
-  repeat: 'Typed twice',
+  hidden: t('Hidden'),
+  missing: t('Not in your paragraph'),
+  plain: t('In plain sight. It must run across two words'),
+  bad: t('Use 3 to 12 letters, no spaces'),
+  repeat: t('Typed twice'),
 };
 
 const FAIL: Record<string, string> = {
-  not_allowed: 'Some of that is not allowed here. Keep it family friendly.',
-  not_hidden: 'Some words are not hidden yet. Check the list.',
-  rate_limited: 'That is enough puzzles for now. Try again in an hour.',
-  sign_in_required: 'Sign in again, then publish.',
+  not_allowed: t('Some of that is not allowed here. Keep it family friendly.'),
+  not_hidden: t('Some words are not hidden yet. Check the list.'),
+  rate_limited: t('That is enough puzzles for now. Try again in an hour.'),
+  sign_in_required: t('Sign in again, then publish.'),
 };
 
 /** "in 1 minute", "in 12 minutes", "in 1 hour". Rounded up, so it is never too early. */
 function retryIn(secs: number | undefined): string {
-  if (!secs) return 'a little while';
+  if (!secs) return t('a little while');
   const mins = Math.ceil(secs / 60);
-  if (mins < 60) return mins === 1 ? '1 minute' : `${mins} minutes`;
+  if (mins < 60) return plural(mins, '{n} minute', '{n} minutes');
   const hours = Math.ceil(mins / 60);
-  return hours === 1 ? '1 hour' : `${hours} hours`;
+  return plural(hours, '{n} hour', '{n} hours');
 }
 
 const offline = () => typeof navigator !== 'undefined' && navigator.onLine === false;
@@ -49,7 +50,7 @@ const offline = () => typeof navigator !== 'undefined' && navigator.onLine === f
 /** The line for a draft that could not be written. */
 function failLine(error: string, retryAfter?: number): string {
   if (error === 'rate_limited') return pick('genLimit', { t: retryIn(retryAfter) });
-  if (error === 'sign_in_required' || error === 'bad_token' || error === 'unknown_job') return 'Sign in again, then try once more.';
+  if (error === 'sign_in_required' || error === 'bad_token' || error === 'unknown_job') return t('Sign in again, then try once more.');
   if (error === 'network' && offline()) return pick('genOffline');
   return pick('genFail');
 }
@@ -186,7 +187,7 @@ export function Make() {
     // The word list is large: it loads only when asked for.
     const { hideForMe } = await import('../engine/hideForMe');
     const words = hideForMe(text);
-    if (words.length < MAKE.minWords) return setBoxNote('Fewer than 4 words hide in that. Write a little more, or try another topic.');
+    if (words.length < MAKE.minWords) return setBoxNote(t('Fewer than 4 words hide in that. Write a little more, or try another topic.'));
     setBoxNote('');
     setDraft({ ...emptyDraft(), text: text.slice(0, MAKE.maxText), raw: words.join(', ') });
   };
@@ -196,7 +197,7 @@ export function Make() {
     if (read.kind === 'empty') return void ask(surprise());
     if (read.kind === 'topic') return void ask(read.topic);
     if (read.kind === 'paragraph') return void hideSome(read.text);
-    setBoxNote('We do not know that emoji yet. Add a word beside it.');
+    setBoxNote(t('We do not know that emoji yet. Add a word beside it.'));
   };
 
   const words = useMemo(() => splitWords(draft?.raw ?? ''), [draft?.raw]);
@@ -212,16 +213,16 @@ export function Make() {
   const need = !draft
     ? ''
     : draft.title.trim().length < 2
-      ? 'Give it a title.'
+      ? t('Give it a title.')
       : draft.noun.trim().length < 2
-        ? 'Say what is hidden.'
+        ? t('Say what is hidden.')
         : short
-          ? `Write a little more. ${MAKE.minText} letters at least.`
+          ? t('Write a little more. {min} letters at least.', { min: MAKE.minText })
           : check.hidden.length < MAKE.minWords
-            ? `Hide at least ${MAKE.minWords} words. ${check.hidden.length} so far.`
+            ? t('Hide at least {min} words. {count} so far.', { min: MAKE.minWords, count: check.hidden.length })
             : !check.ok
-              ? 'Fix or remove the words that are not hidden.'
-              : `${check.hidden.length} words hidden. Ready.`;
+              ? t('Fix or remove the words that are not hidden.')
+              : t('{count} words hidden. Ready.', { count: check.hidden.length });
 
   const publish = async (e: FormEvent) => {
     e.preventDefault();
@@ -232,22 +233,22 @@ export function Make() {
     const r = await publishPuzzle({ title: draft.title.trim(), noun: draft.noun.trim(), text: draft.text.trim(), words, icon: draft.icon });
     setBusy(false);
     if (r.ok) return setMade(r.code);
-    setErr(FAIL[r.error] ?? 'We could not save that. Try again.');
+    setErr(FAIL[r.error] ?? t('We could not save that. Try again.'));
   };
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.title}>Make a puzzle.</h1>
+      <h1 className={styles.title}>{t('Make a puzzle.')}</h1>
 
       {!draft ? (
         <form className={styles.form} onSubmit={submitBox} noValidate data-make-box>
           <label className={styles.area}>
-            <span className={styles.label}>What should we hide words in?</span>
+            <span className={styles.label}>{t('What should we hide words in?')}</span>
             <textarea
               className={styles.text}
               rows={3}
               maxLength={MAKE.maxText}
-              placeholder="Lagos, football, jollof, or a paragraph of your own"
+              placeholder={t('Lagos, football, jollof, or a paragraph of your own')}
               value={box}
               onChange={(e) => {
                 setBox(e.target.value);
@@ -257,9 +258,9 @@ export function Make() {
           </label>
           <div className={styles.row}>
             <Button type="submit" variant="accent" disabled={busy}>
-              {read.kind === 'empty' ? 'Surprise me' : read.kind === 'paragraph' ? 'Hide some for me' : 'Make it'}
+              {read.kind === 'empty' ? t('Surprise me') : read.kind === 'paragraph' ? t('Hide some for me') : t('Make it')}
             </Button>
-            <TextLink onClick={() => setDraft(emptyDraft())}>Write it myself</TextLink>
+            <TextLink onClick={() => setDraft(emptyDraft())}>{t('Write it myself')}</TextLink>
           </div>
           {boxNote && (
             <p className={styles.note} role="alert">
@@ -269,11 +270,11 @@ export function Make() {
         </form>
       ) : (
         <form className={styles.form} onSubmit={publish} noValidate data-make-draft>
-          <Field label="Title" maxLength={MAKE.titleMax} placeholder="Sunday at Mama's" value={draft.title} onChange={(e) => set({ title: e.target.value })} />
-          <Field label="What is hidden" maxLength={MAKE.nounMax} placeholder="Lagos places" value={draft.noun} onChange={(e) => set({ noun: e.target.value })} />
+          <Field label={t('Title')} maxLength={MAKE.titleMax} placeholder={t("Sunday at Mama's")} value={draft.title} onChange={(e) => set({ title: e.target.value })} />
+          <Field label={t('What is hidden')} maxLength={MAKE.nounMax} placeholder={t('Lagos places')} value={draft.noun} onChange={(e) => set({ noun: e.target.value })} />
           <label className={styles.area}>
             <span className={styles.label}>
-              Paragraph
+              {t('Paragraph')}
               <span className={styles.count}>
                 {draft.text.length}/{MAKE.maxText}
               </span>
@@ -281,12 +282,12 @@ export function Make() {
             <textarea className={styles.text} rows={7} maxLength={MAKE.maxText} value={draft.text} onChange={(e) => set({ text: e.target.value })} />
           </label>
           <label className={styles.area}>
-            <span className={styles.label}>Hidden words. Commas or new lines. Up to {MAKE.maxWords}</span>
+            <span className={styles.label}>{t('Hidden words. Commas or new lines. Up to {max}', { max: MAKE.maxWords })}</span>
             <textarea className={styles.text} rows={3} autoCapitalize="none" spellCheck={false} value={draft.raw} onChange={(e) => set({ raw: e.target.value })} />
           </label>
 
           {check.words.length > 0 && (
-            <ul className={styles.words} aria-label="Word check">
+            <ul className={styles.words} aria-label={t('Word check')}>
               {check.words.map((w, i) => (
                 <li key={`${w.word}-${i}`} className={styles.word} data-ok={w.state === 'hidden' || undefined}>
                   <Icon icon={w.state === 'hidden' ? Check : X} size={16} />
@@ -298,8 +299,8 @@ export function Make() {
           )}
 
           <fieldset className={styles.icons}>
-            <legend className={styles.label}>Icon</legend>
-            <div className={styles.iconGrid} role="radiogroup" aria-label="Icon">
+            <legend className={styles.label}>{t('Icon')}</legend>
+            <div className={styles.iconGrid} role="radiogroup" aria-label={t('Icon')}>
               {Object.keys(TOPIC_ICONS).map((name) => (
                 <button
                   key={name}
@@ -318,7 +319,7 @@ export function Make() {
 
           <div className={styles.row}>
             <Button type="submit" variant="accent" disabled={busy || !!made}>
-              Publish puzzle
+              {t('Publish puzzle')}
             </Button>
             {draft.topic && (
               <TextLink
@@ -328,10 +329,10 @@ export function Make() {
                   void ask(topic);
                 }}
               >
-                Another go
+                {t('Another go')}
               </TextLink>
             )}
-            <TextLink onClick={() => setDraft(null)}>Start again</TextLink>
+            <TextLink onClick={() => setDraft(null)}>{t('Start again')}</TextLink>
           </div>
           <p className={styles.note} role="status">
             {err || need}
@@ -343,13 +344,13 @@ export function Make() {
 
       <section className={styles.section} aria-labelledby="mine-title">
         <h2 id="mine-title" className={styles.h2}>
-          Your puzzles
+          {t('Your puzzles')}
         </h2>
         {mine == null ? (
           <SkeletonList rows={3} />
         ) : mine.length === 0 ? (
           <PartnerNote>
-            <p className={styles.muted}>Nothing yet. Publish one and send the link to a friend.</p>
+            <p className={styles.muted}>{t('Nothing yet. Publish one and send the link to a friend.')}</p>
           </PartnerNote>
         ) : (
           <ul className={styles.list}>
@@ -361,8 +362,8 @@ export function Make() {
                     {p.title}
                   </span>
                   <span className={styles.itemMeta}>
-                    {p.words} words · {p.plays} {p.plays === 1 ? 'play' : 'plays'} · {p.ups} liked it
-                    {p.downs > 0 ? ` · ${p.downs} did not` : ''}
+                    {t('{words} words · {plays} · {ups} liked it', { words: p.words, plays: plural(p.plays, '{n} play', '{n} plays'), ups: p.ups })}
+                    {p.downs > 0 ? ` · ${t('{n} did not', { n: p.downs })}` : ''}
                   </span>
                 </Link>
               </li>

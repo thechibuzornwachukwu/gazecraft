@@ -62,7 +62,7 @@ describe('the promise', () => {
   });
 
   it('run and reminder lines talk about today, not about what would be lost', () => {
-    const lines = (['remind', 'remindStreak', 'remindFriend', 'streakKeep', 'streakDay', 'streakStart', 'doneToday'] as const).flatMap((k) => POOLS[k]);
+    const lines = (['remind', 'remindStreak', 'remindFriend'] as const).flatMap((k) => POOLS[k]);
     for (const line of lines) expect(line).not.toMatch(/\b(lose|lost|losing|keep it|needs? today|do not break|don't break|miss out|last chance)\b/i);
   });
 });

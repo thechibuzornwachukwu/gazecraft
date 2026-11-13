@@ -4,6 +4,7 @@
 // or remove). They are drawn last, on top of everything, so a hat sits over whatever hair is underneath.
 // The head is a 38 by 45 rounded box from (29, 25); the window shows roughly x -7 to 103, y -2 to 108.
 
+import { t } from '../../i18n';
 import { c, ellipse, GOLD, INK, line, p, rect, RED, ROSE, STAR, WHITE, type Kit, type Shape } from '../shapes';
 import type { Part } from './face';
 
@@ -22,9 +23,9 @@ export const star = (x: number, y: number, s: number, fill: string): Shape =>
 const dots = (at: ReadonlyArray<readonly [number, number, number]>, fill: string): Shape[] => at.map(([x, y, r]) => c(x, y, r, fill));
 
 export const FESTIVE_STYLES: readonly Part[] = [
-  { name: 'none', draw: () => [] },
+  { name: t('none'), draw: () => [] },
   {
-    name: 'santa hat',
+    name: t('santa hat'),
     draw: () => [
       p('M28 31c1-13 9-22 21-22 11 0 18 8 19 20-12-4-27-4-40 2z', { fill: RED }),
       p('M60 11c9 1 14 7 14 16l-5 1c0-6-3-10-9-11z', { fill: RED }),
@@ -34,7 +35,7 @@ export const FESTIVE_STYLES: readonly Part[] = [
   },
   {
     // Reindeer: antlers and a red nose.
-    name: 'antlers',
+    name: t('antlers'),
     draw: () => [
       line('M38 25c-2-6-6-10-11-12M33 18c-1-3-1-6 1-9M30 15c-3 0-5-1-7-3', ANTLER, 3),
       line('M58 25c2-6 6-10 11-12M63 18c1-3 1-6-1-9M66 15c3 0 5-1 7-3', ANTLER, 3),
@@ -42,7 +43,7 @@ export const FESTIVE_STYLES: readonly Part[] = [
     ],
   },
   {
-    name: 'witch hat',
+    name: t('witch hat'),
     draw: () => [
       p('M33 28L50 0l5 6-3 4 11 18z', { fill: NIGHT }),
       ellipse({ cx: 48, cy: 29, rx: 27, ry: 5.5, fill: NIGHT }),
@@ -50,7 +51,7 @@ export const FESTIVE_STYLES: readonly Part[] = [
     ],
   },
   {
-    name: 'pumpkin',
+    name: t('pumpkin'),
     draw: () => [
       ellipse({ cx: 85, cy: 92, rx: 11, ry: 9.5, fill: PUMPKIN }),
       line('M85 83v18M80 84c-3 5-3 11 0 16M90 84c3 5 3 11 0 16', '#b85f14', 1.1),
@@ -60,7 +61,7 @@ export const FESTIVE_STYLES: readonly Part[] = [
     ],
   },
   {
-    name: 'ghost',
+    name: t('ghost'),
     draw: () => [
       p('M4 30v-11a9 9 0 0 1 18 0v11l-3-2.5-3 2.5-3-2.5-3 2.5-3-2.5z', { fill: WHITE }),
       c(10, 19, 1.4, INK),
@@ -68,9 +69,9 @@ export const FESTIVE_STYLES: readonly Part[] = [
       ellipse({ cx: 13, cy: 23.5, rx: 1.5, ry: 2, fill: INK }),
     ],
   },
-  { name: 'hearts', draw: () => [heart(4, 12, 1.2, ROSE), heart(80, 4, 1, ROSE), heart(88, 26, 0.7, RED), heart(10, 34, 0.6, RED)] },
+  { name: t('hearts'), draw: () => [heart(4, 12, 1.2, ROSE), heart(80, 4, 1, ROSE), heart(88, 26, 0.7, RED), heart(10, 34, 0.6, RED)] },
   {
-    name: 'party hat',
+    name: t('party hat'),
     draw: () => [
       p('M34 27L50 0l14 28c-9-4-20-5-30-1z', { fill: STAR }),
       line('M42 14l12 4M38 21l20 5', ROSE, 2),
@@ -81,7 +82,7 @@ export const FESTIVE_STYLES: readonly Part[] = [
   },
   {
     // Green, white, green: a headband and a flag on each cheek.
-    name: 'naija',
+    name: t('naija'),
     draw: () => [
       rect({ x: 29, y: 31, width: 13, height: 5, fill: GREEN }),
       rect({ x: 42, y: 31, width: 12, height: 5, fill: WHITE }),
@@ -93,13 +94,13 @@ export const FESTIVE_STYLES: readonly Part[] = [
       ]),
     ],
   },
-  { name: 'snow', draw: () => dots([[8, 20, 1.7], [20, 8, 1.3], [84, 14, 1.7], [93, 40, 1.3], [5, 50, 1.3], [89, 66, 1.5], [13, 76, 1.3], [74, 4, 1.2], [30, 2, 1.1]], WHITE) },
+  { name: t('snow'), draw: () => dots([[8, 20, 1.7], [20, 8, 1.3], [84, 14, 1.7], [93, 40, 1.3], [5, 50, 1.3], [89, 66, 1.5], [13, 76, 1.3], [74, 4, 1.2], [30, 2, 1.1]], WHITE) },
   {
-    name: 'crown',
+    name: t('crown'),
     draw: () => [p('M34 27l-3-16 9 8 8-13 8 13 9-8-3 16z', { fill: GOLD }), c(48, 21, 1.8, RED), c(40, 23, 1.3, WHITE), c(56, 23, 1.3, WHITE)],
   },
   {
-    name: 'bunny ears',
+    name: t('bunny ears'),
     draw: (k: Kit) => [
       ellipse({ cx: 39, cy: 12, rx: 5, ry: 14, fill: WHITE, transform: 'rotate(-10 39 24)' }),
       ellipse({ cx: 57, cy: 12, rx: 5, ry: 14, fill: WHITE, transform: 'rotate(10 57 24)' }),
@@ -111,7 +112,7 @@ export const FESTIVE_STYLES: readonly Part[] = [
   },
   {
     // A rainbow wig in tufts, a red nose, painted cheeks, a mark over each eye and a big bow tie.
-    name: 'clown',
+    name: t('clown'),
     draw: () => [
       ...dots([[24, 30, 8], [19, 43, 7.5], [72, 30, 8], [77, 43, 7.5]], RED),
       ...dots([[31, 21, 7.5], [65, 21, 7.5], [22, 55, 6], [74, 55, 6]], STAR),

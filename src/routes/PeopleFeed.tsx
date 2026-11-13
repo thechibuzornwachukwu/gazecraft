@@ -2,6 +2,7 @@ import { Fragment, useEffect, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Flame, Gamepad2, Heart, UserCheck, UserPlus } from 'lucide-react';
 import { Avatar } from '../components/Avatar';
+import { t, plural } from '../i18n';
 import { Icon } from '../components/Icon';
 import { MedalFace } from '../components/Medals';
 import { Segmented } from '../components/Segmented';
@@ -37,7 +38,7 @@ export function FollowIcon({ me, handle, name, initial = false }: { me: string; 
     if (ok) setOn(!on);
   };
   return (
-    <button type="button" className={styles.follow} aria-pressed={on} aria-label={`${on ? 'Following' : 'Follow'} ${name}`} disabled={busy} onClick={() => void toggle()}>
+    <button type="button" className={styles.follow} aria-pressed={on} aria-label={t(on ? 'Following {name}' : 'Follow {name}', { name })} disabled={busy} onClick={() => void toggle()}>
       <Icon icon={on ? UserCheck : UserPlus} size={18} />
     </button>
   );
@@ -48,7 +49,7 @@ function Cheer({ item, me }: { item: FeedItem; me?: string }) {
   const [on, setOn] = useState(item.cheered);
   const [n, setN] = useState(item.cheers);
   const [busy, setBusy] = useState(false);
-  const label = `${n} ${n === 1 ? 'cheer' : 'cheers'}`;
+  const label = plural(n, '{n} cheer', '{n} cheers');
   if (item.mine || !me) {
     return (
       <span className={styles.cheers} aria-label={label} data-none={n === 0 || undefined}>
@@ -69,7 +70,7 @@ function Cheer({ item, me }: { item: FeedItem; me?: string }) {
     } else setN(next);
   };
   return (
-    <button type="button" className={styles.cheer} aria-pressed={on} aria-label={`Cheer ${item.name || item.handle}, ${label}`} disabled={busy} onClick={() => void toggle()}>
+    <button type="button" className={styles.cheer} aria-pressed={on} aria-label={t('Cheer {name}, {label}', { name: item.name || item.handle, label })} disabled={busy} onClick={() => void toggle()}>
       <Icon icon={Heart} size={20} />
       <span>{n}</span>
     </button>
@@ -96,7 +97,7 @@ function MedalCard({ f, me }: { f: FeedItem; me?: string }) {
   const medal = medalOf(f.code)!;
   return (
     <article className={styles.card} data-metal={medal.metal}>
-      <Byline handle={f.handle} name={f.mine ? 'You' : f.name || `@${f.handle}`} at={f.earned_at} to={f.mine ? '/me#badges' : `/u/${f.handle}`} />
+      <Byline handle={f.handle} name={f.mine ? t('You') : f.name || `@${f.handle}`} at={f.earned_at} to={f.mine ? '/me#badges' : `/u/${f.handle}`} />
       <div className={styles.won}>
         <MedalFace medal={medal} size="lg" />
         <p className={styles.medalName}>{medal.name}</p>
@@ -115,7 +116,7 @@ function NoteCard({ n, me }: { n: Note; me?: string }) {
   if (n.kind === 'follow' && me && n.handle) act = <FollowIcon me={me} handle={n.handle} name={n.name ?? n.handle} />;
   else if (n.kind === 'streak_ask')
     act = (
-      <Link to="/players#friend-streaks" className={styles.follow} aria-label={`Answer ${n.name ?? 'the'} streak ask`}>
+      <Link to="/players#friend-streaks" className={styles.follow} aria-label={n.name ? t('Answer {name} streak ask', { name: n.name }) : t('Answer the streak ask')}>
         <Icon icon={Flame} size={18} />
       </Link>
     );
@@ -126,7 +127,7 @@ function NoteCard({ n, me }: { n: Note; me?: string }) {
         <span className={styles.who}>
           <span className={styles.told}>
             {d.text}
-            {n.unread && <span className={styles.srOnly}> New.</span>}
+            {n.unread && <span className={styles.srOnly}> {t('New.')}</span>}
           </span>
           <time className={styles.when} dateTime={n.created_at}>
             {ago(n.created_at)}
@@ -162,7 +163,7 @@ function InviteIcon({ me, p }: { me: string; p: PlayerRef }) {
     <button
       type="button"
       className={styles.invite}
-      aria-label={state === 'failed' ? `Invite ${who} again` : `Play a puzzle with ${who}`}
+      aria-label={state === 'failed' ? t('Invite {who} again', { who }) : t('Play a puzzle with {who}', { who })}
       data-failed={state === 'failed' || undefined}
       disabled={state === 'sending'}
       onClick={() => void go()}
@@ -188,12 +189,12 @@ function FollowStrip({ people, me, myHandle }: { people: PlayerRef[]; me?: strin
     <section className={styles.strip} aria-labelledby="strip-title">
       <div className={styles.stripHead}>
         <h2 id="strip-title" className={styles.stripTitle}>
-          People to follow
+          {t('People to follow')}
         </h2>
         {online.size > 0 && (
           <span className={styles.online}>
             <span className={styles.liveDot} aria-hidden="true" />
-            {online.size} online
+            {t('{n} online', { n: online.size })}
           </span>
         )}
       </div>
@@ -203,7 +204,7 @@ function FollowStrip({ people, me, myHandle }: { people: PlayerRef[]; me?: strin
             <Link to={`/u/${p.handle}`} className={styles.personLink}>
               <span className={styles.face}>
                 <Avatar handle={p.handle} size={56} />
-                {p.on && <span className={styles.onDot} role="img" aria-label="Online now" />}
+                {p.on && <span className={styles.onDot} role="img" aria-label={t('Online now')} />}
               </span>
               <span className={styles.personName}>{p.name || `@${p.handle}`}</span>
             </Link>
@@ -213,7 +214,7 @@ function FollowStrip({ people, me, myHandle }: { people: PlayerRef[]; me?: strin
                 <InviteIcon me={me} p={p} />
               </span>
             ) : (
-              <Link to={`/signin?next=${encodeURIComponent(`/u/${p.handle}`)}`} className={styles.follow} aria-label={`Sign in to follow ${p.name || p.handle}`}>
+              <Link to={`/signin?next=${encodeURIComponent(`/u/${p.handle}`)}`} className={styles.follow} aria-label={t('Sign in to follow {name}', { name: p.name || p.handle })}>
                 <Icon icon={UserPlus} size={18} />
               </Link>
             )}
@@ -276,10 +277,10 @@ export function PeopleFeed({ me, myHandle, suggested }: { me?: string; myHandle?
   }, [scope, list, me]);
   const strip = <FollowStrip people={suggested} me={me} myHandle={myHandle} />;
   return (
-    <section className={styles.feed} aria-label="Feed">
+    <section className={styles.feed} aria-label={t('Feed')}>
       {me && (
         <div className={styles.switch}>
-          <Segmented label="Whose news" hideLabel options={[['friends', 'Your people'], ['world', 'Top players']] as const} value={scope} onChange={setScope} />
+          <Segmented label={t('Whose news')} hideLabel options={[['friends', t('Your people')], ['world', t('Top players')]] as const} value={scope} onChange={setScope} />
         </div>
       )}
       {/* People to follow never wait on the feed: whoever is on the game can be found while it loads. */}
@@ -290,12 +291,12 @@ export function PeopleFeed({ me, myHandle, suggested }: { me?: string; myHandle?
         </>
       ) : list === 'failed' ? (
         <>
-          <p className={styles.muted}>The feed did not load. Try again in a moment.</p>
+          <p className={styles.muted}>{t('This did not load. Try again in a moment.')}</p>
           {strip}
         </>
       ) : list.length === 0 ? (
         <>
-          <p className={styles.muted}>{scope === 'friends' ? 'Quiet this month. Follow a few players and their medals land here.' : 'No medals won this month yet.'}</p>
+          <p className={styles.muted}>{scope === 'friends' ? t('Quiet this month. Follow a few players and their medals land here.') : t('No medals won this month yet.')}</p>
           {strip}
         </>
       ) : (

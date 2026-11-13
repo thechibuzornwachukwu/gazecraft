@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { pick } from '../copy';
 import { levelFor } from '../engine/level';
+import { num, t } from '../i18n';
 import { Ring } from './Ring';
 import styles from './LevelBadge.module.css';
+import { rankName } from '../i18n/gameNames';
 
 type Props = {
   /** Lifetime points. Missing, null or not a number: level 1 with an empty ring. */
@@ -34,7 +36,9 @@ export function LevelBadge({ points, size = 'md', levelUp = false, className }: 
   }, [levelUp, level]);
 
   const line = useMemo(() => pick('levelUp', { n: level }), [level]);
-  const label = levelUp ? `Level ${level}, ${rank}. Level reached.` : `Level ${level}, ${rank}. ${into} of ${need} points to level ${level + 1}.`;
+  const label = levelUp
+    ? t('Level {level}, {rank}. Level reached.', { level, rank })
+    : t('Level {level}, {rank}. {into} of {need} points to level {next}.', { level, rank, into: num(into), need: num(need), next: level + 1 });
 
   return (
     <span className={[styles.badge, styles[size], className].filter(Boolean).join(' ')} data-level={level} data-level-up={levelUp || undefined}>
@@ -45,10 +49,10 @@ export function LevelBadge({ points, size = 'md', levelUp = false, className }: 
         </span>
       </span>
       <span className={styles.text}>
-        <span className={styles.rank}>{rank}</span>
+        <span className={styles.rank}>{rankName(rank)}</span>
         {size === 'md' && (
           <span className={styles.points} aria-hidden={levelUp ? undefined : true}>
-            {levelUp ? line : `${into} / ${need}`}
+            {levelUp ? line : `${num(into)} / ${num(need)}`}
           </span>
         )}
       </span>

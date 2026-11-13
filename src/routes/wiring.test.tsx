@@ -410,7 +410,7 @@ describe("Owner page", () => {
     world.api.fetchHiddenPuzzles = fail;
     open();
     expect(
-      await screen.findByText("This list did not load. Try again in a moment."),
+      await screen.findByText("This did not load. Try again in a moment."),
     ).toBeInTheDocument();
     expect(screen.queryByText(/Nothing is hidden/)).toBeNull();
     expect(

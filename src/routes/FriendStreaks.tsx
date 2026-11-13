@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Avatar } from '../components/Avatar';
 import { Button } from '../components/Button';
+import { t, plural } from '../i18n';
 import { SkeletonList } from '../components/Skeleton';
 import { askFriendStreak, endFriendStreak, myFriendStreaks, myStreakLink, nudgeFriend, type FriendStreak } from '../lib/api';
 import { copyText } from '../lib/share';
@@ -9,12 +10,12 @@ import styles from './Players.module.css';
 
 /** Whose move it is today, in a few words. */
 function status(f: FriendStreak): string {
-  if (f.state === 'incoming') return 'Wants a streak with you';
-  if (f.state === 'outgoing') return 'Asked. Waiting for a yes';
-  if (f.you_today && f.them_today) return 'Both played today';
-  if (f.them_today) return 'Played today. Your turn';
-  if (f.you_today) return 'You played. Waiting on them';
-  return 'Nobody has played today yet';
+  if (f.state === 'incoming') return t('Wants a streak with you');
+  if (f.state === 'outgoing') return t('Asked. Waiting for a yes');
+  if (f.you_today && f.them_today) return t('Both played today');
+  if (f.them_today) return t('Played today. Your turn');
+  if (f.you_today) return t('You played. Waiting on them');
+  return t('Nobody has played today yet');
 }
 
 /** Your friend streaks, and the list every screen reads them from. */
@@ -51,9 +52,9 @@ export function FriendStreaks({ quiet = false }: { /** Not unlocked yet: show no
     setNote('');
     if (what === 'yes') {
       const r = await askFriendStreak(handle).catch(() => 'failed' as const);
-      if (r === 'limit') setNote('You can keep 5 friend streaks at once. End one to start another.');
-      else if (r === 'failed') setNote('That did not work. Try again.');
-    } else if (!(await endFriendStreak(handle).catch(() => false))) setNote('That did not work. Try again.');
+      if (r === 'limit') setNote(t('You can keep 5 friend streaks at once. End one to start another.'));
+      else if (r === 'failed') setNote(t('That did not work. Try again.'));
+    } else if (!(await endFriendStreak(handle).catch(() => false))) setNote(t('That did not work. Try again.'));
     setBusy('');
     reload();
   };
@@ -65,10 +66,10 @@ export function FriendStreaks({ quiet = false }: { /** Not unlocked yet: show no
     setNudged((n) => [...n, f.handle]);
     setNote(
       r.ok || r.error === 'already_nudged'
-        ? `${f.name} has been nudged. One a day.`
+        ? t('{name} has been nudged. One a day.', { name: f.name })
         : r.error === 'already_played'
-          ? `${f.name} has just played.`
-          : 'The nudge did not go out. Try again later.',
+          ? t('{name} has just played.', { name: f.name })
+          : t('The nudge did not go out. Try again later.'),
     );
     if (r.error === 'already_played') reload();
   };
@@ -77,9 +78,9 @@ export function FriendStreaks({ quiet = false }: { /** Not unlocked yet: show no
   const invite = async () => {
     setNote('');
     const code = await myStreakLink().catch(() => null);
-    if (!code) return setNote('We could not make your link. Try again.');
+    if (!code) return setNote(t('We could not make your link. Try again.'));
     const url = `${window.location.origin}/s/${code}`;
-    const text = 'Keep a daily streak with me on Gazecraft. We both play, it grows.';
+    const text = t('Keep a daily streak with me on Gazecraft. We both play, it grows.');
     if (navigator.share && window.matchMedia('(pointer: coarse)').matches) {
       try {
         await navigator.share({ title: 'Gazecraft', text, url });
@@ -88,7 +89,7 @@ export function FriendStreaks({ quiet = false }: { /** Not unlocked yet: show no
         /* closed the sheet: fall back to copying */
       }
     }
-    setNote((await copyText(`${text} ${url}`)) ? 'Link copied. Send it to a friend. Their yes starts the streak.' : url);
+    setNote((await copyText(`${text} ${url}`)) ? t('Link copied. Send it to a friend. Their yes starts the streak.') : url);
   };
 
   if (quiet && !rows?.length) return null;
@@ -96,18 +97,17 @@ export function FriendStreaks({ quiet = false }: { /** Not unlocked yet: show no
     <section id="friend-streaks" className={styles.section} aria-labelledby="friend-streaks-title">
       <div className={styles.sectionHead}>
         <h2 id="friend-streaks-title" className={styles.h2}>
-          Friend streaks
+          {t('Friend streaks')}
         </h2>
         <Button variant="secondary" size="sm" onClick={invite}>
-          Invite a friend
+          {t('Invite a friend')}
         </Button>
       </div>
       {rows == null ? (
         <SkeletonList rows={2} avatar={40} sub />
       ) : rows.length === 0 ? (
         <p className={styles.muted}>
-          A streak you share with a friend. It grows each day you both play the daily. Send your link to anyone, or open a player's profile and
-          choose Start a streak.
+          {t('A streak you share with a friend. It grows each day you both play the daily. Send your link to anyone, or open a player\'s profile and choose Start a streak.')}
         </p>
       ) : (
         <ul className={styles.list}>
@@ -119,11 +119,11 @@ export function FriendStreaks({ quiet = false }: { /** Not unlocked yet: show no
                   <span className={styles.name}>{f.name}</span>
                   <span className={styles.handle}>{status(f)}</span>
                 </span>
-                {f.state === 'active' && <span className={styles.stat}>{f.streak === 1 ? '1 day' : `${f.streak} days`}</span>}
+                {f.state === 'active' && <span className={styles.stat}>{plural(f.streak, '{n} day', '{n} days')}</span>}
               </Link>
               {f.state === 'incoming' && (
                 <button type="button" className={styles.follow} aria-pressed="true" disabled={busy === f.handle} onClick={() => void act(f.handle, 'yes')}>
-                  Start
+                  {t('Start')}
                 </button>
               )}
               {f.state === 'active' && f.you_today && !f.them_today && (
@@ -131,20 +131,20 @@ export function FriendStreaks({ quiet = false }: { /** Not unlocked yet: show no
                   type="button"
                   className={styles.follow}
                   disabled={busy === f.handle || nudged.includes(f.handle)}
-                  aria-label={`Nudge ${f.name}`}
+                  aria-label={t('Nudge {name}', { name: f.name })}
                   onClick={() => void nudge(f)}
                 >
-                  {nudged.includes(f.handle) ? 'Nudged' : 'Nudge'}
+                  {nudged.includes(f.handle) ? t('Nudged') : t('Nudge')}
                 </button>
               )}
               <button
                 type="button"
                 className={styles.follow}
                 disabled={busy === f.handle}
-                aria-label={`${f.state === 'active' ? 'End streak with' : f.state === 'incoming' ? 'Say no to' : 'Take back ask to'} ${f.name}`}
+                aria-label={t(f.state === 'active' ? 'End streak with {name}' : f.state === 'incoming' ? 'Say no to {name}' : 'Take back ask to {name}', { name: f.name })}
                 onClick={() => void act(f.handle, 'end')}
               >
-                {f.state === 'active' ? 'End' : f.state === 'incoming' ? 'No' : 'Cancel'}
+                {f.state === 'active' ? t('End') : f.state === 'incoming' ? t('No') : t('Cancel')}
               </button>
             </li>
           ))}

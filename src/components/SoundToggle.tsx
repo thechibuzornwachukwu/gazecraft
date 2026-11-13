@@ -2,6 +2,7 @@ import { useSyncExternalStore } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
 import { Icon } from './Icon';
 import { setSound, soundOn, subscribeSound } from '../lib/sound';
+import { t } from '../i18n';
 // Same 36 square control as the theme toggle.
 import styles from './ThemeToggle.module.css';
 
@@ -12,9 +13,9 @@ export function SoundToggle() {
     <button
       type="button"
       className={styles.toggle}
-      aria-label="Sound"
+      aria-label={t('Sound')}
       aria-pressed={on}
-      title={on ? 'Mute sounds' : 'Turn sounds on'}
+      title={on ? t('Mute sounds') : t('Turn sounds on')}
       onClick={() => setSound(!on)}
     >
       <Icon icon={on ? Volume2 : VolumeX} size={18} />

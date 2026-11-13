@@ -226,7 +226,6 @@ describe('Leaders', () => {
   it('a guest sees the board and the way to get on it', async () => {
     open('/leaderboard');
     expect(await screen.findByText('Nobody is on it yet. Finish the whole puzzle signed in and you are.')).toBeInTheDocument();
-    expect(screen.getByText(/Guest scores stay on this device/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/signin?next=%2Fleaderboard');
     expectNoHoles();
   });
@@ -234,7 +233,7 @@ describe('Leaders', () => {
   it('a board that did not load says so, and a reply that is not a list is an empty board', async () => {
     world.api.fetchGameBoard = fail;
     open('/leaderboard');
-    expect(await screen.findByText('The board did not load. Try again in a moment.')).toBeInTheDocument();
+    expect(await screen.findByText('This did not load. Try again in a moment.')).toBeInTheDocument();
     cleanup();
     world.api.fetchGameBoard = ok(null);
     open('/leaderboard');
@@ -305,7 +304,7 @@ describe('Players', () => {
   it('a feed that did not load says so, and never claims to be quiet', async () => {
     world.api.squadFeed = fail;
     open('/players');
-    expect(await screen.findByText('The feed did not load. Try again in a moment.')).toBeInTheDocument();
+    expect(await screen.findByText('This did not load. Try again in a moment.')).toBeInTheDocument();
     expect(screen.queryByText(/No medals won/)).toBeNull();
   });
 
@@ -340,7 +339,7 @@ describe('Players', () => {
     first.unmount();
     open('/players#circles');
     const region = await screen.findByRole('region', { name: 'Circles' });
-    expect(await within(region).findByText(/A circle is a private daily table/)).toBeInTheDocument();
+    expect(await within(region).findByText(/A private board for your family/)).toBeInTheDocument();
     expect(within(region).getByRole('link', { name: 'Start a circle' })).toHaveAttribute('href', '/circles');
   });
 
@@ -360,7 +359,7 @@ describe('Players', () => {
     world.api.myCircles = fail;
     open('/players#circles');
     const region = await screen.findByRole('region', { name: 'Circles' });
-    expect(await within(region).findByText('This list did not load. Try again in a moment.')).toBeInTheDocument();
+    expect(await within(region).findByText('This did not load. Try again in a moment.')).toBeInTheDocument();
   });
 
   it('a player already in a friend streak sees it whatever the count says', async () => {
@@ -512,13 +511,13 @@ describe('the league on Your League', () => {
     cleanup();
     world.api.fetchMyLeague = fail;
     open('/leaderboard');
-    expect(await screen.findByText('The league did not load. Try again in a moment.')).toBeInTheDocument();
+    expect(await screen.findByText('This did not load. Try again in a moment.')).toBeInTheDocument();
   });
 
   it('a guest has the board of the pack and no league', async () => {
     world.api.fetchMyLeague = ok(LEAGUE);
     open('/leaderboard');
-    await screen.findByText(/Guest scores stay on this device/);
+    await screen.findByText(/to get on the board/);
     expect(screen.queryByRole('radio', { name: 'This week' })).toBeNull();
     expect(screen.queryByRole('heading', { name: /league/ })).toBeNull();
   });

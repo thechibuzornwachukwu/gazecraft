@@ -5,6 +5,7 @@ import { buttonClass } from '../components/buttonClass';
 import { SkeletonList } from '../components/Skeleton';
 import { fetchFollowing, inviteToRoom, myGameInvites, type GameInvite, type PlayerRef } from '../lib/api';
 import { useAuth } from '../lib/auth';
+import { t } from '../i18n';
 import styles from './GameInvites.module.css';
 
 /** Where a game lives: curated puzzles by id, custom ones by their share code. */
@@ -27,16 +28,16 @@ export function GameInvites() {
   }, [me]);
   if (!me || rows.length === 0) return null;
   return (
-    <section className={styles.invites} aria-label="Invites">
+    <section className={styles.invites} aria-label={t('Invites')}>
       {rows.map((i) => (
         <div key={`${i.handle}-${i.room_code}`} className={styles.invite}>
           <Avatar handle={i.handle} size={40} />
           <span className={styles.text}>
-            <span className={styles.title}>{i.name} wants to play together</span>
-            <span className={styles.sub}>{i.title}. They are in the room now.</span>
+            <span className={styles.title}>{i.name} {t('wants to play together')}</span>
+            <span className={styles.sub}>{i.title}. {t('They are in the room now.')}</span>
           </span>
           <Link to={`${gamePath(i.game_id)}?room=${i.room_code}`} className={buttonClass('primary', 'sm')}>
-            Join
+            {t('Join')}
           </Link>
         </div>
       ))}
@@ -73,21 +74,21 @@ export function InviteFollowing({ gameId, room }: { gameId: string; room: string
   return (
     <div className={styles.following}>
       <button type="button" className={styles.toggle} aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        Invite someone you follow
+        {t('Invite someone you follow')}
       </button>
       {open &&
         (people == null ? (
           <SkeletonList rows={3} avatar={32} stat={false} />
         ) : people.length === 0 ? (
           <p className={styles.sub}>
-            You follow nobody yet.{' '}
+            {t('You follow nobody yet.')}{' '}
             <Link to="/players" className={styles.inline}>
-              Find players
+              {t('Find players')}
             </Link>
-            , or send the invite link.
+            , {t('or send the invite link.')}
           </p>
         ) : (
-          <ul className={styles.people} aria-label="People you follow">
+          <ul className={styles.people} aria-label={t('People you follow')}>
             {people.slice(0, 12).map((p) => (
               <li key={p.handle} className={styles.person}>
                 <Avatar handle={p.handle} size={24} />
@@ -96,10 +97,10 @@ export function InviteFollowing({ gameId, room }: { gameId: string; room: string
                   type="button"
                   className={styles.ask}
                   disabled={sent[p.handle] === 'sending' || sent[p.handle] === 'sent'}
-                  aria-label={`Invite ${p.name}`}
+                  aria-label={t('Invite {name}', { name: p.name })}
                   onClick={() => void ask(p)}
                 >
-                  {sent[p.handle] === 'sent' ? 'Invited' : sent[p.handle] === 'failed' ? 'Try again' : 'Invite'}
+                  {sent[p.handle] === 'sent' ? t('Invited') : sent[p.handle] === 'failed' ? t('Try again') : t('Invite')}
                 </button>
               </li>
             ))}

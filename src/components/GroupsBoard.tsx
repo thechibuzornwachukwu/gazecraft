@@ -4,6 +4,7 @@ import rawGroups from '../../data/groups.json';
 import { decodePick, encodePick, TILES } from '../engine/groups';
 import { Icon } from './Icon';
 import type { PuzzleProps } from './Puzzle';
+import { t } from '../i18n';
 import styles from './GroupsBoard.module.css';
 
 /** Each word's picture (Fluent Emoji 3D, MIT: public/icons/fluent/LICENSE.txt). */
@@ -15,7 +16,7 @@ const iconOf = (w: string): string | null => (ICONS[w] ? `/icons/fluent/${ICONS[
  * after the end, the sets missed are laid out the same way, muted. It speaks the same (a, b) as every board
  * (src/engine/groups.ts), so the session, the log and the server's replay are the ones every type uses.
  */
-export function GroupsBoard({ chars, found, missed, hintLi, disabled, onPick, describedBy, label = 'Word tiles', setNames = {} }: PuzzleProps) {
+export function GroupsBoard({ chars, found, missed, hintLi, disabled, onPick, describedBy, label = t('Word tiles'), setNames = {} }: PuzzleProps) {
   // The words, one a line in the text.
   const tiles = useMemo(() => chars.map((c) => c.ch).join('').split('\n'), [chars]);
   const [sel, setSel] = useState<number[]>([]);
@@ -68,10 +69,10 @@ export function GroupsBoard({ chars, found, missed, hintLi, disabled, onPick, de
       )}
       {!disabled && open.length > 0 && (
         <div className={styles.actions}>
-          <button type="button" className={styles.clear} aria-label="Clear the picked words" disabled={sel.length === 0} onClick={() => setSel([])}>
+          <button type="button" className={styles.clear} aria-label={t('Clear the picked words')} disabled={sel.length === 0} onClick={() => setSel([])}>
             <Icon icon={X} size={18} />
           </button>
-          <button type="button" className={styles.check} aria-label={sel.length === 4 ? 'Check these 4 words' : `Pick ${4 - sel.length} more to check`} disabled={sel.length !== 4} onClick={check}>
+          <button type="button" className={styles.check} aria-label={sel.length === 4 ? t('Check these 4 words') : t('Pick {n} more to check', { n: 4 - sel.length })} disabled={sel.length !== 4} onClick={check}>
             <Icon icon={Check} size={20} />
           </button>
         </div>

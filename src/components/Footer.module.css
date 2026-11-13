@@ -4,22 +4,12 @@
 .inner {
   max-width: var(--page-max);
   margin: 0 auto;
-  padding: var(--space-10) var(--gutter);
+  padding: var(--space-6) var(--gutter);
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   gap: var(--space-6);
   flex-wrap: wrap;
-}
-.cta {
-  composes: h2 from '../styles/type.module.css';
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  transition: color var(--dur-base) var(--ease-std);
-}
-.cta:hover {
-  color: var(--fg-strong);
 }
 .meta {
   display: flex;

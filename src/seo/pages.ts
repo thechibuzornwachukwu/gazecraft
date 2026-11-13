@@ -268,7 +268,7 @@ export function pageFor(path: string, origin: string): Page {
 
   const help = clean.match(/^\/help\/([a-z0-9-]{2,80})$/);
   if (help) {
-    const a = helpArticle(help[1] ?? '');
+    const a = helpArticle(help[1] ?? '', HELP_ARTICLES);
     return a ? helpPage(a) : { ...home(origin), canonical: clean, noindex: true };
   }
 

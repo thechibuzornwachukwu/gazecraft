@@ -16,7 +16,9 @@ import { SkeletonList } from '../components/Skeleton';
 import { Segmented } from '../components/Segmented';
 import { useAuth } from '../lib/auth';
 import { Avatar } from '../components/Avatar';
+import { t, plural, num } from '../i18n';
 import styles from './Leaderboard.module.css';
+import { tierLabel, titleOf } from '../i18n/gameNames';
 
 
 function Board({ rows, me, myHandle, empty, emptyTitle }: { rows: BoardRow[]; me: MyRank | null; myHandle?: string; empty: ReactNode; emptyTitle: string }) {
@@ -34,23 +36,23 @@ function Board({ rows, me, myHandle, empty, emptyTitle }: { rows: BoardRow[]; me
       <Link to={`/u/${r.handle}`} className={styles.handle}>
         <Avatar handle={r.handle} size={28} />
         @{r.handle}
-        {mine && <span className={styles.you}>You</span>}
+        {mine && <span className={styles.you}>{t('You')}</span>}
       </Link>
-      <span className={styles.found}>{r.total == null ? `${r.found} found` : `${r.found}/${r.total}`}</span>
+      <span className={styles.found}>{r.total == null ? t('{n} found', { n: r.found }) : `${r.found}/${r.total}`}</span>
       <span className={styles.time}>{formatTime(r.secs)}</span>
-      <span className={styles.score}>{r.score.toLocaleString('en-US')}</span>
+      <span className={styles.score}>{num(r.score)}</span>
     </li>
   );
   return (
     <>
-      <ol className={styles.board} aria-label="Top scores">
+      <ol className={styles.board} aria-label={t('Top scores')}>
         {rows.map((r) => row(r, r.handle === myHandle))}
         {/* Your own row is pinned: it holds to the edge of the screen while the board scrolls past. Below the top, it is set apart. */}
         {me && !meInTop && row(me, true, true)}
       </ol>
       {me && Number.isFinite(me.rank) && Number.isFinite(me.players) && (
         <p className={styles.meta}>
-          You are #{me.rank} of {me.players}.
+          {t('You are #{rank} of {players}.', { rank: me.rank, players: me.players })}
         </p>
       )}
     </>
@@ -85,20 +87,20 @@ function CaseRanks({ myHandle }: { myHandle?: string }) {
       <div className={styles.head}>
         <div className={styles.headText}>
           <h2 id="case-title" className={styles.h2}>
-            {g.title}
+            {titleOf(g.id, g.title)}
           </h2>
         </div>
         <Button to={`/play/${id}`} variant="secondary" size="sm">
-          Play it
+          {t('Play it')}
         </Button>
       </div>
       {rows == null && <SkeletonList rows={5} avatar={28} />}
       {rows === 'error' && (
         <PartnerNote moment="error" layout="screen" className={styles.empty}>
-          <p>The board did not load. Try again in a moment.</p>
+          <p>{t('This did not load. Try again in a moment.')}</p>
         </PartnerNote>
       )}
-      {Array.isArray(rows) && <Board rows={rows} me={null} myHandle={myHandle} emptyTitle="The board is open" empty="Nobody is on it yet. Finish the whole puzzle signed in and you are." />}
+      {Array.isArray(rows) && <Board rows={rows} me={null} myHandle={myHandle} emptyTitle={t('The board is open')} empty={t('Nobody is on it yet. Finish the whole puzzle signed in and you are.')} />}
     </section>
   );
 }
@@ -108,11 +110,10 @@ function GuestNote({ next }: { next: string }) {
   if (auth.profile || auth.loading) return null;
   return (
     <p className={styles.guest}>
-      Guest scores stay on this device and are never ranked.{' '}
       <Link to={`/signin?next=${encodeURIComponent(next)}`} className={styles.inline}>
-        Sign in
+        {t('Sign in')}
       </Link>{' '}
-      to get on the board.
+      {t('to get on the board.')}
     </p>
   );
 }
@@ -128,16 +129,16 @@ export function Leaderboard() {
   const board = !signedIn ? 'pack' : asked === 'pack' || asked === 'friends' ? asked : 'league';
   return (
     <div className={styles.page}>
-      <PageHeader title="Your League" />
+      <PageHeader title={t('Your League')} />
       {signedIn && (
         <div className={styles.switch}>
           <Segmented
-            label="Board"
+            label={t('Board')}
             hideLabel
             options={[
-              ['league', 'This week'],
-              ['friends', 'Friends'],
-              ['pack', 'This pack'],
+              ['league', t('This week')],
+              ['friends', t('Friends')],
+              ['pack', t('This pack')],
             ]}
             value={board}
             onChange={(v) => setParams(v === 'league' ? {} : { board: v }, { replace: true })}
@@ -175,30 +176,30 @@ function FriendsBoard() {
   if (rows === 'failed') {
     return (
       <PartnerNote moment="error" layout="screen" className={styles.empty}>
-        <p>Your friends did not load. Try again in a moment.</p>
+        <p>{t('This did not load. Try again in a moment.')}</p>
       </PartnerNote>
     );
   }
   if (rows.length <= 1) {
     return (
-      <PartnerNote layout="screen" title="Just you so far" className={styles.empty}>
-        <Button to="/players#find">Find people</Button>
+      <PartnerNote layout="screen" title={t('Just you so far')} className={styles.empty}>
+        <Button to="/players#find">{t('Find people')}</Button>
       </PartnerNote>
     );
   }
   return (
-    <section className={styles.section} aria-label="Friends">
-      <ol className={styles.board} aria-label="Friends this week">
+    <section className={styles.section} aria-label={t('Friends')}>
+      <ol className={styles.board} aria-label={t('Friends this week')}>
         {rows.map((r) => (
           <li key={r.handle} className={styles.leagueRow} data-mine={r.me || undefined}>
             <span className={styles.rank}>{String(r.place).padStart(2, '0')}</span>
             <Link to={`/u/${r.handle}`} className={styles.handle}>
               <Avatar handle={r.handle} size={28} />
               @{r.handle}
-              {r.me && <span className={styles.you}>You</span>}
+              {r.me && <span className={styles.you}>{t('You')}</span>}
             </Link>
             <span className={styles.upMark} />
-            <span className={styles.score}>{r.points.toLocaleString('en-US')}</span>
+            <span className={styles.score}>{num(r.points)}</span>
           </li>
         ))}
       </ol>
@@ -227,15 +228,15 @@ function LeagueBoard() {
   if (load.status === 'error') {
     return (
       <PartnerNote moment="error" layout="screen" className={styles.empty}>
-        <p>The league did not load. Try again in a moment.</p>
+        <p>{t('This did not load. Try again in a moment.')}</p>
       </PartnerNote>
     );
   }
   if (load.status === 'left') {
     return (
-      <PartnerNote layout="screen" title="Out of the league" className={styles.empty}>
+      <PartnerNote layout="screen" title={t('Out of the league')} className={styles.empty}>
         <Button onClick={() => act(joinLeague)} disabled={busy}>
-          Join the league
+          {t('Join the league')}
         </Button>
       </PartnerNote>
     );
@@ -244,9 +245,9 @@ function LeagueBoard() {
   return (
     <section className={styles.section} aria-labelledby="league-title" data-league={tierName(league.tier).toLowerCase()}>
       <h2 id="league-title" className={styles.h2}>
-        {tierName(league.tier)} league
+        {t('{tier} league', { tier: tierLabel(tierName(league.tier)) })}
       </h2>
-      <ol className={styles.board} aria-label="This week">
+      <ol className={styles.board} aria-label={t('This week')}>
         {league.rows.map((r) => {
           const up = goesUp(r, league.tier);
           return (
@@ -255,16 +256,16 @@ function LeagueBoard() {
               <Link to={`/u/${r.handle}`} className={styles.handle}>
                 <Avatar handle={r.handle} size={28} />
                 @{r.handle}
-                {r.me && <span className={styles.you}>You</span>}
+                {r.me && <span className={styles.you}>{t('You')}</span>}
               </Link>
-              <span className={styles.upMark}>{up && <Icon icon={ChevronsUp} size={16} label="Goes up" />}</span>
-              <span className={styles.score}>{r.points.toLocaleString('en-US')}</span>
+              <span className={styles.upMark}>{up && <Icon icon={ChevronsUp} size={16} label={t('Goes up')} />}</span>
+              <span className={styles.score}>{num(r.points)}</span>
             </li>
           );
         })}
       </ol>
       <p className={styles.leave}>
-        <TextLink onClick={() => act(leaveLeague)}>Leave the league</TextLink>
+        <TextLink onClick={() => act(leaveLeague)}>{t('Leave the league')}</TextLink>
       </p>
     </section>
   );
@@ -273,24 +274,25 @@ function LeagueBoard() {
 function TeamBoard({ rows, myHandle }: { rows: TeamRow[]; myHandle?: string }) {
   if (rows.length === 0) {
     return (
-      <PartnerNote layout="screen" title="No teams yet" className={styles.empty}>
-        <p>No teams on this puzzle yet. Open it, choose Play together and send the invite.</p>
+      <PartnerNote layout="screen" title={t('No teams yet')} className={styles.empty}>
+        <p>{t('No teams on this puzzle yet. Open it, choose Play together and send the invite.')}</p>
       </PartnerNote>
     );
   }
+  const team = t('Team');
   return (
-    <ol className={styles.board} aria-label="Top teams">
+    <ol className={styles.board} aria-label={t('Top teams')}>
       {rows.map((t) => (
         <li key={t.rank} className={styles.team} data-mine={t.players.some((p) => p.handle === myHandle) || undefined}>
           <span className={styles.rank}>{String(t.rank).padStart(2, '0')}</span>
-          <ul className={styles.members} aria-label="Team">
+          <ul className={styles.members} aria-label={team}>
             {t.players.map((p) => (
               <li key={p.handle} className={styles.member}>
                 <Link to={`/u/${p.handle}`} className={styles.handle}>
                   <Avatar handle={p.handle} size={28} />
                   @{p.handle}
                 </Link>
-                <span className={styles.found}>{p.finds === 1 ? '1 word' : `${p.finds} words`}</span>
+                <span className={styles.found}>{plural(p.finds, '{n} word', '{n} words')}</span>
               </li>
             ))}
           </ul>
@@ -331,18 +333,18 @@ export function GameLeaderboard() {
 
   return (
     <div className={styles.page}>
-      <Link to="/leaderboard" className={styles.back} aria-label="Your League">
+      <Link to="/leaderboard" className={styles.back} aria-label={t('Your League')}>
         <Icon icon={ChevronLeft} size={20} />
       </Link>
       <h1 className={styles.title}>
-        {g.title}.
+        {titleOf(g.id, g.title)}.
         <br />
-        <span className={styles.sub}>{together ? 'Best teams.' : 'Best scores.'}</span>
+        <span className={styles.sub}>{together ? t('Best teams.') : t('Best scores.')}</span>
       </h1>
-      <section className={styles.section} aria-label={`${g.title} board`}>
+      <section className={styles.section} aria-label={t('{title} board', { title: titleOf(g.id, g.title) })}>
         <div className={styles.switch}>
           <Segmented
-            label="Board"
+            label={t('Board')}
             hideLabel
             options={[
               ['solo', 'Solo'],
@@ -355,20 +357,20 @@ export function GameLeaderboard() {
         {state.status === 'loading' && <SkeletonList rows={8} avatar={28} />}
         {state.status === 'error' && (
           <PartnerNote moment="error" layout="screen" className={styles.empty}>
-            <p>The board did not load. Try again in a moment.</p>
+            <p>{t('This did not load. Try again in a moment.')}</p>
           </PartnerNote>
         )}
         {state.status === 'solo' && (
-          <Board rows={state.rows} me={null} myHandle={auth.profile?.handle} emptyTitle="The board is open" empty={<>No verified scores on this puzzle yet.</>} />
+          <Board rows={state.rows} me={null} myHandle={auth.profile?.handle} emptyTitle={t('The board is open')} empty={t('No verified scores on this puzzle yet.')} />
         )}
         {state.status === 'together' && <TeamBoard rows={state.rows} myHandle={auth.profile?.handle} />}
         {together && (
           <p className={styles.meta}>
-            Most words found together, then the faster team. Each player's count is the words they found first. Guests are not ranked.
+            {t('Most words found together, then the faster team. Each player\'s count is the words they found first. Guests are not ranked.')}
           </p>
         )}
         <div>
-          <Button to={`/play/${g.id}`}>Play {g.title}</Button>
+          <Button to={`/play/${g.id}`}>{t('Play {title}', { title: titleOf(g.id, g.title) })}</Button>
         </div>
         <GuestNote next={`/leaderboard/${g.id}`} />
       </section>

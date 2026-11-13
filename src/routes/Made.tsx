@@ -4,6 +4,7 @@ import { PageHeader } from '../components/PageHeader';
 import { PartnerNote } from '../components/PartnerNote';
 import { SkeletonList } from '../components/Skeleton';
 import { TextLink } from '../components/TextLink';
+import { t, plural } from '../i18n';
 import { TopicIcon } from '../components/TopicIcon';
 import { fetchPublicPuzzles, type PublicPuzzle } from '../lib/api';
 import styles from './Make.module.css';
@@ -23,19 +24,19 @@ export function Made() {
 
   return (
     <div className={styles.page}>
-      <PageHeader title="Made by players" action={<TextLink to="/make">Make one</TextLink>} />
+      <PageHeader title={t('Made by players')} action={<TextLink to="/make">{t('Make one')}</TextLink>} />
       {list == null ? (
         <SkeletonList rows={6} />
       ) : list === 'failed' ? (
         <PartnerNote moment="error" layout="screen">
-          <p>The list did not load. Try again in a moment.</p>
+          <p>{t('This did not load. Try again in a moment.')}</p>
         </PartnerNote>
       ) : list.length === 0 ? (
-        <PartnerNote layout="screen" title="Nothing here yet">
-          <p>Puzzles players make show here once they are published.</p>
+        <PartnerNote layout="screen" title={t('Nothing here yet')}>
+          <p>{t('Puzzles players make show here once they are published.')}</p>
         </PartnerNote>
       ) : (
-        <ul className={styles.list} aria-label="Made by players" data-made>
+        <ul className={styles.list} aria-label={t('Made by players')} data-made>
           {list.map((p) => (
             <li key={p.code}>
               <Link to={`/p/${p.code}`} className={styles.item}>
@@ -44,7 +45,7 @@ export function Made() {
                   {p.title}
                 </span>
                 <span className={styles.itemMeta}>
-                  @{p.maker} · {p.words} words · {p.plays} {p.plays === 1 ? 'play' : 'plays'} · {p.ups} liked it
+                  {t('@{maker} · {words} words · {plays} · {ups} liked it', { maker: p.maker, words: p.words, plays: plural(p.plays, '{n} play', '{n} plays'), ups: p.ups })}
                 </span>
               </Link>
             </li>
