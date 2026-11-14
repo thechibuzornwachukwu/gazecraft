@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { recordScore } from './scoreStore';
 import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import { Partner } from '../components/Partner';
@@ -38,7 +39,7 @@ beforeEach(() => {
 
 describe('a guest', () => {
   it('starts with Mochi, unchosen, and holds 1: another pick swaps it', async () => {
-    expect(loadPartner()).toEqual({ current: 'cat', owned: ['cat'], points: 0, bonds: {} });
+    expect(loadPartner()).toEqual({ current: 'cat', owned: ['cat'], points: 0, bonds: {}, synced: false });
     expect(partnerChosen()).toBe(false);
     expect(await choosePartner('dog', false)).toBe(true);
     expect(loadPartner()).toMatchObject({ current: 'dog', owned: ['dog'] });
@@ -48,13 +49,22 @@ describe('a guest', () => {
     expect(api.asked).toEqual([]);
   });
 
+  it("a guest's points are the best scores kept here: 3,000 opens a second pet", async () => {
+    recordScore('a', 2000);
+    recordScore('b', 1000);
+    forgetPartner();
+    expect(loadPartner().points).toBe(3000);
+    expect(await choosePartner('dog', false)).toBe(true);
+    expect(loadPartner().owned).toEqual(expect.arrayContaining(['cat', 'dog']));
+  });
+
   it('broken storage is the start, never a crash', () => {
     localStorage.setItem(PARTNER_KEY, '{broken');
     forgetPartner();
-    expect(loadPartner()).toEqual({ current: 'cat', owned: ['cat'], points: 0, bonds: {} });
+    expect(loadPartner()).toEqual({ current: 'cat', owned: ['cat'], points: 0, bonds: {}, synced: false });
     localStorage.setItem(PARTNER_KEY, JSON.stringify({ current: 'ghost', owned: ['ghost'], points: 'lots', bonds: 'many' }));
     forgetPartner();
-    expect(loadPartner()).toEqual({ current: 'cat', owned: ['cat'], points: 0, bonds: {} });
+    expect(loadPartner()).toEqual({ current: 'cat', owned: ['cat'], points: 0, bonds: {}, synced: false });
   });
 });
 
@@ -77,7 +87,7 @@ describe('signing in', () => {
     api.mine = { current: 'dino', owned: ['cat', 'dino'], points: 4200 };
     await syncPartner();
     expect(api.asked).toEqual([]);
-    expect(loadPartner()).toEqual({ current: 'dino', owned: ['cat', 'dino'], points: 4200, bonds: {} });
+    expect(loadPartner()).toEqual({ current: 'dino', owned: ['cat', 'dino'], points: 4200, bonds: {}, synced: true });
   });
 
   it('offline: nothing changes', async () => {

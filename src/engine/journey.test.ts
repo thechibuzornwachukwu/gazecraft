@@ -61,10 +61,12 @@ describe('clueStates', () => {
   const states = (done: string[], exists?: Set<string>) => clueStates(path, done, exists);
   const first = path.cases[0]!;
 
-  it('a new player stands on the first clue, the rest locked', () => {
+  it('a new player stands on the first clue; every pack is open at its own first clue, the rest of each pack locked', () => {
     const s = states([]);
     expect(s.next).toBe(ids[0]);
-    expect(s.clues.map((x) => x.state)).toEqual(ids.map((_, i) => (i === 0 ? 'next' : 'locked')));
+    const firsts = new Set(path.cases.map((c) => c.clues[0]!.id));
+    expect(s.clues.map((x) => x.state)).toEqual(ids.map((id) => (firsts.has(id) ? 'next' : 'locked')));
+    expect(s.nextByCase).toEqual(path.cases.map((c) => c.clues[0]!.id));
     expect(s.complete).toBe(false);
     expect(s.left).toEqual(path.cases.map((c) => c.clues.length));
   });
@@ -81,7 +83,18 @@ describe('clueStates', () => {
     expect(s.next).toBe(path.cases[1]!.clues[0]!.id);
     expect(s.casesDone.slice(0, 2)).toEqual([true, false]);
     expect(s.left[0]).toBe(0);
-    expect(s.clues.filter((x) => x.state === 'next')).toHaveLength(1);
+    expect(s.nextByCase[0]).toBeNull();
+    expect(s.clues.filter((x) => x.state === 'next')).toHaveLength(path.cases.length - 1);
+  });
+
+  it('packs are open: a later pack once started is the one in progress, and the next clue is in it', () => {
+    const later = path.cases[3]!;
+    const s = states([later.clues[0]!.id]);
+    expect(s.next).toBe(later.clues[1]!.id);
+    expect(s.clues.find((x) => x.id === later.clues[1]!.id)!.state).toBe('next');
+    expect(s.clues.find((x) => x.id === later.clues[2]!.id)!.state).toBe('locked');
+    // The first pack is still open at its first clue.
+    expect(s.nextByCase[0]).toBe(path.cases[0]!.clues[0]!.id);
   });
 
   it('a whole-puzzle score from before shows every passage of its case as done', () => {
@@ -113,7 +126,7 @@ describe('clueStates', () => {
     // A path rebuilt from the smaller catalogue has no hole either, and the old ids in progress are ignored.
     const rebuilt = clueStates(buildPath(games.filter((g) => g.id !== first.id)), [first.id, `${first.id}~1`]);
     expect(rebuilt.clues.some((x) => x.puzzle === first.id)).toBe(false);
-    expect(rebuilt.clues.filter((x) => x.state === 'next')).toHaveLength(1);
+    expect(rebuilt.clues.filter((x) => x.state === 'next')).toHaveLength(rebuilt.nextByCase.filter(Boolean).length);
   });
 
   it('done ids that are not on the path are ignored', () => {
@@ -132,6 +145,6 @@ describe('clueStates', () => {
 
   it('an empty path is not complete', () => {
     const empty: Path = { cases: [] };
-    expect(clueStates(empty, ['a'])).toEqual({ clues: [], next: null, complete: false, casesDone: [], left: [] });
+    expect(clueStates(empty, ['a'])).toEqual({ clues: [], next: null, nextByCase: [], complete: false, casesDone: [], left: [] });
   });
 });

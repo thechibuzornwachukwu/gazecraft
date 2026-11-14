@@ -139,6 +139,13 @@
   --dur-star-step: 140ms;   /* Each star starts this long after the last */
   --dur-burst: 900ms;       /* One piece of paper flying out. Once per 3 star clue */
   --dur-burst-step: 12ms;   /* Each piece starts this long after the last */
+  --radius-card: 22px;      /* CaseDeck: a case card */
+  --dur-nudge: 3200ms;      /* CaseDeck: the top card leans to show it swipes */
+  --dur-nudge-delay: 1000ms;
+  --dur-glow: 1800ms;       /* CaseDeck: the PLAY! stamp's glow, one cycle */
+  --dur-pet-bob: 2600ms;    /* Puzzles: the partner beside the bubble, one cycle */
+  --dur-pop: 350ms;         /* Puzzles: the bubble when the partner says something new */
+  --dur-twinkle: 2200ms;    /* Puzzles: the run and star chips, one cycle */
   --burst-delay: 0ms;       /* How long the paper waits before it flies */
   --burst-reach: 150px;     /* How far the paper flies */
   /* The sums board, SPEC sections 6 and 9. */

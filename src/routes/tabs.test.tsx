@@ -125,17 +125,34 @@ const title = () => screen.getByRole('heading', { level: 1 }).textContent;
 beforeEach(() => emptyWorld());
 
 describe('Games', () => {
-  it('a first visit shows the crew and the path, and no daily and no list of games', async () => {
+  it('a first visit shows the partner, the deck of cases and the team, and no daily and no list of games', async () => {
     open('/play');
     expect(title()).toBe('Puzzles');
     expect(screen.queryByRole('link', { name: /Daily #\d+/ })).toBeNull();
-    expect(within(screen.getByRole('region', { name: 'Path' })).getAllByRole('link').length).toBeGreaterThan(0);
+    const deck = within(screen.getByRole('region', { name: 'Cases' }));
+    expect(deck.getByRole('button', { name: 'Later' })).toBeInTheDocument();
+    expect(deck.getByRole('button', { name: 'Play with a friend' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'Team' })).toBeInTheDocument();
     expect(screen.queryByRole('region', { name: 'All games' })).toBeNull();
     expect(screen.getByRole('link', { name: /Change your look and your pet/ })).toHaveAttribute('href', '/me');
     expect(screen.queryByRole('link', { name: 'Make a puzzle' })).toBeNull();
     expect(screen.queryByRole('link', { name: "See today's board" })).toBeNull();
     expect(screen.queryByText(/of the last 7 days/)).toBeNull();
     expectNoHoles();
+  });
+
+  it('the partner greets a new player, and answers a Later', async () => {
+    open('/play');
+    expect(screen.getByRole('status')).toHaveTextContent(/Hi, detective! I am Mochi/);
+    fireEvent.click(within(screen.getByRole('region', { name: 'Cases' })).getByRole('button', { name: 'Later' }));
+    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('No problem. How about this one?'));
+  });
+
+  it('a player halfway through a pack sees it first', () => {
+    const pack = games.find((g) => g.id === 'bible') ?? games[0]!;
+    localStorage.setItem('gazecraft-stars', JSON.stringify({ [`${pack.id}~1`]: 2 }));
+    open('/play');
+    expect(screen.getByRole('status')).toHaveTextContent(/Welcome back!/);
   });
 
   it('unreadable storage is a first visit, not a crash', () => {
@@ -145,7 +162,7 @@ describe('Games', () => {
     open('/play');
     expect(screen.queryByRole('link', { name: 'Make a puzzle' })).toBeNull();
     expect(screen.queryByText('Play today')).toBeNull();
-    expect(screen.getByRole('region', { name: 'Path' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Cases' })).toBeInTheDocument();
     expectNoHoles();
   });
 
@@ -160,7 +177,7 @@ describe('Games', () => {
     open('/play?f=Nothing');
     expect(title()).toBe('Puzzles');
     expect(screen.queryByRole('group', { name: 'Filter games' })).toBeNull();
-    expect(screen.getByRole('region', { name: 'Path' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Cases' })).toBeInTheDocument();
   });
 
   it('Cases is the daily and the path: no week, no board link, and Make only once it is unlocked', () => {
@@ -185,14 +202,14 @@ describe('Games', () => {
     expect(await screen.findByRole('link', { name: 'Make a puzzle' })).toBeInTheDocument();
   });
 
-  it('a signed in player whose plays do not load still gets the path', async () => {
+  it('a signed in player whose plays do not load still gets the cases', async () => {
     world.me = ADA;
     world.api.fetchOwnPlays = fail;
     world.api.fetchDailyDays = fail;
     world.api.myGameInvites = fail;
     open('/play');
     await Promise.resolve();
-    expect(screen.getByRole('region', { name: 'Path' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Cases' })).toBeInTheDocument();
     expectNoHoles();
   });
 });
@@ -350,7 +367,7 @@ describe('Players', () => {
     const region = await screen.findByRole('region', { name: 'Circles' });
     expect(within(region).getByRole('link', { name: /Obi family/ })).toHaveAttribute('href', '/c/ABCDEF');
     expect(region).toHaveTextContent('1 player');
-    expect(within(region).getByRole('link', { name: /Your circle/ })).toHaveAttribute('href', '/c/GHIJKL');
+    expect(within(region).getByRole('link', { name: /^Circle/ })).toHaveAttribute('href', '/c/GHIJKL');
     expectNoHoles();
   });
 

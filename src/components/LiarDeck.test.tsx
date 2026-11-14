@@ -91,10 +91,10 @@ describe('LiarDeck', () => {
     expect(card()).toBe(LINES[0]);
   });
 
-  it('a tip-off brings the statement it marks to the top', () => {
+  it('a marked letter never reorders the deck: Liar has no tip-off, it would name the lie', () => {
     const [a] = spanOf(2);
     deck({ hintLi: a! + 2 });
-    expect(card()).toBe(LINES[2]);
+    expect(card()).toBe(LINES[0]);
   });
 
   it('a lie found on an earlier visit is not dealt again', () => {

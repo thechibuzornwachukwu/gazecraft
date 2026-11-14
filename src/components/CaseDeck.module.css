@@ -1,0 +1,205 @@
+.deck {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+}
+.stack {
+  position: relative;
+  display: grid;
+  width: min(100%, 460px);
+}
+.card {
+  grid-area: 1 / 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 330px;
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-card);
+  box-shadow: 0 8px 0 var(--line-2);
+  /* The pack's colour, softened, so a whole stack of files reads at a glance. */
+  --tint: color-mix(in srgb, var(--pack) 42%, var(--surface));
+}
+.card[data-under='1'] {
+  transform: translateY(9px) scale(0.95) rotate(-3deg);
+  pointer-events: none;
+}
+.card[data-under='2'] {
+  transform: translateY(18px) scale(0.9) rotate(5deg);
+  pointer-events: none;
+}
+.card[data-top] {
+  z-index: 1;
+  touch-action: pan-y;
+  user-select: none;
+  cursor: grab;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.card[data-moving] {
+  cursor: grabbing;
+  transition: none;
+}
+.card[data-nudge] {
+  animation: nudge var(--dur-nudge) ease-in-out var(--dur-nudge-delay) infinite;
+}
+@keyframes nudge {
+  0%, 62%, 100% { translate: 0; rotate: 0deg; }
+  70% { translate: 26px; rotate: 3deg; }
+  80% { translate: -6px; rotate: -1deg; }
+  88% { translate: 0; }
+}
+.band {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3h) var(--space-4);
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  background: var(--tint);
+}
+.band img {
+  flex: none;
+}
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 21px;
+  line-height: 1.05;
+  text-transform: uppercase;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+.tag {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--fg);
+}
+.teaser {
+  flex: 1;
+  margin: 0;
+  padding: var(--space-4) var(--space-5) 0;
+  font-size: clamp(19px, 2.3vw, 24px);
+  font-weight: 600;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+  color: var(--text-puzzle);
+}
+.hit {
+  padding: 1px 2px;
+  border-radius: var(--radius-md);
+  background: var(--accent);
+  color: var(--on-accent);
+  animation: glow var(--dur-glow) ease-in-out infinite;
+}
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; }
+  50% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 45%, transparent); }
+}
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-2) var(--space-5) var(--space-4);
+}
+.found {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-ink);
+}
+.stones {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.stones li {
+  width: 12px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--line-2);
+}
+.stones li[data-state='done'] {
+  background: var(--fg);
+}
+.stones li[data-state='now'] {
+  background: var(--accent);
+}
+.stamp {
+  position: absolute;
+  top: 92px;
+  padding: 4px 12px;
+  border: 3px solid currentColor;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-display);
+  font-size: 22px;
+  text-transform: uppercase;
+  background: var(--surface);
+  pointer-events: none;
+}
+.stamp[data-side='play'] {
+  left: 16px;
+  rotate: -12deg;
+  color: var(--accent-ink);
+}
+.stamp[data-side='later'] {
+  right: 16px;
+  rotate: 12deg;
+  color: var(--muted);
+}
+.calls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+.round {
+  font-size: 24px;
+  width: 60px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line-2);
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line-2);
+  color: var(--muted);
+  cursor: pointer;
+}
+.go {
+  font-size: 34px;
+  width: 84px;
+  height: 84px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--accent) 60%, var(--fg));
+  color: var(--on-accent);
+  cursor: pointer;
+}
+.go svg {
+  fill: currentColor;
+}
+.round:active,
+.go:active {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .card[data-nudge],
+  .hit {
+    animation: none;
+  }
+}

@@ -9,6 +9,7 @@ import type { Answer } from '../engine/hiddenWords';
 import { DEEP_JOINS, LONG_WORD, skillsOf, type Skills } from '../engine/skill';
 import type { Char } from '../engine/text';
 import { formatTime } from '../engine/time';
+import { categoryName } from '../i18n/gameNames';
 import type { NewRecord } from '../lib/records';
 
 export type Picker = (key: PoolKey, vars?: Vars) => string;
@@ -76,7 +77,7 @@ export function recordLines(broke: readonly NewRecord[], pick: Picker): string[]
   return [...broke]
     .sort((a, b) => order[a.kind] - order[b.kind])
     .map((r) => {
-      if (r.kind === 'clean') return word(r.pack) && whole(r.secs) ? pick('recordClean', { w: r.pack, t: formatTime(r.secs) }) : '';
+      if (r.kind === 'clean') return word(r.pack) && whole(r.secs) ? pick('recordClean', { w: categoryName(r.pack), t: formatTime(r.secs) }) : '';
       if (r.kind === 'daily') return whole(r.found) && r.found > 0 ? pick('recordDaily', { n: r.found }) : '';
       return word(r.word) && whole(r.len) && r.len > 0 ? pick('recordLong', { w: r.word, n: r.len }) : '';
     })

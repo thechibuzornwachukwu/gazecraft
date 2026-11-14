@@ -8,7 +8,6 @@ import { REST_EARN, REST_WINDOW } from '../engine/rest';
 import { FIND_POINTS, TIME_BONUS, TIP_OFF_COST } from '../engine/score';
 import { DEEP_JOINS, LONG_WORD } from '../engine/skill';
 import { GOALS } from '../lib/goal';
-import { GUEST_GAMES } from '../lib/guestLimit';
 import { LEAGUE_TIERS, LEAGUE_UP } from '../lib/league';
 import { OUTFIT_NEEDS } from '../lib/petOutfit';
 import { CLEAN_BONUS, RARE_BONUS } from '../lib/profileStats';
@@ -43,7 +42,7 @@ export const HELP_ARTICLES_ES: readonly HelpArticle[] = [
     slug: 'tip-offs',
     group: 'Playing',
     title: '¿Qué es una pista?',
-    answer: `Tu mascota marca la primera letra de una palabra que aún no encontraste. Cada pista cuesta ${TIP_OFF_COST} puntos.`,
+    answer: `Tu mascota marca la primera letra de una palabra que aún no encontraste, en todos los juegos menos Mentiroso, donde delataría la mentira. Cada pista cuesta ${TIP_OFF_COST} puntos.`,
     facts: PARTNERS.map((p) => `${p.name} elige ${PICKS[HINT_OF[p.id]]}.`),
     related: ['pets', 'points'],
   },
@@ -86,7 +85,7 @@ export const HELP_ARTICLES_ES: readonly HelpArticle[] = [
     slug: 'groups-puzzles',
     group: 'Playing',
     title: '¿Cómo se juega a grupos de 4?',
-    answer: 'Las 16 imágenes son 4 grupos de 4: toca 4 que vayan juntas y compruébalas. Un grupo correcto se fija con su nombre, y 3 de 4 es "a una", que nunca cuenta como error.',
+    answer: 'Las 16 imágenes son 4 grupos de 4: toca 4 que vayan juntas y compruébalas. Un grupo correcto se fija con su nombre, y 3 de 4 es "a una": no cuesta estrellas, pero gasta 1 de tus 4 intentos.',
     related: ['how-to-play'],
   },
   {
@@ -131,7 +130,7 @@ export const HELP_ARTICLES_ES: readonly HelpArticle[] = [
     slug: 'playing-as-a-guest',
     group: 'Packs and progress',
     title: '¿Necesito una cuenta?',
-    answer: `No. Como invitado juegas ${GUEST_GAMES} puzles y luego inicias sesión para seguir. Con sesión iniciada, tus estrellas, racha y puntos te acompañan en cualquier dispositivo.`,
+    answer: 'No, puedes jugar todos los puzles como invitado en este dispositivo. Iniciar sesión (para mayores de 13 años) guarda tus estrellas, tu racha y tus puntos en todos tus dispositivos.',
     related: ['signing-in'],
   },
 
@@ -192,7 +191,7 @@ export const HELP_ARTICLES_ES: readonly HelpArticle[] = [
     answer: `${PARTNERS[0]!.name} es gratis. Las demás se abren a medida que crecen tus puntos de toda la vida, y los puntos nunca se gastan.`,
     facts: [
       ...PARTNERS.slice(1).map((p, i) => `${p.name}: ${n(PARTNER_POINTS[i + 1]!)} puntos.`),
-      `Termina ${BOND_AT[0]} paquetes con una mascota y lleva bufanda. Con ${BOND_AT[1]}, también un broche dorado.`,
+      `Termina ${BOND_AT[0]} paquetes con una mascota y lleva su lupa. Con ${BOND_AT[1]}, también su monóculo.`,
     ],
     steps: ['Abre Tú.', 'En Mascotas, toca una para probarla y luego elígela.'],
     related: ['tip-offs', 'pet-outfits'],

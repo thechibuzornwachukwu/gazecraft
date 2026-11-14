@@ -43,7 +43,7 @@ function cardsOf(chars: PuzzleProps['chars']): Card[] {
  * ones every board uses. When the deck runs out the game ends. Finished, it is the plain board with lies shaded.
  */
 export function LiarDeck(props: PuzzleProps & { onEnd?: () => void }) {
-  const { chars, found, hintLi, disabled, onPick, onEnd, describedBy, label = t('Statements') } = props;
+  const { chars, found, disabled, onPick, onEnd, describedBy, label = t('Statements') } = props;
   const cards = useMemo(() => cardsOf(chars), [chars]);
   const foundAt = useMemo(() => new Set(found.map(([a]) => a)), [found]);
   // Called this visit. A lie found in an earlier visit is already called.
@@ -54,9 +54,7 @@ export function LiarDeck(props: PuzzleProps & { onEnd?: () => void }) {
   const start = useRef<{ x: number; id: number } | null>(null);
 
   const open = cards.filter((c) => !called.has(c.a) && !foundAt.has(c.a));
-  // A tip-off brings the statement it marks to the top.
-  const hinted = open.find((c) => hintLi >= c.a && hintLi <= c.b);
-  const top = hinted ?? open[0];
+  const top = open[0];
   const next = open.find((c) => c !== top);
   const done = cards.length - open.length;
 
@@ -115,7 +113,6 @@ export function LiarDeck(props: PuzzleProps & { onEnd?: () => void }) {
           key={top.a}
           className={styles.card}
           data-moving={dragging || undefined}
-          data-hint={top === hinted || undefined}
           style={{ transform: `translateX(${shift}px) rotate(${shift / 24}deg)` }}
           onPointerDown={down}
           onPointerMove={move}

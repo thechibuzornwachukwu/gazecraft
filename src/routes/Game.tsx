@@ -12,7 +12,6 @@ import { caseClues, getGameDef, getPassage, sponsorFor, type GameDef, type GameT
 import { registry } from '../games/registry';
 import { playFacts, recordLines, skillLines, starsUpLine } from '../games/resultLines';
 import { isCleanRead, scoreOf, secondsOf, useGameSession, type Session } from '../games/session';
-import { GuestWall } from '../components/GuestWall';
 import { clueId, clueKind } from '../engine/journey';
 import { ClueDone } from '../components/ClueDone';
 import { Partner } from '../components/Partner';
@@ -20,8 +19,7 @@ import { HINT_OF } from '../engine/partners';
 import { doneClues, nextClueTo } from '../games/path';
 import { packHue } from '../lib/packHue';
 import { countPuzzleToday } from '../lib/goal';
-import { guestBlocked, markGuestPlayed, playKey } from '../lib/guestLimit';
-import { loadPartner } from '../lib/partner';
+import { forgetPartner, loadPartner } from '../lib/partner';
 import { countOf } from '../engine/specials';
 import { starsFor } from '../engine/stars';
 import { countEvent, fetchCustomGame, submitPlay } from '../lib/api';
@@ -43,6 +41,7 @@ import { markFinished } from '../lib/shelves';
 import { record as recordSound } from '../lib/sound';
 import { markPlayedToday } from '../lib/playDays';
 import { recordStars } from '../lib/starStore';
+import { recordScore } from '../lib/scoreStore';
 import { useStreak } from '../lib/useStreak';
 import { GameResults } from './GameResults';
 import { GameReveal } from './GameReveal';
@@ -57,7 +56,7 @@ export function GameById() {
   const { id = '' } = useParams();
   const def = getGameDef(id);
   if (!def) return <Navigate to="/play" replace />;
-  return <Gated key={id} def={def} />;
+  return <GameScreen key={id} def={def} />;
 }
 
 /** One sitting of a catalogue puzzle: `/play/bible/2`. A puzzle that is not cut, or has no such passage, opens whole. */
@@ -66,7 +65,7 @@ export function PassageById() {
   if (!getGameDef(id)) return <Navigate to="/play" replace />;
   const p = /^\d+$/.test(n) ? getPassage(id, Number(n)) : undefined;
   if (!p) return <Navigate to={`/play/${id}`} replace />;
-  return <Gated key={`${id}~${p.part.n}`} def={p.def} part={p.part} />;
+  return <GameScreen key={`${id}~${p.part.n}`} def={p.def} part={p.part} />;
 }
 
 /** A custom game opened by its share code. */
@@ -97,21 +96,10 @@ export function GameByCode() {
   }, [code]);
   if (def === undefined) return <SkeletonPage rows={4} />;
   if (!def) return <Navigate to="/play" replace />;
-  return <Gated key={def.id} def={def} />;
+  return <GameScreen key={def.id} def={def} />;
 }
 
 type ScreenProps = { def: GameDef; /** A sitting: `def` is the puzzle with one passage as its text. */ part?: Part };
-
-/** A guest plays 2 games. A third asks them to sign in. A game they already played stays open. */
-function Gated(props: ScreenProps) {
-  const auth = useAuth();
-  // Decided when the game opens, so the result of a guest's last game is never walled.
-  const [blocked] = useState(() => guestBlocked(playKey(props.def.id, undefined, props.part?.n)));
-  if (!auth.enabled || !blocked) return <GameScreen {...props} />;
-  // Still finding out who this is: never wall someone who is signed in.
-  if (auth.loading) return <SkeletonPage rows={4} />;
-  return auth.session ? <GameScreen {...props} /> : <GuestWall />;
-}
 
 /** How each type is played, for a mouse and for a finger. */
 const HOW: Record<GameType, readonly [string, string]> = {
@@ -276,8 +264,8 @@ function GameScreen({ def, part }: ScreenProps) {
   // Played to the end means at least half found: a game given up with less is not finished (src/engine/stars.ts).
   const earnedEnd = finished && starsFor({ finished, found: foundCount, total, hints: 0, wrongs: 0 }) > 0;
   useEffect(() => {
-    if (earnedEnd && inCatalogue) markFinished(def.id);
-  }, [earnedEnd, inCatalogue, def.id]);
+    if (earnedEnd && inCatalogue && !inRoom) markFinished(def.id);
+  }, [earnedEnd, inCatalogue, inRoom, def.id]);
 
   // The moment a game ends, once: stars for a catalogue puzzle played alone, then personal records.
   // Both live in this browser.
@@ -286,12 +274,10 @@ function GameScreen({ def, part }: ScreenProps) {
   // The popup for a clue done: open for the finish itself, never for a result opened again.
   const [popup, setPopup] = useState<number | null>(null);
   function onFinish(fs: Session) {
-    // A guest's games are counted: 2, then they are asked to sign in.
-    if (!signedIn) markGuestPlayed(playKey(def.id, undefined, part?.n));
     const mine = fs.found.filter((f) => !f.by);
     const stars = starsFor({ finished: true, found: fs.found.length, total, hints: fs.hints, wrongs: fs.wrongs, byOthers: mine.length !== fs.found.length });
-    // The run counts a day on which a clue was finished, with at least half found. A game given up counts nothing.
-    if (stars > 0) {
+    // The run counts a day on which a game played alone earned a star, as the server does. A room game is not checked.
+    if (stars > 0 && !inRoom) {
       markPlayedToday();
       countPuzzleToday();
     }
@@ -300,6 +286,8 @@ function GameScreen({ def, part }: ScreenProps) {
     if (total > 0 && fs.found.length === total) countEvent(def.id, 'full');
     const cleanRead = isCleanRead(fs, total);
     const starsUp = starred && recordStars(gameKey, stars);
+    // A guest's points live here, by the account's rule: the best score of each puzzle played alone that earned a star.
+    if (!signedIn && !inRoom && stars > 0 && recordScore(gameKey, scoreOf(fs, total, false, secondsOf(fs, fs.endAt ?? now())))) forgetPartner();
     const broke = recordPlay({
       pack: inCatalogue ? def.category : null,
       // A sitting is a few words: its time is no record for the pack.
@@ -574,7 +562,8 @@ function GameScreen({ def, part }: ScreenProps) {
           time={<Elapsed startAt={s.startAt} endAt={s.endAt} />}
           message={s.msg}
           pet={pet}
-          onHint={g.hint}
+          // A tip-off in Liar would name the lie: the whole game. Liar has none.
+          onHint={def.type === 'liar' ? undefined : g.hint}
           onDone={g.finish}
         />
       )}

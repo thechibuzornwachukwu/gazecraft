@@ -2,7 +2,6 @@ import { BANNED_CLAIMS } from '../copy/claims';
 import { MAKE } from '../engine/make';
 import { PARTNER_POINTS } from '../engine/partners';
 import { FIND_POINTS, TIP_OFF_COST } from '../engine/score';
-import { GUEST_GAMES } from '../lib/guestLimit';
 import { CLEAN_BONUS, RARE_BONUS } from '../lib/profileStats';
 import { HELP_ARTICLES, helpArticle, helpByGroup, searchHelp } from './articles';
 import { HELP_GROUPS } from './types';
@@ -50,7 +49,7 @@ describe('help articles', () => {
     expect(text('points')).toContain(`adds ${CLEAN_BONUS} once a puzzle`);
     expect(text('points')).toContain(`adds ${RARE_BONUS} once a word`);
     expect(text('tip-offs')).toContain(`costs ${TIP_OFF_COST} points`);
-    expect(text('playing-as-a-guest')).toContain(`plays ${GUEST_GAMES} puzzles`);
+    expect(text('playing-as-a-guest')).toContain('play every puzzle as a guest');
     expect(text('pets')).toContain(PARTNER_POINTS[1].toLocaleString('en-US'));
     expect(text('make-a-puzzle')).toContain(`Up to ${MAKE.perHour}`);
     expect(text('ranks')).toContain('Keen: from 3,720 points.');

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 // The "With NAME" mark (SPEC section 5, With NAME): one field on a puzzle, shown on the game row, the daily card
 // and the link preview. The result and the share card are in GameResults.test.tsx and cards.test.ts.
-import { render, screen, within } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 import { dayNo } from '../engine/daily';
@@ -46,20 +46,21 @@ describe('With NAME', () => {
     expect(sponsorFor({ id: 'c-abcdefgh', sponsor: { name: 'Chi Farms' } })).toBeUndefined();
   });
 
-  it('shows on a case card on the path, under the title', () => {
+  const tile = (container: HTMLElement, title: RegExp) => [...container.querySelectorAll('[data-case]')].find((c) => title.test(c.textContent ?? ''))!;
+
+  it('shows on a case on the All cases shelf, under the title', () => {
     const { container } = showGames();
-    const path = screen.getByRole('region', { name: 'Path' });
     const marks = [...container.querySelectorAll('[data-case-sponsor]')];
     expect(marks).toHaveLength(games.length - 1);
     for (const m of marks) expect(m.textContent).toBe('With Chi Farms');
-    expect(within(path).getByRole('heading', { level: 3, name: /The classic/ }).closest('[data-case]')!.querySelector('[data-case-sponsor]')).not.toBeNull();
+    expect(tile(container, /The classic/i).querySelector('[data-case-sponsor]')).not.toBeNull();
     // The list of games is gone: the path is the way in.
     expect(screen.queryByRole('region', { name: 'All games' })).toBeNull();
   });
 
   it('a field that fails the rule shows nothing', () => {
-    showGames();
-    const card = screen.getByRole('heading', { level: 3, name: /Party at ours/ }).closest('[data-case]')!;
+    const { container } = showGames();
+    const card = tile(container, /Party at ours/i);
     expect(card.querySelector('[data-case-sponsor]')).toBeNull();
     expect(card).not.toHaveTextContent(/With /);
   });

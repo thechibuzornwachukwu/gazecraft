@@ -10,8 +10,7 @@ import { Avatar } from '../components/Avatar';
 import { Button } from '../components/Button';
 import { Dialog } from '../components/Dialog';
 import { Icon } from '../components/Icon';
-import { doneClues } from '../games/path';
-import { games } from '../games/catalog';
+import { doneClues, packsDone } from '../games/path';
 import { fetchPoints, saveAvatar, saveLook } from '../lib/api';
 import { keepLook, loadLook } from '../lib/firstMinute';
 import { LOOK_CHOICES, type LookChoice } from '../lib/onboarding';
@@ -134,7 +133,7 @@ function Editor({ seed, code, look, onSave, onLook, onClose }: EditorProps) {
   }, [seed]);
   const standing = useMemo(() => {
     const done = doneClues();
-    return { cases: games.filter((g) => done.has(g.id)).length, points };
+    return { cases: packsDone(done), points };
   }, [points]);
   const current = TABS.find((t) => t.key === tab)!;
 

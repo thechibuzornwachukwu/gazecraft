@@ -113,8 +113,10 @@ export type ClueInfo = Clue & { case: number; state: ClueState };
 
 export type Standing = {
   clues: ClueInfo[];
-  /** The clue to play now. Null when every clue is done, or the path is empty. */
+  /** The clue to play now: the next one in the pack in progress, else the first of the first pack not started. Null when every clue is done, or the path is empty. */
   next: string | null;
+  /** The next clue of each case, or null when the case is done. */
+  nextByCase: (string | null)[];
   /** Every clue done. An empty path is not complete. */
   complete: boolean;
   /** One flag per case: all its clues done. */
@@ -124,23 +126,24 @@ export type Standing = {
 };
 
 /**
- * Where the player stands. Clues open in order: the first one not done is `next`, everything after it is locked,
- * and finishing `next` opens the one after. A clue finished out of order still shows done.
+ * Where the player stands. Packs are open: any of them can be started at any time. Inside a pack the clues open in
+ * order: its first clue not done is its `next`, the ones after it are locked, and finishing it opens the one after.
+ * A clue finished out of order still shows done.
  * `done` holds clue ids. A puzzle's own id in it means the whole puzzle was played, so every clue of its case is
  * done: a score from before the puzzle was cut counts. Ids that are not on the path are ignored.
- * `exists`, when given, lists the puzzles still in the catalogue: a case outside it is left out and blocks nothing.
+ * `exists`, when given, lists the puzzles still in the catalogue: a case outside it is left out.
  */
 export function clueStates(path: Path, done: Iterable<string>, exists?: ReadonlySet<string>): Standing {
   const finished = new Set(done);
   const clues: ClueInfo[] = [];
-  let next: string | null = null;
+  const nextByCase: (string | null)[] = path.cases.map(() => null);
   path.cases.forEach((c, ci) => {
     for (const s of c.clues) {
       if (exists && !exists.has(s.puzzle)) continue;
       let state: ClueState = 'done';
       if (!finished.has(s.id) && !finished.has(s.puzzle)) {
-        if (next === null) {
-          next = s.id;
+        if (nextByCase[ci] === null) {
+          nextByCase[ci] = s.id;
           state = 'next';
         } else state = 'locked';
       }
@@ -150,5 +153,8 @@ export function clueStates(path: Path, done: Iterable<string>, exists?: Readonly
   const mine = path.cases.map((_, ci) => clues.filter((s) => s.case === ci));
   const left = mine.map((m) => m.filter((s) => s.state !== 'done').length);
   const casesDone = mine.map((m, ci) => m.length > 0 && left[ci] === 0);
-  return { clues, next, complete: clues.length > 0 && next === null, casesDone, left };
+  // The pack in progress comes first: started, not finished. Else the first pack not done.
+  const going = mine.findIndex((m, ci) => left[ci]! > 0 && left[ci]! < m.length);
+  const next = (going >= 0 ? nextByCase[going] : nextByCase.find((n) => n !== null)) ?? null;
+  return { clues, next, nextByCase, complete: clues.length > 0 && next === null, casesDone, left };
 }

@@ -238,23 +238,13 @@ test('You is a stage: tap a partner or a piece of gear to try it, and one button
   await expect(page.getByRole('link', { name: 'You', exact: true }).first()).toBeVisible();
 });
 
-test('a guest plays 2 games, then is asked to sign in, and what they played stays open', async ({ page }) => {
+test('a guest is never walled: a third game opens like the first', async ({ page }) => {
   await page.goto('/play/bnote/1');
   await page.getByRole('button', { name: "I'm done" }).click();
   await page.goto('/play/bnote/2');
   await page.getByRole('button', { name: "I'm done" }).click();
-  // The result of the 2nd game is theirs to read.
-  await expect(page.locator('[aria-labelledby="results-title"]')).toBeVisible();
-  // A 3rd game asks them to sign in.
   await page.goto('/play/bnote');
-  const wall = page.locator('[data-guest-wall]');
-  await expect(wall.getByRole('heading', { level: 1, name: 'Sign in to keep playing' })).toBeVisible();
-  await expect(wall.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/welcome?from=%2Fplay%2Fbnote');
-  await expect(page.getByRole('button', { name: "I'm done" })).toHaveCount(0);
-  // A game already played opens as before.
-  await page.goto('/play/bnote/1');
-  await expect(page.locator('[data-guest-wall]')).toHaveCount(0);
-  await expect(page.locator('[aria-labelledby="results-title"]')).toBeVisible();
+  await expect(page.getByRole('button', { name: "I'm done" })).toBeVisible();
 });
 
 test('copy result puts the spoiler free text on the clipboard', async ({ page, context }) => {

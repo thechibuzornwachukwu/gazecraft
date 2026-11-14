@@ -1,61 +1,299 @@
+/* Puzzles (design/V3_STYLE.md): one column on a phone; on a wide screen the shelf of all cases is the side column. */
 .screen {
   padding: var(--screen-top-game) 0 var(--space-30);
   display: flex;
-  flex-direction: column;
-  gap: var(--screen-gap-game);
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-12);
 }
-/* The daily, the week and the way to the board read as one block. */
-.today {
+.main {
+  flex: 999 1 560px;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--space-6);
 }
-.more,
-.empty {
-  margin: 0;
+.side {
+  flex: 1 1 340px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
-.empty {
-  composes: body from '../styles/type.module.css';
-  color: var(--muted);
+.hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
-.daily {
+.chips {
   display: flex;
-  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.chip {
+  composes: small from '../styles/type.module.css';
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-5) var(--space-8);
-  padding: var(--card-pad);
-  border-radius: var(--radius-xl);
+  gap: var(--space-1);
+  height: 36px;
+  padding: 0 var(--space-3) 0 6px;
+  border-radius: var(--radius-pill);
   background: var(--surface);
   border: 1px solid var(--line);
-  color: var(--fg);
-  transition: border-color var(--dur-base) var(--ease-std);
-}
-.daily:hover {
-  border-color: var(--line-4);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
   color: var(--fg);
 }
-.dailyText {
+
+/* The partner talks in a bubble that points at it. */
+.pet {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+.pet > img {
+  flex: none;
+  width: 96px;
+  height: auto;
+}
+.say {
+  composes: body from '../styles/type.module.css';
+  margin: 0 0 30px;
+  padding: 14px var(--space-4);
+  background: var(--fg);
+  color: var(--bg);
+  border-radius: 18px 18px 18px var(--radius-sm);
+  font-weight: 700;
+  line-height: 1.35;
+  animation: pop var(--dur-pop) ease-out both;
+}
+
+.cases {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  flex: 1 1 280px;
-  min-width: 0;
+  align-items: center;
+  gap: var(--space-4);
 }
-.kicker {
+.friend {
+  width: 60px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line-2);
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line-2);
+  color: var(--fg);
+  cursor: pointer;
+}
+.friend svg {
+  width: 24px;
+  height: 24px;
+}
+.friend:active {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+.allButton {
+  composes: small from '../styles/type.module.css';
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  border: none;
+  background: none;
+  font: inherit;
+  font-weight: 700;
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--line-2);
+  cursor: pointer;
+}
+
+/* The team: always dark, on either theme, so the lime bar and the pets stand out. */
+.team {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: 20px;
+  background: var(--stage-ink);
+  border: 1px solid var(--line-2);
+  color: var(--stage-ink-dark);
+}
+.teamTitle {
+  composes: h3 from '../styles/type.module.css';
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+}
+.shelfTitle {
+  composes: h3 from '../styles/type.module.css';
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+}
+.teamTitle {
+  color: inherit;
+}
+.pets {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--radius-xl);
+}
+.pets > img {
+  width: 66px;
+  height: auto;
+}
+.lockedPet {
+  composes: h2 from '../styles/type.module.css';
+  flex: none;
+  width: 58px;
+  height: 66px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--stage-ink-dark) 12%, var(--stage-ink));
+  color: var(--accent);
+}
+.teamLine {
+  composes: small from '../styles/type.module.css';
+  margin: 0;
+  font-weight: 800;
+}
+.meter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.bar {
+  height: 12px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--stage-ink-dark) 20%, var(--stage-ink));
+  overflow: hidden;
+}
+.bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 6px;
+  background: var(--accent);
+}
+.meterText {
   composes: label from '../styles/type.module.css';
   font-weight: 700;
-  color: var(--accent-ink);
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
 }
-.dailyTitle {
-  composes: h2 from '../styles/type.module.css';
+
+/* All cases: a tile per pack in its colour. */
+.sheetHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
 }
-/* "With NAME" on a sponsored daily. Never lime: lime means found. */
-.dailyWith {
-  composes: label from '../styles/type.module.css';
-  color: var(--muted);
+.close {
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line-2);
+  background: var(--surface);
+  font: inherit;
+  font-weight: 700;
+  color: var(--fg);
+  cursor: pointer;
+}
+.shelf {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+.tile {
+  height: 100%;
+  min-height: 104px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--pack) 42%, var(--surface));
+  box-shadow: 0 5px 0 var(--line);
+  color: var(--stage-ink);
+  text-decoration: none;
   overflow-wrap: anywhere;
 }
+.tile:hover {
+  color: var(--stage-ink);
+  border-color: var(--line-2);
+}
+.tile:active {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+.tile[data-state='closed'] {
+  background: var(--surface);
+  color: var(--fg);
+}
+.tileTitle {
+  composes: small from '../styles/type.module.css';
+  font-family: var(--font-display);
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+.tileMeta {
+  composes: label from '../styles/type.module.css';
+  font-weight: 800;
+}
+
+.more {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.bob {
+  animation: bob var(--dur-pet-bob) ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+.cheer {
+  animation: bob var(--dur-pet-bob) ease-in-out infinite;
+}
+.flame,
+.twinkle {
+  animation: twinkle var(--dur-twinkle) ease-in-out infinite;
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+}
+@keyframes twinkle {
+  0%, 100% { transform: scale(1) rotate(0); }
+  50% { transform: scale(1.15) rotate(10deg); }
+}
+@keyframes pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  70% { transform: scale(1.06); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bob, .cheer, .flame, .twinkle, .say { animation: none; }
+}
+
 .dailySub {
   composes: caption from '../styles/type.module.css';
   color: var(--muted);
@@ -79,53 +317,3 @@
   color: var(--fg);
 }
 
-.shelf {
-  composes: label from '../styles/type.module.css';
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--space-1) var(--space-4);
-  padding: var(--space-6) 0 var(--space-2);
-  border-bottom: 1px solid var(--line-2);
-  color: var(--subtle);
-  font-variant-numeric: tabular-nums;
-}
-.shelfName {
-  font-weight: 700;
-  color: var(--fg);
-}
-
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
-}
-.rows {
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  border-top: 2px solid var(--fg);
-}
-
-/* Who is on the case: 2 small faces in the corner of the header, pressable, to the stage. */
-.crew {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  min-height: 44px;
-  padding: var(--space-1);
-  border: 1px solid var(--line-3);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Make a puzzle and Made by players, side by side, wrapping on a narrow phone. */
-.more {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-5);
-}

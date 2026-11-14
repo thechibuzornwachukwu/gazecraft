@@ -9,7 +9,6 @@ import { REST_EARN, REST_WINDOW } from '../engine/rest';
 import { FIND_POINTS, TIME_BONUS, TIP_OFF_COST } from '../engine/score';
 import { DEEP_JOINS, LONG_WORD } from '../engine/skill';
 import { GOALS } from '../lib/goal';
-import { GUEST_GAMES } from '../lib/guestLimit';
 import { LEAGUE_TIERS, LEAGUE_UP } from '../lib/league';
 import { OUTFIT_NEEDS } from '../lib/petOutfit';
 import { CLEAN_BONUS, RARE_BONUS } from '../lib/profileStats';
@@ -53,7 +52,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     slug: 'tip-offs',
     group: 'Playing',
     title: 'What is a tip-off?',
-    answer: `Your pet marks the first letter of a word you have not found yet. Each tip-off costs ${TIP_OFF_COST} points.`,
+    answer: `Your pet marks the first letter of a word you have not found yet, in every game but Liar, where it would name the lie. Each tip-off costs ${TIP_OFF_COST} points.`,
     facts: PARTNERS.map((p) => `${p.name} picks ${PICKS[HINT_OF[p.id]]}.`),
     related: ['pets', 'points'],
   },
@@ -96,7 +95,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     slug: 'groups-puzzles',
     group: 'Playing',
     title: 'How do I play sets of 4?',
-    answer: 'The 16 pictures are 4 sets of 4: tap 4 that belong together, then check them. A right set locks in with its name, and 3 right of 4 is one away, which never counts as a wrong pick.',
+    answer: 'The 16 pictures are 4 sets of 4: tap 4 that belong together, then check them. A right set locks in with its name, and 3 right of 4 is one away: it costs no star, but it uses 1 of your 4 tries.',
     related: ['how-to-play'],
   },
   {
@@ -142,7 +141,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     slug: 'playing-as-a-guest',
     group: 'Packs and progress',
     title: 'Do I need an account?',
-    answer: `No. A guest plays ${GUEST_GAMES} puzzles, then signs in to keep going, and signing in keeps your stars, run and points on every device.`,
+    answer: 'No, you can play every puzzle as a guest on this device. Signing in (for players 13 and over) keeps your stars, run and points on every device.',
     related: ['signing-in'],
   },
 
@@ -205,7 +204,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     answer: `${PARTNERS[0]!.name} is free. The others open as your lifetime points grow, and points are never spent.`,
     facts: [
       ...PARTNERS.slice(1).map((p, i) => `${p.name}: ${n(PARTNER_POINTS[i + 1]!)} points.`),
-      `Finish ${BOND_AT[0]} packs with a pet and it wears a scarf. At ${BOND_AT[1]}, a gold pin too.`,
+      `Finish ${BOND_AT[0]} packs with a pet and it carries its magnifying glass. At ${BOND_AT[1]}, its monocle too.`,
     ],
     steps: ['Open You.', 'Under Pets, tap one to try it, then choose it.'],
     related: ['tip-offs', 'pet-outfits'],

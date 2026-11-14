@@ -37,11 +37,6 @@
   cursor: grabbing;
   transition: none;
 }
-.card[data-hint] {
-  box-shadow:
-    0 var(--ledge) 0 var(--line-3),
-    inset 0 0 0 2px var(--fg);
-}
 .under {
   transform: scale(0.95) translateY(10px);
   opacity: 0.6;

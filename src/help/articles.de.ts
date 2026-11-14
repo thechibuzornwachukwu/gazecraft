@@ -8,7 +8,6 @@ import { REST_EARN, REST_WINDOW } from '../engine/rest';
 import { FIND_POINTS, TIME_BONUS, TIP_OFF_COST } from '../engine/score';
 import { DEEP_JOINS, LONG_WORD } from '../engine/skill';
 import { GOALS } from '../lib/goal';
-import { GUEST_GAMES } from '../lib/guestLimit';
 import { LEAGUE_TIERS, LEAGUE_UP } from '../lib/league';
 import { OUTFIT_NEEDS } from '../lib/petOutfit';
 import { CLEAN_BONUS, RARE_BONUS } from '../lib/profileStats';
@@ -42,7 +41,7 @@ export const HELP_ARTICLES_DE: readonly HelpArticle[] = [
     slug: 'tip-offs',
     group: 'Playing',
     title: 'Was ist ein Tipp?',
-    answer: `Dein Haustier markiert den ersten Buchstaben eines Worts, das du noch nicht gefunden hast. Jeder Tipp kostet ${TIP_OFF_COST} Punkte.`,
+    answer: `Dein Haustier markiert den ersten Buchstaben eines Worts, das du noch nicht gefunden hast, in jedem Spiel außer Lügner, wo er die Lüge verraten würde. Jeder Tipp kostet ${TIP_OFF_COST} Punkte.`,
     facts: PARTNERS.map((p) => `${p.name} wählt ${PICKS[HINT_OF[p.id]]}.`),
     related: ['pets', 'points'],
   },
@@ -85,7 +84,7 @@ export const HELP_ARTICLES_DE: readonly HelpArticle[] = [
     slug: 'groups-puzzles',
     group: 'Playing',
     title: 'Wie spielt man Vierergruppen?',
-    answer: 'Die 16 Bilder sind 4 Gruppen zu je 4: Tipp 4 an, die zusammengehören, und prüf sie. Eine richtige Gruppe rastet mit ihrem Namen ein, und 3 von 4 ist „eins daneben“, nie ein Fehlgriff.',
+    answer: 'Die 16 Bilder sind 4 Gruppen zu je 4: Tipp 4 an, die zusammengehören, und prüf sie. Eine richtige Gruppe rastet mit ihrem Namen ein, und 3 von 4 ist „eins daneben“: kostet keinen Stern, aber 1 deiner 4 Versuche.',
     related: ['how-to-play'],
   },
   {
@@ -129,7 +128,7 @@ export const HELP_ARTICLES_DE: readonly HelpArticle[] = [
     slug: 'playing-as-a-guest',
     group: 'Packs and progress',
     title: 'Brauche ich ein Konto?',
-    answer: `Nein. Als Gast spielst du ${GUEST_GAMES} Rätsel und meldest dich dann an, um weiterzuspielen. Angemeldet bleiben deine Sterne, deine Serie und deine Punkte auf jedem Gerät.`,
+    answer: 'Nein, du kannst jedes Rätsel als Gast auf diesem Gerät spielen. Wenn du dich anmeldest (ab 13 Jahren), bleiben deine Sterne, deine Serie und deine Punkte auf jedem Gerät.',
     related: ['signing-in'],
   },
   {
@@ -188,7 +187,7 @@ export const HELP_ARTICLES_DE: readonly HelpArticle[] = [
     answer: `${PARTNERS[0]!.name} ist kostenlos. Die anderen öffnen sich, wenn deine Punkte wachsen, und Punkte werden nie ausgegeben.`,
     facts: [
       ...PARTNERS.slice(1).map((p, i) => `${p.name}: ${n(PARTNER_POINTS[i + 1]!)} Punkte.`),
-      `Schließ ${BOND_AT[0]} Pakete mit einem Haustier ab, und es trägt einen Schal. Bei ${BOND_AT[1]} auch eine goldene Nadel.`,
+      `Schließ ${BOND_AT[0]} Pakete mit einem Haustier ab, und es trägt seine Lupe. Bei ${BOND_AT[1]} auch sein Monokel.`,
     ],
     steps: ['Öffne Du.', 'Tipp unter Haustiere eins an, um es auszuprobieren, und wähl es dann.'],
     related: ['tip-offs', 'pet-outfits'],

@@ -71,7 +71,8 @@ export const evalLiar: Evaluate = (p, a, b, found) => {
 
 /**
  * Groups: (a, b) is a pick of 4 tiles (src/engine/groups.ts). The 4 of a set is a hit. 3 of 4 from one set still
- * unfound is close ("one away"): never a wrong pick, so a miss narrows the board instead of only costing.
+ * unfound is close ("one away"): no wrong pick and no star lost, though it uses a try (TRIES below), so a miss
+ * narrows the board instead of only costing.
  */
 export const evalGroups: Evaluate = (p, a, b, found) => {
   const tiles = decodePick(a, b);

@@ -15,8 +15,7 @@ import { Partner } from '../components/Partner';
 import { SkeletonPills } from '../components/Skeleton';
 import { TextLink } from '../components/TextLink';
 import { nextAt, partnerName, PARTNERS, standingOf, type PartnerId } from '../engine/partners';
-import { doneClues } from '../games/path';
-import { games } from '../games/catalog';
+import { doneClues, packsDone } from '../games/path';
 import { fetchBadges, saveAvatar, saveLook } from '../lib/api';
 import { useAuth } from '../lib/auth';
 import { keepLook, loadLook } from '../lib/firstMinute';
@@ -102,7 +101,7 @@ export function Me() {
   const mine: Parts = useMemo(() => (profile ? (profile.avatar ? parseAvatar(profile.avatar) : avatarFor(profile.handle)) : guestAvatar()), [profile, guestRev]);
   const standing: Standing = useMemo(() => {
     const done = doneClues();
-    return { cases: games.filter((g) => done.has(g.id)).length, points: partner.points };
+    return { cases: packsDone(done), points: partner.points };
   }, [partner.points]);
 
   const keep = async (next: string): Promise<boolean> => {

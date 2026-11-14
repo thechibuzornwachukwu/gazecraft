@@ -8,7 +8,6 @@ import { REST_EARN, REST_WINDOW } from '../engine/rest';
 import { FIND_POINTS, TIME_BONUS, TIP_OFF_COST } from '../engine/score';
 import { DEEP_JOINS, LONG_WORD } from '../engine/skill';
 import { GOALS } from '../lib/goal';
-import { GUEST_GAMES } from '../lib/guestLimit';
 import { LEAGUE_TIERS, LEAGUE_UP } from '../lib/league';
 import { OUTFIT_NEEDS } from '../lib/petOutfit';
 import { CLEAN_BONUS, RARE_BONUS } from '../lib/profileStats';
@@ -42,7 +41,7 @@ export const HELP_ARTICLES_FR: readonly HelpArticle[] = [
     slug: 'tip-offs',
     group: 'Playing',
     title: 'C’est quoi, un indice ?',
-    answer: `Ton compagnon marque la première lettre d’un mot que tu n’as pas encore trouvé. Chaque indice coûte ${TIP_OFF_COST} points.`,
+    answer: `Ton compagnon marque la première lettre d’un mot que tu n’as pas encore trouvé, dans tous les jeux sauf Menteur, où il trahirait le mensonge. Chaque indice coûte ${TIP_OFF_COST} points.`,
     facts: PARTNERS.map((p) => `${p.name} choisit ${PICKS[HINT_OF[p.id]]}.`),
     related: ['pets', 'points'],
   },
@@ -85,7 +84,7 @@ export const HELP_ARTICLES_FR: readonly HelpArticle[] = [
     slug: 'groups-puzzles',
     group: 'Playing',
     title: 'Comment on joue aux groupes de 4 ?',
-    answer: 'Les 16 images forment 4 groupes de 4 : touche-en 4 qui vont ensemble, puis vérifie. Un bon groupe se fixe avec son nom, et 3 sur 4, c’est « à un près », jamais une erreur.',
+    answer: 'Les 16 images forment 4 groupes de 4 : touche-en 4 qui vont ensemble, puis vérifie. Un bon groupe se fixe avec son nom, et 3 sur 4, c’est « à un près » : aucune étoile perdue, mais 1 de tes 4 essais en moins.',
     related: ['how-to-play'],
   },
   {
@@ -129,7 +128,7 @@ export const HELP_ARTICLES_FR: readonly HelpArticle[] = [
     slug: 'playing-as-a-guest',
     group: 'Packs and progress',
     title: 'Faut-il un compte ?',
-    answer: `Non. En invité, tu joues ${GUEST_GAMES} puzzles, puis tu te connectes pour continuer. Connecté, tes étoiles, ta série et tes points te suivent sur tous tes appareils.`,
+    answer: 'Non, tu peux jouer à tous les puzzles en invité sur cet appareil. Te connecter (à partir de 13 ans) garde tes étoiles, ta série et tes points sur tous tes appareils.',
     related: ['signing-in'],
   },
   {
@@ -188,7 +187,7 @@ export const HELP_ARTICLES_FR: readonly HelpArticle[] = [
     answer: `${PARTNERS[0]!.name} est gratuit. Les autres s’ouvrent à mesure que tes points grandissent, et les points ne se dépensent jamais.`,
     facts: [
       ...PARTNERS.slice(1).map((p, i) => `${p.name} : ${n(PARTNER_POINTS[i + 1]!)} points.`),
-      `Finis ${BOND_AT[0]} paquets avec un compagnon et il porte une écharpe. À ${BOND_AT[1]}, une broche dorée en plus.`,
+      `Finis ${BOND_AT[0]} paquets avec un compagnon et il sort sa loupe. À ${BOND_AT[1]}, son monocle en plus.`,
     ],
     steps: ['Ouvre Toi.', 'Sous Compagnons, touche-en un pour l’essayer, puis choisis-le.'],
     related: ['tip-offs', 'pet-outfits'],

@@ -17,6 +17,16 @@ export function doneClues(): Set<string> {
 
 let path: Path | null = null;
 
+/**
+ * Packs finished, by the one rule (design/V3_STYLE.md): every clue of the pack done, or the whole puzzle played alone
+ * with at least half found (that play marks the pack finished and holds its stars, so its clues all count done).
+ * Outfits, gear and medals all count this.
+ */
+export function packsDone(done: Iterable<string> = doneClues()): number {
+  path ??= buildPath(games, SPECIAL_SOURCES);
+  return clueStates(path, done, new Set(games.map((g) => g.id))).casesDone.filter(Boolean).length;
+}
+
 /** Where the next clue on the path is played, for this browser. Null when every pack is done. */
 export function nextClueTo(): string | null {
   path ??= buildPath(games, SPECIAL_SOURCES);
