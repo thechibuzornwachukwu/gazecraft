@@ -1,15 +1,19 @@
 # Build plan
 
-What is left for Gazecraft, in sets that ship one at a time. What is built is in `SPEC.md` and git history.
-
-Deploy: `npx supabase db push`, then `npm run deploy:api`, then `npm run deploy:site`.
-Seed (after `npm run db:seed:gen`): `npx supabase db query --linked -f supabase/seed.sql`.
+What is left for Gazecraft, in sets that ship one at a time. What is built is in `SPEC.md` and git history; how to run, check and deploy is in `CLAUDE.md`.
 
 ## To build, in sets
 
 Each item names who champions it. **Opus**: engines, the server, data, money, anything that can cost points or trust. **Sonnet**: screens, drawing, research. **Haiku**: tests, copy, screenshots. **Free model** (OpenRouter's free tier): bulk drafts of words only, never code, always checked by the engine or a person. **You**: accounts, money, signatures and decisions.
 
 One set at a time. Each set is small, works on its own and leaves the live game whole. After each set: lint, typecheck, unit tests and the browser tests pass.
+
+### 12. Your language first
+
+A Spanish player today gets the 8 Spanish puzzles first, then all 25 English packs with "(en inglés)" on them. A hidden-word sentence cannot be translated: each one is written in its own language, so every language needs its own puzzles.
+
+- [ ] **Sonnet.** **Set 12a. The deck in your language.** In Spanish, French or German, the Puzzles deck holds that language's puzzles only. The English packs move to their own shelf, "Practise English", which Set 10f gives a reason to be there.
+- [ ] **Free model** drafts, the engine keeps only sentences whose words truly hide, **a native speaker** reads them, **Haiku** adds them. **Set 12b. 15 puzzles in each language.** Today: Spanish 8, French 7, German 3 (`data/games.{es,fr,de}.json`). German first.
 
 ### 11. Sign up and come back
 
@@ -23,6 +27,7 @@ One set at a time. Each set is small, works on its own and leaves the live game 
 - [ ] **You** decide, then **Opus** (engine, replay, scoring) and **Sonnet** (screens). **Set 10d. Against the clock.** Proposed by the owner on 3 Nov 2026: now and then a Series or hidden words clue is played to a countdown, and the player finds as many as they can before it ends. Open questions: how long, how it is scored and starred when not everything can be found, and how the server checks the time (the play log already carries it).
 - [ ] **You** decide, then **Opus** and **Sonnet**. **Set 10e. Word jumble.** Proposed by the owner on 3 Nov 2026: a new game type, letters shuffled, make the word. Needs a word list checked for crude and rare words, like Relay's.
 
+- [ ] **Opus** (engine) and **Sonnet** (screens), **you** check the word pairs. **Set 10f. Translation.** Proposed by the owner on 14 Nov 2026; both versions wanted. (1) *Find the word*: the partner shows a word in the player's language, PERRO, and the player finds DOG hiding in an English sentence. The same pick and check as hidden words, so it can be a clue in an English pack. (2) *Word cards*: a word in one language and 4 in the other, tap or swipe the match, like the Liar deck. Easier for the youngest. Word pairs start from the topics the packs already have (animals, colours, fruits, the body), checked by a person, one list per language.
 - [ ] **Free model** drafts, **you** check, **Haiku** adds. **Set 10c. More boards.** Each category has 1 Groups board and 1 Liar bank today, so every pack in a category shows the same Groups board. 3 more Groups picture boards for General, Science and Health (`data/groups.json`, Fluent Emoji 3D icons only), and 10 more Liar statements for each category (`data/liar.json`).
 - [ ] **Opus.** Relay reaches 6 of 25 packs. Find more chains (a wider word list from SCOWL level 35, or 2-link chains on short packs) without letting in crude or rare words.
 - [ ] **Free model** drafts paragraphs, the engine keeps only those whose words truly hide, **Haiku** adds them to `data/games.json`. **Set 10b. More packs,** 5 at a time, on topics players ask Make for most.
@@ -66,7 +71,21 @@ Play with no account, and sponsors get numbers, never people.
 - [ ] **You.** Decide: which seasons a player sees by default. Suggested: the ones the whole world shares the weather or the date for (New Year, spring, summer, harvest, December snow), and the rest by where the player is or what they choose.
 - Still under the old name until the domain exists: fignda.pages.dev, the Cloudflare projects `fignda` and `fignda-api`, the local Supabase project id, the database functions `fignda_day_no` and `fignda_score`.
 
+## Running it in production
+
+None of these exist yet. Each matters before the first school or paying sponsor.
+
+- [ ] **Opus.** Error tracking for the site and the Worker, with no player data in the reports.
+- [ ] **Opus.** An uptime check on the site and `/api/health`, telling the owner when either is down.
+- [ ] **You** (the plan), then **Opus.** Database backups you have restored once, so you know they work.
+- [ ] **Opus** drafts, **you** keep. What to do when something leaks or breaks: who is told, what is switched off, what players are told.
+- [ ] **Opus.** Rotating every secret (Supabase service key, VAPID, Groq, OpenRouter) on a date, and a note of when each was last changed.
+
 ## Checks still owed
+
+- [ ] **Opus.** `supabase/migrations/20261114000100_one_pack_rule.sql` (one rule for a finished pack, a run day for a whole puzzle, leagues that count a clue once) has not run anywhere. `npm run test:db` with Docker running, then `npx supabase db push`. Until then the server keeps the old rules for pack badges, run days and league points.
+- [ ] **Opus.** The browser tests (`e2e/`) still look for the screens before V3: the path list, the old titles and the clock. Rewrite them for the case deck, the speech bubble, the case card and the stamped result, then run them against the local stack.
+- [ ] **Sonnet.** Liar does not keep the true statements already swiped past: after a reload they come back. The score is not affected.
 
 - [ ] **Opus.** The browser tests for the 4 new games (Liar, Relay, Series, Groups) and the Your People phone test (the dot on the tab), with the local Supabase stack running. They were checked by hand in a browser, not by the e2e suite.
 - [ ] **Opus.** Your People's Top players feed is slow on a database with many plays (`squad_feed` reads `player_points()` for everyone). Fine at today's size; measure before it grows.
@@ -75,4 +94,4 @@ Play with no account, and sponsors get numbers, never people.
 - [ ] **You.** On real phones: the dock on an iPhone Home Screen app, a room game on 2 phones, a machine-written puzzle through the site, the waiting screen with the phone locked.
 - [ ] **You,** or **Sonnet** in your browser once you are signed in. Signed in screens on the live site with a real second account.
 - [ ] **You.** One real push on Android and iPhone. Needs the reminder keys.
-- [ ] **Sonnet** (research). The numbers in `INSIGHTS.html` against primary sources before any goes on a public page.
+- [ ] **Sonnet** (research). The numbers in `INSIGHTS.html` against primary sources before any goes on a public page. Its "13 badges" (lines 80 and 89) too.

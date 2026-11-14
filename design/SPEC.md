@@ -1,6 +1,6 @@
 # Gazecraft spec
 
-Values are tokens from `src/styles/tokens.css`. Prototype wins on visuals.
+How each part of the game works. Values are tokens from `src/styles/tokens.css`. For how a screen looks and talks, `V3_STYLE.md` wins; what is left to build is in `BUILD_PLAN.md`.
 
 ## 1. Brand
 
@@ -55,12 +55,12 @@ Two faces. Bungee (`--font-display`, 400 only, capitals only) for headings.
 | Button accent | bg `--accent`, text `--on-accent`, hover `--accent-hover` |
 | Button secondary | 1px `--line-3`, text `--fg`, hover bg `--surface-2` |
 | TextLink | 14/600 `--muted`, underline offset 4 `--line-3`, hover `--fg` |
-| FilterTabs | gap 20, 14/600, active `--fg` + 2px bottom border, else `--subtle` |
-| GameRow | padding 24 0, 1px bottom `--line-2`. Category 84 wide 13/600 `--subtle` (hidden <760). Title `row`. Meta "N words · Level" 14 `--subtle`. Hover padding-left 12 |
-| PageHeader | One per tab (Your puzzles, Your league, Your people, You). Title is the `h1` at `resultTitle`, left; one action slot on the right (a TextLink, or nothing), baseline aligned, wraps under the title when it does not fit. Same top padding (`--screen-top-game`) on all 4, phone and desktop |
-| ProgressLine | 2px, track `--line`, fill `--bar`. Landing preview only |
+| CaseDeck | A stack of case cards (`--radius-card` 22, an 8px ledge, the pack's colour band). Swipe right to play, left for later, with the same two as round buttons (Later 60, Play 84 in `--accent`) and an optional third. A drag never blocks page scroll (`touch-action: pan-y`). PLAY! and LATER stamps fade in with the lean |
+| Speech bubble | The partner's line: `--fg` and `--bg` swapped, 16/700, radius `--radius-bubble` with the corner by the partner at `--radius-sm`, pops in once. One per screen, beside the partner |
+| RunChips | The run (fire) and the stars (star), pills 36 high on `--surface`. Nothing before the first of either |
+| GuestAsk | The partner, its bubble, an accent "Ask a grown-up to sign in" and one line on what works without an account |
+| PageHeader | One per tab (Puzzles, People, League, You). Title is the `h1` at `resultTitle`, left; one action slot on the right, baseline aligned. `tab`: hidden on a phone, where the dock names the tab |
 | Ring | An open circle that fills clockwise from 12 o'clock. SVG, 20 (40 for the week), stroke 2.5, track `--line-3`, fill `--fg`. Closed (value 1) it turns `--accent-ink`: the only time it is lime, since lime means found. `value` 0 to 1 is a `progressbar`. `parts` makes a segmented ring (an `img` with a label), 12 degrees open between parts: done `--fg` 2.5, rest `--muted` 1.5 in 3 dashes, empty `--line-3` 1.5, so a rest day never reads by colour alone. A segmented ring closes when no part is empty and at least 1 is done |
-| BigClock | label "Time" / "Final time" 13/600. Digits `clock`, `--subtle` playing, `--fg` finished. Hidden <760 |
 | WordList | 2px `--fg` top rule. Header title + count. Rows 10 0, 1px `--line`, index 01 left. Chip: found `--accent`/`--on-accent`, missed `--miss`, unfound one • per letter `--line-4`. Chip 2 6, r4. Desktop sticky top 24, max-h min(62vh,640) scroll |
 | Segmented | track p4 r10 `--surface` 1px `--line`. Option h36 r7 14/700. Active `--fg`/`--bg` |
 | Toggle | 44x26 r13. Off `--line-2`, on `--accent`. Knob 20 |
@@ -78,10 +78,10 @@ Anything that waits on the network shows the shape of what is coming, in the pla
 
 | Where | Skeleton |
 |---|---|
-| Your league, a puzzle's board, a circle's board | 8 rows (5 in a circle): a 28 circle, a line, a number |
-| Your people: Lately, top players, people to follow, search results | 4 or 5 rows: a 40 circle, 2 lines, a number |
-| Your people: friend streaks | 2 rows: a 40 circle, 2 lines, a number |
-| Your people: Circles, and the list on `/circles` | 2 rows: a line |
+| League, a puzzle's board, a circle's board | 8 rows (5 in a circle): a 28 circle, a line, a number |
+| People: Lately, top players, people to follow, search results | 4 or 5 rows: a 40 circle, 2 lines, a number |
+| People: friend streaks | 2 rows: a 40 circle, 2 lines, a number |
+| People: Circles, and the list on `/circles` | 2 rows: a line |
 | A circle `/c/CODE`, before it is known | a title block, then 5 board rows |
 | Player `/u/HANDLE` | an 88 circle beside 3 lines, then 4 rows |
 | You: Badges | 4 pills |
@@ -113,7 +113,7 @@ Streak resets on wrong pick and on hint. `onFound` picks: first find, last one l
 
 **Tip-off** (`hint` in code): on screen the pet's help is always a "tip-off": the link "Ask for a tip-off", the phone bar's "Tip-off" button, "1 tip-off" in the count and on the share card. It marks the first letter of one unfound answer, -25.
 **Finish:** "I'm done" or last find. Missed answers shade.
-**Save and resume:** a game played alone that is left unfinished carries on where it stopped: the finds, the hints, the hand of a hint still showing, the wrong picks and the clock. One line from the `resumed` pool says so when there is a find or a hint to come back to.
+**Save and resume:** a game played alone that is left unfinished carries on where it stopped: the finds, the hints, the hand of a hint still showing, the wrong picks and the time taken so far, which the result shows. One line from the `resumed` pool says so when there is a find or a hint to come back to.
 - It stops when the player leaves the page, closes the tab, switches app or locks the phone, and starts again on return.
 - A finished game is kept too.
 - Nothing is dropped in normal play.
@@ -186,7 +186,7 @@ All but the last are counted by the game as it is played, per puzzle per UTC day
 
 Linked from past days on the leaderboard and listed in the sitemap (last 60).
 
-**Notifications:** no page and no bell. They are lines in the Your people feed, among the medals; an unread one has a 2px `--fg` bar on its leading edge. While any is unread, the Your people tab carries an 8 dot in `--cheer`, checked on each page and once a minute. Opening Your people reads them. `/notifications` redirects there.
+**Notifications:** no page and no bell. They are lines in the People feed, among the medals; an unread one has a 2px `--fg` bar on its leading edge. While any is unread, the People tab carries an 8 dot in `--cheer`, checked on each page and once a minute. Opening People reads them. `/notifications` redirects there.
 
 **Cheers:** signed in, a heart (18, `--tap` square) on every medal in the feed that is not yours: pressed, the heart fills `--cheer` and the count stays in ink. One cheer a player a medal; it tells the owner ("Ada cheered your 30 day run."). Your own medal shows its count, read only. `cheer()` checks the medal exists and is not yours.
 
@@ -202,11 +202,11 @@ Profile section Badges (`#badges`): earned ones as `--fg` pills; on your own pag
 
 **Records on the account:** signed in, every visit brings the account's records (`my_records`, worked out from verified plays): the fastest clean read in each pack, the longest word found, and the best week (most points in one Monday to Sunday week, UTC). The browser keeps the better of each (`mergeRecords`); nothing goes down.
 
-**Friends board:** Your league's middle option (`?board=friends`): you and the people you follow on this week's league points (`friends_board()`). A friend you invited shows as soon as they play signed in. Alone on it: a Find people button.
+**Friends board:** League's middle option (`?board=friends`): you and the people you follow on this week's league points (`friends_board()`). A friend you invited shows as soon as they play signed in. Alone on it: a Find people button.
 
 **Room colours:** in a room your finds stay lime; each teammate's are drawn in their own colour (`--mate-1` to `--mate-6`: orange, pink, sky, violet, blue, yellow), first come first, and their dot in the room list matches (`src/lib/mates.ts`).
 
-**Leagues:** signed in, Your league opens on the league (Segmented This week / Friends / This pack, `?board=pack`). A table of up to 20, seated on first look each week (Monday 00:00 UTC), in 1 of 5 tiers named for the medal metals: Bronze, Silver, Gold, Jade, Onyx (`src/lib/league.ts`).
+**Leagues:** signed in, League opens on the league (Segmented This week / Friends / This pack, `?board=pack`). A table of up to 20, seated on first look each week (Monday 00:00 UTC), in 1 of 5 tiers named for the medal metals: Bronze, Silver, Gold, Jade, Onyx (`src/lib/league.ts`).
 
 **Rare finds:** a word fewer than 1 in 10 of a puzzle's players found, once 20 or more have played it (`plays_rare`, from the counts in `word_finds` and `puzzle_players`). Fixed when the play is saved.
 
@@ -222,7 +222,7 @@ Profile section Badges (`#badges`): earned ones as `--fg` pills; on your own pag
 - Rules are in `src/engine/partners.ts`, pure.
 - `<Partner moment>` shows the player's pet in the mood of the moment: hello (waving), empty (calm), loading (thinking), error (stumped), done (happy), found (found), asleep (sleepy).
 - `<PartnerNote moment layout>`: the player's pet with a line, so a screen with nothing on it is never just grey text.
-- Where it shows: the You stage; the crew row at the top of Packs, calm at 48 beside the avatar; the waiting screen, full size only, thinking beside the avatar at 88; the result, at 56 beside the title, found when every word was found and happy otherwise; the empty path, calm at 40; the first screen; and the screen that asks a guest to sign in, waving at 120.
+- Where it shows: the You stage; the Team panel on Puzzles; the waiting screen, full size only, thinking beside the avatar at 88; the result, at 56 beside the title, found when every word was found and happy otherwise; the empty path, calm at 40; the first screen; and the screen that asks a guest to sign in, waving at 120.
 - The pick, in the first minute: on the first screen, under the character, a group "And your pet.
 - Choosing a pet is on the You stage (section 6, You), not in Settings.
 - Unlocking: the first pet is free.
@@ -233,9 +233,9 @@ Profile section Badges (`#badges`): earned ones as `--fg` pills; on your own pag
 
 **Avatars:** drawn from parts in `src/avatar` . Saved as a code of positions, so part lists are append only.
 
-**Tab bar (phones, app pages):** a floating dock, 12 from the sides and the bottom plus the safe area, `--tabbar-h` 56 high, `--surface` with a 1px `--line-3` border, radius `--radius-dock` 22 and a hard lower edge of `--ledge` 4 in `--line-3`. Icons only, as Duolingo has: each tab is an icon 20 in its own colour (`--tab-home`, `--tab-people`, `--tab-league`, `--tab-you`), filled a shade lighter, its name for screen readers only; the active tab's 56 by 40 pill is outlined and tinted in its colour.
-- 4 slots: Home (house, `/play`), Your people (people, `/players`), Your league (trophy, `/leaderboard`), You (the player's own face).
-- No Play tab: Home leads with the next puzzle, so a Play tab would be a second door to the same place.
+**Tab bar (phones, app pages):** a floating dock, 12 from the sides and the bottom plus the safe area, `--tabbar-h` 60 high, `--surface` with a 1px `--line-3` border, radius `--radius-dock` 22 and a hard lower edge of `--ledge` 4 in `--line-3`. Each tab is an icon 20 in its own colour (`--tab-home`, `--tab-people`, `--tab-league`, `--tab-you`), filled a shade lighter, over its name (`label`, 800, `--muted`, `--fg` when active); the active tab's 56 by 32 pill is outlined and tinted in its colour.
+- 4 slots: Puzzles (magnifier, `/play`), People (`/players`), League (trophy, `/leaderboard`), You (the player's own face).
+- No Play tab: Puzzles leads with the next case, so a Play tab would be a second door to the same place.
 
 **Outfits, earned:** 5 player pieces are earned and nothing else is: everything that helps someone look like themselves stays free, always. The rules are in `src/avatar/earned.ts`, the drawings in `src/avatar/parts/kit.ts` and the outfit list, all append only.
 - An avatar part, Extras (letter `d`), worn one at a time and drawn on top: Star pin (finish 1 pack), Headphones (finish 5 packs), Crown (reach the rank of Keen), Gold set, the crown and the pin together (finish 10 packs).
@@ -248,27 +248,20 @@ Profile section Badges (`#badges`): earned ones as `--fg` pills; on your own pag
 
 **Landing `/`** [Gazecraft Landing]
 Top to bottom:
-- Hero, two columns (one under 900).
-- The promise, straight under the hero. h2 "Slow down.
-- `#how`, h2 "Two ways to find a word".
-- h2 "More than one way to play". 4 cards, 7 and 5 of 12 columns then 5 and 7 (one column under 760), each a preview, an h3, a line and a TextLink: "A new one every day" (today's kicker and title, a 7 day strip) to `/d/N`; "Play it together" (a room code, 3 players with a found chip each) to `/play`; "Climb the board" (3 ranked rows, scores from the engine) to `/leaderboard`; "Look like yourself" (8 avatars) to `/players`.
-- Games list with 3 steps and "Or make your own" to `/make`, about (the origin story, then the promise in one sentence), footer CTA "Start playing".
+- The header: the logo and Sign in, nothing else.
+- h1 "Words are hiding in this sentence.", then the demo sentence with the partner beside it: its speech bubble gives the instruction, then reacts to each pick. One guided find: a hand (Pointer) taps the first letter of the first hidden word, then the last, on a loop, and that first letter wears the hint ring. The word list under it.
+- One accent button with a ledge: "Start playing" on a first visit, "Play the next puzzle" after.
+- "Cases waiting": 6 case cards, one per topic (icon tile in the pack's colour, title, "9 puzzles · Science"), each to the pack's first puzzle, then "All 25 cases" to `/play`.
 
-Everything above stays, below it, in the same order; the hero heading becomes an h2, "Try it here" is left out and `#how` keeps its two demonstrations. One guided find: a hand (Pointer) taps the first letter of the first hidden word, then the last, on a loop, and that first letter wears the hint ring.
+Landing avatars are drawn from fixed parts, never looked up, so a guest loads no auth or data client.
 
-The only accent button is the one the demo earns. Landing avatars are drawn from fixed parts, never looked up, so a guest loads no auth or data client.
-
-**Games `/play`** [Gazecraft home view]
-- PageHeader "Games".
-- Order: room invites, the path, and at the foot "Make a puzzle" once it is unlocked (Packs, below).
-- Unplayed "One try.
-- Beside it `weekDays` ("Played 5 of the last 7 days.", 15/700) over `runMonth` ("Current run: 4.
-- It replaces the list as the way in, it does not sit on top of it. h2 "Your path", a Ring at 20 and `journeyCount` ("7 of 108 clues").
-- Stars: 3 Star icons in a row, earned ones filled `--fg`, the rest outlined `--line-4`, so the count reads by shape.
-- LevelBadge (built, mounted once levels come from the server): a Ring with the level number inside it (Manrope 800, tabular), the rank beside it (14/700): Starter, Keen, Sharp, Master, 5 levels each and the last with no end (`RANKS`) and "120 / 600" (13 `--subtle`).
-- Pack shelves: a line above the first row of each category, the category name (13/700 `--fg`) and `shelfDone` ("4 of 12 finished", 13/600 `--subtle`).
-- Empty filter (no game in a category): "No games here yet." and TextLink "See all games".
-- Background making, server ready and not yet used by this screen : `startGenerate` answers at once with a job, `runGenerateJob` is the long request that does the work, `getGenerateJob` is asked every 5 seconds.
+**Puzzles `/play`** (design/V3_STYLE.md; `src/routes/Games.tsx`)
+- No visible title on a phone (the dock names it). The run and star chips (`RunChips`) on a phone; in the header on desktop.
+- The partner at 96 and its speech bubble: a new player, "Hi, detective! I am Mochi. Swipe right on a case you like."; a pack in progress, "Welcome back! Short note is waiting."; after Later, "No problem. How about this one?"; every pack closed, "Every case is closed."
+- The deck (`CaseDeck`, `src/games/cases.ts`): every pack as a case file, the pack in progress first, then new ones; closed ones leave it. The top card shows the pack's colour band, icon, title, "Category · Puzzle 3 of 13" (or "New case"), what the puzzle Play opens asks for (a sentence from it with one hidden word already lit, or "Find false statements" for a Liar, sums or Groups puzzle) and a stone per puzzle: done, now, to do. Swipe right or Play opens that puzzle; left or Later brings the next card; a third round button plays the top card with a friend. The top card nudges right until first touched.
+- "All 25 cases": the shelf of every pack as tiles in the pack's colour, with "3 of 7 done" or "Case closed". A sheet on a phone, the side column on desktop.
+- Team: one dark panel with the pets held, a "?" for each still to come, the line about the next one ("A new pet joins you at 3,000 points. You choose who.") and a points bar. It leads to You.
+- At the foot, "Make a puzzle" and "Made by players" once Make is unlocked.
 - Waiting elsewhere, only when the wait passes 1 second: a slow page load and opening a puzzle by link `/p/CODE` (full, `waiting` pool), making share images and publishing in Make (inline: avatar at 40, dots beside it).
 
 **The 4 tabs: one job each**
@@ -276,11 +269,11 @@ Nothing was dropped. Sections are separated by space and a 2px rule on a list, n
 
 | Tab | Job | Leads with | Then | Moved |
 |---|---|---|---|---|
-| Leaders `/leaderboard` | See where you stand | Today's board for your crowd, your row pinned | Day buttons, the line about totals | Circles went to Players (One job a screen, below). "Find players" left the top: Players is a tab, and the empty Following board still links it |
+| League `/leaderboard` | See where you stand | Today's board, your row pinned | Day buttons, the line about totals | Circles went to People (One job a screen, below) |
 
-- PageHeader titles: "Your puzzles", "Your people", "Your league", "You" (`/me`). Settings is "Your settings."
-- Leaders, signed in: the board opens on your crowd.
-- Leaders, Players, You: none that only group.
+- PageHeader titles: "Puzzles", "People", "League", "You" (`/me`), passed `tab`: on a phone the dock names the tab, so the title is for screen readers only (`src/components/PageHeader.tsx`). Settings is "Your settings."
+- League, signed in: the board opens on the players you follow.
+- League, People, You: no section that only groups.
 
 **Less at once**
 An entry point appears when the player has done what it scores. The rules hide links and sections, never a route: every page opens from its address, and a section opens from its anchor.
@@ -297,18 +290,21 @@ An entry point appears when the player has done what it scores. The rules hide l
 **Empty states on the 4 tabs.** A list never leaves a heading over nothing. Nothing yet: one calm line and, where it helps, one link.
 
 **Game `/play/:id`, `/d/:n`**
-- Back "Packs", `Category · Level`.
-- The ring fills by found over total and closes on the last find.
-- With 3 or fewer left, and at least 1 found, `leftCount` ("3 left", 700 `--muted`) joins the stats and the ring appears showing the gap.
-- Two columns wrap: puzzle (flex 3, min 520) and WordList (flex 1, min 260), gap clamp(32px,5vw,72px).
-- Instruction: "Drag across the letters.
-- Under puzzle: "Give me a hint", "I'm done", live message (`aria-live="polite"`).
-- How many?
+- Top: back to Puzzles; for a pack's puzzle, the pack as a row of marks (Sitting, below); for a whole puzzle, `Category · Level` and "Play together".
+- The partner at 80 with its speech bubble (`role="status"`): how to play this type first (`HOW` in `src/routes/Game.tsx`), then what each pick did. It describes the board for screen readers.
+- The case card: a band in the pack's colour (`packHue`, 42% over `--surface`) with the topic icon at 52, the title (`h1`, Bungee, upper case) and "Puzzle 2 of 13 · Find 4 books of the Bible"; under it the board on `--surface`. Radius `--radius-card`, an 8px ledge.
+- No clock while playing: the time shows on the result.
+- Under the card (wide screens): "Ask Mochi −25 points" (the partner at 32, the cost in `--muted`) and "I'm done", 52 high pills with a ledge. Liar has no tip-off: one would name the lie. Phones: the same two in the fixed bottom bar, with the found count and its Ring.
+- Two columns wrap: the card (flex 3, min 520) and the word list (flex 1, min 260), titled "Evidence" ("Lies" in Liar, "Sets" in Groups, "Answers" once finished).
 
 **Results** (above puzzle, smooth scroll to top)
-One job: say what happened and lead on. In view: the title, one line ("Every answer found." or "The ones you missed are shaded below."), the Stars, a sponsor's "With NAME" line, and 2 buttons.
+One job: say what happened and lead on.
+- The partner at 80 says the result title in its speech bubble (`h2`), in the mood of the play: `found` when every word was found, `done` when solved, `empty` when not.
+- Under it the case file: a card (`--surface`, `--radius-card`, an 8px ledge) with the points as a `stat`, "points", "5 of 8 found · 1:35", the one line ("Every answer found." or "The ones you missed are shaded below."), the Stars and a sponsor's "With NAME".
+- Solved, at least half found (`src/engine/stars.ts`): a "Puzzle solved" stamp, Bungee in a 3px `--accent-ink` border rotated -10deg, thuds in once (still under reduced motion). Under half: no stamp, the points read 0 (nothing is banked) and the actions are an accent "Try again" and "Packs".
+- Otherwise 2 buttons: the way on (the next puzzle of the pack) as the accent, and Share as an icon.
 - Where the score would stand: one `guestPlace` line, "That score is place 14 of 60 today." The place comes from the server (`daily_place`), from the guest's own score against the checked plays, with the guest counted as one more player.
-- Where the run lives: at a run of 3 days or more, one `guestRun` line after any win, not only the daily, said once in this browser (`gazecraft-run-told`) and before the place: the run is kept in this browser only, and sign in keeps it anywhere.
+- Where the run lives: at a run of 3 days or more, one `guestRun` line after any win, said once in this browser (`gazecraft-run-told`) and before the place: the run is kept in this browser only, and signing in keeps it anywhere.
 - Keep your streak: from a run of 2 days, the sign in link under a guest's result reads "Keep your streak" in place of "Keep this score" (`guestKeepLabel`).
 - Who they are, first of all: until the first minute's character step has an answer, the strip says one `guestLook` line and its link reads "Choose your look".
 Nothing is locked for a guest and nothing is taken away. Play first stays.
@@ -326,29 +322,29 @@ A stage, the way a runner game shows its characters: who you are is the front of
 - A badge notification opens `/me#badges`.
 - Settings holds the account only (name, sign out, reminders, theme, download my data, delete) and one line pointing here.
 
-**Packs:** one thing to do, then the path. In order: PageHeader "Packs" with the crew as its action, room invites, the path, and at the foot "Make a puzzle" once it is unlocked.
+**Puzzles** is described above, under Puzzles `/play`.
 
 **One job a screen:** every screen has one job and one main action, and the fewest taps to it (`BUILD_PLAN.md`, Screens). What is not the job moves to the screen whose job it is.
 - Phones have no bar across the top on app screens: the dock is the navigation.
 - `<IconLink>`: a page action as a 44 square with a 1px `--line-3` border, radius `--radius-lg`.
-- On the path, closed packs fold into one row, "3 packs done" with an Award icon, which opens to show them.
+- On Puzzles, closed packs leave the deck (it shows them again only when every pack is closed) and stay on the All cases shelf as "Case closed".
 - You: the week (`<Week>`) is under the rows.
-- Your people holds every person.
-- Circles on Your people (`#circles`), signed in: h2 "Circles" with a secondary "Start a circle" to `/circles`, then each circle as a row (its name, "3 players") to `/c/CODE`, where that circle's board is.
-- Your league is one board at a time, and no circles: today's board for Everyone or Following (Segmented, signed in; `?board=following|everyone`; it opens on Following when you follow anyone).
+- People holds every person.
+- Circles on People (`#circles`), signed in: h2 "Circles" with a secondary "Start a circle" to `/circles`, then each circle as a row (its name, "3 players") to `/c/CODE`, where that circle's board is.
+- League is one board at a time, and no circles: today's board for Everyone or Following (Segmented, signed in; `?board=following|everyone`; it opens on Following when you follow anyone).
 - Your row on a board is pinned in view: it carries the "You" chip on `--surface-2` and sticks to the top or the foot of the screen while the board scrolls past, clear of the dock on a phone.
 - `/u/HANDLE` is the public page only, your own too: PageHeader "Player", earned badges, no records and no badges to aim for.
 
-**Packs are the only way in.** There is no list of games and no filter: the path is the game, and a pack not yet reached cannot be opened from Packs. A sponsored pack carries "With NAME" on its card.
+**Every pack is reachable.** Puzzles has no list of games and no filter: the deck is the way in, and the All cases shelf holds every pack. A sponsored pack carries "With NAME" on its shelf tile.
 
-A puzzle played alone has no board of its own any more: its result carries no board link and Your league lists no puzzle boards. `/leaderboard/:id` still opens for old links, and every score is kept.
+A puzzle played alone has no board of its own any more: its result carries no board link and League lists no puzzle boards. `/leaderboard/:id` still opens for old links, and every score is kept.
 
-**Guests:** a guest plays 2 games to the end, of any kind. Opening a 3rd shows one screen in place of the game: the pet waving, h1 "Sign in to keep playing", one line saying nothing is lost, an accent "Sign in" to the first minute and a link back to Packs.
+**Guests:** most players are guests under 13, and nothing in the game is locked for them: every pack, stars, pets and points (kept in the browser, `src/lib/scoreStore.ts`). People, League and You show one `GuestAsk` (`src/components/GuestAsk.tsx`): the partner says why the place needs an account, an accent "Ask a grown-up to sign in" to `/welcome`, and what works meanwhile. A guest is never shown other players to follow.
 
 **Sitting `/play/:id/:n`**
 One passage of a catalogue puzzle, played as a game of its own: a clue of its pack, reached from the path. The same screen as a puzzle, with these differences:
 - At the top right, in place of the level, the pack as a row of marks, one a clue, in the order they are played (named "Bible, clue 2 of 8" for a screen reader, and never written out).
-- The pet plays along: at 32 beside the feedback line (in the phone bar, and under the board on a wide screen), in the mood of the last thing that happened.
+- The partner plays along in its speech bubble above the case card (Game, below), in the mood of the last thing that happened.
 - A sums clue (`/play/:id/21` and up) and the Mirror clue (`/play/:id/31`) are sittings like any other, on the same board with the same drag, list, hint, stars and result (section 9, Buried sums and Mirror).
 - The result leads with one accent button to the next sitting, "Next puzzle".
 - Its own kept game, result and stars (`gazecraft-resume-ID~N`, and `ID~N` in `gazecraft-stars`).
@@ -369,7 +365,7 @@ One passage of a catalogue puzzle, played as a game of its own: a clue of its pa
 
 - The days of clues are kept in this browser (`gazecraft-days`, UTC day numbers, the last 800).
 - A friend streak counts the days both played.
-- Your league is the board of the pack the player is on and nothing else (`<CaseRanks>`): the puzzle of the next clue on the path, or the first one, under its title, with a secondary "Play it".
+- League is the board of the pack the player is on and nothing else (`<CaseRanks>`): the puzzle of the next clue on the path, or the first one, under its title, with a secondary "Play it".
 - Reminders (`remind`, `remindStreak`) and the run line (`streakKeep`) speak of the pack: "Your pack is open.
 
 **Clue done** (`<ClueDone>`, a popup)
@@ -422,7 +418,6 @@ Rules for any new motion (from Emil Kowalski's design engineering skill, linked 
 | Letter | bg, color 180ms ease |
 | Hint hand | rises 6 and fades in once, `--dur-slow` `--ease-out`. It does not loop |
 | Word chip | bg, color 250ms ease |
-| GameRow hover | padding-left 0→12, color 250ms ease |
 | FilterTab, Button, Toggle | 200ms ease |
 | Button press | scales to 0.97 while held, `--dur-fast` `--ease-out`. Not when disabled. Hover fills only with a mouse |
 | Progress | width 400ms ease |
@@ -435,7 +430,6 @@ Rules for any new motion (from Emil Kowalski's design engineering skill, linked 
 | Welcome steps | no motion between steps. The Ring uses its own transition as it fills |
 | Skeleton | opacity 1 to 0.5 and back, `--dur-skeleton` each way, `--ease-loop`. A second loop allowed past 300ms, because it only says "still coming". Still under reduced motion |
 | Waiting | the other loop outside the landing, so it is allowed past 300ms. Avatar bobs up `--space-1` and back, `--dur-bob` each way, `--ease-loop`. 3 dots in `--muted` hop `--space-1h` one after the other, a `--dur-bounce` cycle, each `--dur-bounce-step` behind the last, `--ease-loop`. Only `transform` moves. No blink: the avatar is drawn by `<Avatar>` and is not redrawn. The line changes every 20 seconds with no motion. Shown after 1 second, kept at least 600ms. Reduced motion: no bob, no hop, the line still changes |
-| Journey hop | once, when the player returns to the path with a new next clue: the avatar hops from the clue it stood on to the new one in an arc, or drops in when the new one opens a pack, `--dur-hop` `--ease-out`. `transform` only. A rare moment (once per finished clue), so it may pass 300ms. Pressing a clue sinks it by `--ledge`, `--dur-fast`. The line and the discs do not animate. Reduced motion: the avatar is simply on the new clue |
 | Stars | on the clue or the pack just finished, and on the result screen: earned stars pop in one at a time, each from 0.8 scale and 0 opacity, `--dur-star` `--ease-out`, each `--dur-star-step` behind the last. Stars already seen do not move. Reduced motion: all shown at once |
 | Clue done | the popup rises `--space-4` from 0.96 scale and 0 opacity, `--dur-slower` `--ease-out`, and its stars pop as stars do. Reduced motion: it is there |
 | Burst | 18 small pieces of paper fly out from one point and fade, `transform` and `opacity` only, `--dur-burst` `--ease-out`, each starting `--dur-burst-step` after the last, reaching `--burst-reach`. Once, behind 3 stars in the popup. A rare moment, so it may pass 300ms. Reduced motion: no paper |
@@ -452,7 +446,7 @@ Nothing else animates.
 - Floor 0.
 - Server decides.
 - Passages: `passages(puzzle)` in `src/engine/passages.ts` cuts a puzzle into short sittings.
-- A passage can be played (`/play/ID/N`, section 6, Sitting) and is a clue on the path (section 6, Games).
+- A passage can be played (`/play/ID/N`, section 6, Sitting) and is a clue on the path (section 6, Puzzles).
 - The rhythm of a pack (`caseOrder` in `src/engine/journey.ts`): word, word, number, word.
 - Buried sums (`src/engine/sums.ts`): a row of digits 1 to 9, and the runs of 2 or more in a row that add up to a target from 10 to 17.
 - Mirror (`src/engine/mirror.ts`): hidden words that read right to left.
@@ -497,16 +491,16 @@ Navigation, on a phone: no bar across the top. Each screen is its title and one 
 | Screen | Its one job | Main action | State |
 |---|---|---|---|
 | Play (dock) | Start the next thing | The next clue | Built |
-| Cases `/play` | Show where you are on the path | The next puzzle | Built: the path, a pack a card |
+| Puzzles `/play` | Pick the next case | Swipe right, or Play | Built: the case deck, the All cases shelf, the team panel |
 | Puzzle, clue | Find the words | Done | Built |
 | Result | Say what happened and lead on | Next clue, or Share | Built: a popup at the finish of a clue, then one line and 2 buttons, the rest behind "More" |
 | You `/me` | Who you are: character and pet | Select, or Wear | Built. Holds the week, badges and records. `/u/HANDLE` is only what others see |
-| Your people `/players` | What your people did, and finding more | Cheer, follow, or play together | Built: a feed of cards (medals large, with a heart to cheer; notifications with their action as an icon), Your people / Top players. People to follow is a strip inside it: anyone on the game, online players first with a green dot and the count online; each card follows, or opens a room on your next puzzle and invites them (following them first). Friend streaks above, circles below, search behind the search icon (`#find`) |
-| Your league `/leaderboard` | Where you stand today | None: it is read | Built: one board at a time, your own row pinned in view |
+| People `/players` | What your people did, and finding more | Cheer, follow, or play together | Built: a feed of cards (medals large, with a heart to cheer; notifications with their action as an icon), People / Top players. Signed in only: a guest sees the guest ask. People to follow is a strip inside it: anyone on the game, online players first with a green dot and the count online; each card follows, or opens a room on your next puzzle and invites them (following them first). Friend streaks above, circles below, search behind the search icon (`#find`) |
+| League `/leaderboard` | Where you stand today | None: it is read | Built: one board at a time, your own row pinned in view |
 | Settings | The account | Save | Built: account only. Reached from the gear on You |
 | First minute `/welcome` | Make a new player someone | Keep this look | Built: a new player lands in a clue, and the character and pet are asked after the first result |
-| Guest wall | Turn a guest into a player | Sign in | Built: after 2 games |
-| Make `/make` | Write a puzzle | Publish | Built. To do: sets 6a to 6g. Reached from the foot of Cases, once unlocked |
+| Guest ask | Tell a guest what an account adds | Ask a grown-up to sign in | Built: on People, League and You (`GuestAsk`). There is no wall: a guest plays every pack |
+| Make `/make` | Write a puzzle | Publish | Built. To do: sets 6a to 6g. Reached from the foot of Puzzles, once unlocked |
 
 ### Revenue
 
