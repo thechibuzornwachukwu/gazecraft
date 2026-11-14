@@ -237,4 +237,12 @@ export const play: Dict = {
   'Puzzle solved': 'Rätsel gelöst',
   'points': 'Punkte',
   'Practise English': 'Englisch üben',
+  'Hidden words': 'Versteckte Wörter',
+  'Liar': 'Lügner',
+  'Hidden sums': 'Versteckte Summen',
+  'Series': 'Reihen',
+  'Mirror': 'Spiegel',
+  'Relay': 'Staffel',
+  'Groups': 'Gruppen',
+  'Next up: {kind}': 'Als Nächstes: {kind}',
 };

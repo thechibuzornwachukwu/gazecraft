@@ -235,4 +235,12 @@ export const play = {
   'Puzzle solved': 'Puzle resuelto',
   'points': 'puntos',
   'Practise English': 'Practica inglés',
+  'Hidden words': 'Palabras ocultas',
+  'Liar': 'Mentiroso',
+  'Hidden sums': 'Sumas ocultas',
+  'Series': 'Series',
+  'Mirror': 'Espejo',
+  'Relay': 'Relevo',
+  'Groups': 'Grupos',
+  'Next up: {kind}': 'Ahora: {kind}',
 } as const;

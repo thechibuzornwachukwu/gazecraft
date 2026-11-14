@@ -13,7 +13,7 @@ import { clueId, clueKind } from '../engine/journey';
 import { ClueDone } from '../components/ClueDone';
 import { Partner } from '../components/Partner';
 import { HINT_OF, partnerName } from '../engine/partners';
-import { baseCategory, caseIcon } from '../games/cases';
+import { baseCategory, caseIcon, kindName } from '../games/cases';
 import { doneClues, nextClueTo } from '../games/path';
 import { packHue } from '../lib/packHue';
 import { countPuzzleToday } from '../lib/goal';
@@ -487,6 +487,7 @@ function GameScreen({ def, part }: ScreenProps) {
                 </h1>
                 <span className={styles.bandMeta}>
                   {part ? `${t('Puzzle {n} of {m}', { n: part.at, m: part.of })} · ` : ''}
+                  {def.type !== 'hidden-words' ? `${kindName(def.type)} · ` : ''}
                   {t('Find {what}', { what: countOf(total, named.noun) })}
                 </span>
               </div>

@@ -8,7 +8,7 @@ import { buildHiddenWords, type HiddenWordsPuzzle } from '../engine/hiddenWords'
 import { sentences } from '../engine/text';
 import { t } from '../i18n';
 import { categoryName, titleOf } from '../i18n/gameNames';
-import { games, getPassage, getPuzzle, SPECIAL_SOURCES, sponsorFor } from './catalog';
+import { games, getPassage, getPuzzle, SPECIAL_SOURCES, sponsorFor, type GameType } from './catalog';
 
 /** A 3D topic picture per category (public/icons/fluent). A category without one gets the star. */
 const ICON: Record<string, string> = {
@@ -30,6 +30,29 @@ const LOCAL: Record<string, readonly [base: string, icon: string]> = {
 /** The English category a pack is coloured by. */
 export const baseCategory = (category: string): string => LOCAL[category]?.[0] ?? category;
 export const caseIcon = (category: string): string => `/icons/fluent/${LOCAL[category]?.[1] ?? ICON[category] ?? 'star'}.webp`;
+
+/**
+ * What each kind of round is called. A pack mixes them (words, then Liar, then a number round...), so the card,
+ * the shelf and the puzzle all name the round Play opens: a pack called French names can open a number puzzle.
+ */
+export function kindName(type: GameType): string {
+  switch (type) {
+    case 'hidden-words':
+      return t('Hidden words');
+    case 'liar':
+      return t('Liar');
+    case 'buried-sums':
+      return t('Hidden sums');
+    case 'series':
+      return t('Series');
+    case 'mirror':
+      return t('Mirror');
+    case 'relay':
+      return t('Relay');
+    case 'groups':
+      return t('Groups');
+  }
+}
 
 /** A piece of the teaser sentence: plain text, or the hidden word that shows. */
 export type Piece = { text: string; hit: boolean };
@@ -53,6 +76,8 @@ export type CaseFile = {
   teaser: Piece[];
   /** The marked word, as the answer list writes it. */
   word: string;
+  /** The kind of round Play opens: Hidden words, Liar, Hidden sums... */
+  kind: string;
   /** What the puzzle Play opens asks for, when it has no sentence to show: a Liar, sums or groups puzzle. */
   find: string;
   /** Who the pack is with ("With NAME"), when it is. */
@@ -115,7 +140,8 @@ export function caseFiles(done: Iterable<string>): CaseFile[] {
       state,
       teaser: pieces,
       word,
-      find: words ? '' : t('Find {what}', { what: opens!.noun }),
+      kind: kindName(opens?.type ?? 'hidden-words'),
+      find: words ? '' : t('Next up: {kind}', { kind: kindName(opens!.type) }),
       sponsor: sponsorFor(def)?.name ?? '',
       lang: def.lang,
     });

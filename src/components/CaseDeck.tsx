@@ -77,7 +77,7 @@ export function CaseDeck({ cases, onPlay, onLater, extra }: Props) {
 
   const shift = leaving ? leaving * 520 : dx;
   const lean = Math.max(-1, Math.min(1, shift / SEND_AT));
-  const tag = top.state === 'going' ? t('Puzzle {n} of {m}', { n: top.done + 1, m: top.total }) : top.state === 'closed' ? t('Case closed') : t('New case');
+  const tag = top.state === 'going' ? `${t('Puzzle {n} of {m}', { n: top.done + 1, m: top.total })} · ${top.kind}` : top.state === 'closed' ? t('Case closed') : t('New case');
 
   return (
     <div className={styles.deck}>

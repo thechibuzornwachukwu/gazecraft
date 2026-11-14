@@ -182,6 +182,7 @@ function Shelf({ cases, onPick }: { cases: readonly CaseFile[]; onPick: () => vo
             <span className={styles.tileMeta}>
               {c.category} · {c.state === 'closed' ? t('Case closed') : t('{done} of {total} done', { done: c.done, total: c.total })}
             </span>
+            {c.state !== 'closed' && <span className={styles.tileMeta}>{t('Next up: {kind}', { kind: c.kind })}</span>}
             {c.sponsor && (
               <span className={styles.tileMeta} data-case-sponsor>
                 {pick('sponsorWith', { name: c.sponsor })}
