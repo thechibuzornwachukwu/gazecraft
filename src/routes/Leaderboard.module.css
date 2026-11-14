@@ -279,3 +279,96 @@
 .leave {
   margin: var(--space-4) 0 0;
 }
+
+/* The league as a race (design/canvas/LeaguePhone.dc.html): a lane a player, the avatar along a track. */
+.raceTitle {
+  composes: h3 from '../styles/type.module.css';
+  margin: 0;
+  text-transform: uppercase;
+}
+.race {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  border: 1px solid var(--line-2);
+  box-shadow: 0 6px 0 var(--line-2);
+}
+.lane {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3);
+  background: var(--surface);
+}
+.lane:nth-child(even) {
+  background: var(--surface-2);
+}
+.lane[data-mine] {
+  background: color-mix(in srgb, var(--accent) 22%, var(--surface));
+}
+.laneRank {
+  composes: figure from '../styles/type.module.css';
+  flex: none;
+  width: 2ch;
+  text-align: right;
+  color: var(--muted);
+}
+.track {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+}
+.trail {
+  position: absolute;
+  left: 0;
+  top: 19px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line-3);
+}
+.lane[data-mine] .trail {
+  background: var(--accent-ink);
+}
+.runner {
+  position: absolute;
+  top: 2px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 3px solid var(--surface);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.laneName {
+  composes: small from '../styles/type.module.css';
+  flex: none;
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-weight: 800;
+  color: var(--fg);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+.lanePts {
+  composes: label from '../styles/type.module.css';
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+/* The cut: everyone above it goes up a tier when the week ends. */
+.cut {
+  composes: label from '../styles/type.module.css';
+  padding: var(--space-2) var(--space-3);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 800;
+  text-align: center;
+}

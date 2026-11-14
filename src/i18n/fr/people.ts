@@ -262,4 +262,8 @@ export const people: Dict = {
   'Copy your link': 'Copie ton lien',
   'Open a room and solve a puzzle with a friend. No account needed.': 'Ouvre une salle et résous une énigme avec un ami. Pas besoin de compte.',
   'Cheer your friends. Their medals land here.': 'Encourage tes amis. Leurs médailles arrivent ici.',
+  'This week in {tier}': 'Cette semaine en {tier}',
+  'Top {n} go up to {tier}': 'Les {n} premiers montent en {tier}',
+  'You are in the top {n}. Keep it up and you go up to {tier}.': 'Tu es dans les {n} premiers. Continue et tu montes en {tier}.',
+  'Every word you find moves you along. The top {n} go up.': 'Chaque mot trouvé te fait avancer. Les {n} premiers montent.',
 };

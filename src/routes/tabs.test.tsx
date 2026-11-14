@@ -510,9 +510,11 @@ describe('the league on League', () => {
     world.me = ADA;
     world.api.fetchMyLeague = ok(LEAGUE);
     open('/leaderboard');
-    expect(await screen.findByRole('heading', { level: 2, name: 'Silver league' })).toBeInTheDocument();
-    const rows = within(screen.getByRole('list', { name: 'This week' })).getAllByRole('listitem');
-    expect(rows.map((r) => r.hasAttribute('data-up'))).toEqual([true, true, false]);
+    expect(await screen.findByRole('heading', { level: 2, name: 'This week in Silver' })).toBeInTheDocument();
+    const items = within(screen.getByRole('list', { name: 'This week' })).getAllByRole('listitem');
+    // A lane a player, and the cut under the last place that goes up.
+    expect(items.map((r) => (r.hasAttribute('data-up') ? 'up' : r.textContent?.startsWith('Top 5 go up') ? 'cut' : 'stay'))).toEqual(['up', 'up', 'cut', 'stay']);
+    const rows = items.filter((r) => !r.textContent?.startsWith('Top 5 go up'));
     expect(rows[1]).toHaveAttribute('data-mine');
     expect(document.body.textContent).not.toMatch(/down|drop|relegat/i);
     expect(screen.getByRole('radio', { name: 'This week' })).toHaveAttribute('aria-checked', 'true');

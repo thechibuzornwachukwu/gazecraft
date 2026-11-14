@@ -1,12 +1,13 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom';
-import { ChevronLeft, ChevronsUp } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { Button } from '../components/Button';
+import { PartnerSays } from '../components/PartnerSays';
 import { Icon } from '../components/Icon';
 import { formatTime } from '../engine/time';
 import { getGameDef } from '../games/catalog';
 import { fetchFriendsBoard, fetchGameBoard, fetchMyLeague, fetchTogetherBoard, joinLeague, leaveLeague, type BoardRow, type MyRank, type TeamRow } from '../lib/api';
-import { goesUp, tierName, type League, type LeagueRow } from '../lib/league';
+import { goesUp, LEAGUE_UP, tierName, type League, type LeagueRow } from '../lib/league';
 import { TextLink } from '../components/TextLink';
 import { nextClueTo } from '../games/path';
 import { games } from '../games/catalog';
@@ -242,27 +243,42 @@ function LeagueBoard() {
     );
   }
   const { league } = load;
+  const tier = tierLabel(tierName(league.tier));
+  const top = Math.max(1, ...league.rows.map((r) => r.points));
+  // The cut sits under the last place that goes up; a top tier has none.
+  const lastUp = league.rows.reduce((at, r, i) => (goesUp(r, league.tier) ? i : at), -1);
+  const mine = league.rows.find((r) => r.me);
   return (
     <section className={styles.section} aria-labelledby="league-title" data-league={tierName(league.tier).toLowerCase()}>
-      <h2 id="league-title" className={styles.h2}>
-        {t('{tier} league', { tier: tierLabel(tierName(league.tier)) })}
+      <PartnerSays>
+        {mine && mine.place <= LEAGUE_UP && lastUp >= 0
+          ? t('You are in the top {n}. Keep it up and you go up to {tier}.', { n: LEAGUE_UP, tier: tierLabel(tierName(league.tier + 1)) })
+          : t('Every word you find moves you along. The top {n} go up.', { n: LEAGUE_UP })}
+      </PartnerSays>
+      <h2 id="league-title" className={styles.raceTitle}>
+        {t('This week in {tier}', { tier })}
       </h2>
-      <ol className={styles.board} aria-label={t('This week')}>
-        {league.rows.map((r) => {
-          const up = goesUp(r, league.tier);
-          return (
-            <li key={r.handle} className={styles.leagueRow} data-mine={r.me || undefined} data-up={up || undefined}>
-              <span className={styles.rank}>{String(r.place).padStart(2, '0')}</span>
-              <Link to={`/u/${r.handle}`} className={styles.handle}>
-                <Avatar handle={r.handle} size={28} />
-                @{r.handle}
-                {r.me && <span className={styles.you}>{t('You')}</span>}
+      <ol className={styles.race} aria-label={t('This week')}>
+        {league.rows.map((r, i) => (
+          <Fragment key={r.handle}>
+            <li className={styles.lane} data-mine={r.me || undefined} data-up={goesUp(r, league.tier) || undefined}>
+              <span className={styles.laneRank}>{r.place}</span>
+              <span className={styles.track} aria-hidden="true">
+                <span className={styles.trail} style={{ width: `${(r.points / top) * 100}%` }} />
+                <span className={styles.runner} style={{ left: `calc(${(r.points / top) * 100}% - ${(r.points / top) * 40}px)` }}>
+                  <Avatar handle={r.handle} size={34} />
+                </span>
+              </span>
+              <Link to={`/u/${r.handle}`} className={styles.laneName}>
+                {r.me ? t('You') : r.name || `@${r.handle}`}
+                <span className={styles.lanePts}>{num(r.points)}</span>
               </Link>
-              <span className={styles.upMark}>{up && <Icon icon={ChevronsUp} size={16} label={t('Goes up')} />}</span>
-              <span className={styles.score}>{num(r.points)}</span>
             </li>
-          );
-        })}
+            {i === lastUp && i < league.rows.length - 1 && (
+              <li className={styles.cut}>{t('Top {n} go up to {tier}', { n: LEAGUE_UP, tier: tierLabel(tierName(league.tier + 1)) })}</li>
+            )}
+          </Fragment>
+        ))}
       </ol>
       <p className={styles.leave}>
         <TextLink onClick={() => act(leaveLeague)}>{t('Leave the league')}</TextLink>
