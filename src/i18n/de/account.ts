@@ -291,4 +291,6 @@ export const account: Dict = {
   '{n} of {total}': '{n} von {total}',
   'Keep your streak': 'Behalte deine Serie',
   'Become a detective': 'Werde Detektiv',
+  'Detective': 'Detektiv',
+  'Saved on this device.': 'Auf diesem Gerät gespeichert.',
 };

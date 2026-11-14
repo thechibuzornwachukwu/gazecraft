@@ -154,6 +154,14 @@ export function Me() {
     <div className={styles.page}>
       <PageHeader tab title={t('You')} action={profile ? <IconLink to="/settings" icon={Settings} label={t('Settings')} /> : auth.enabled ? <TextLink to="/welcome?from=%2Fme">{t('Ask a grown-up to sign in')}</TextLink> : undefined} />
 
+      <section className={styles.profile} aria-labelledby="me-name">
+        <h2 id="me-name" className={styles.who}>
+          {profile?.name ?? t('Detective')}
+        </h2>
+        <LevelBadge points={partner.points} />
+        {!profile && <p className={styles.saved}>{t('Saved on this device.')}</p>}
+      </section>
+
       <section className={styles.stage} aria-label={t('You and your pet')} data-trying={trying?.kind}>
         <div className={styles.cast}>
           <figure className={styles.figure}>
@@ -165,7 +173,6 @@ export function Me() {
               </button>
             </span>
             <figcaption className={styles.caption}>{profile?.name ?? t('You')}</figcaption>
-            {profile && <LevelBadge points={partner.points} size="sm" />}
           </figure>
           <figure className={styles.figure}>
             <span className={styles.portrait}>

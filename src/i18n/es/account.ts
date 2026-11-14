@@ -289,4 +289,6 @@ export const account = {
   '{n} of {total}': '{n} de {total}',
   'Keep your streak': 'Mantén tu racha',
   'Become a detective': 'Hazte detective',
+  'Detective': 'Detective',
+  'Saved on this device.': 'Guardado en este dispositivo.',
 } as const;

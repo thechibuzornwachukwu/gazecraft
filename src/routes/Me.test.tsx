@@ -118,7 +118,7 @@ describe('You, signed in', () => {
     expect(screen.getByRole('link', { name: 'Settings' })).toHaveAttribute('href', '/settings');
     await screen.findByRole('button', { name: 'Mochi. With you, 4 packs.' });
     expect(line()).toBe('');
-    expect(within(stage()).getByRole('progressbar')).toBeInTheDocument();
+    expect(within(screen.getByRole('region', { name: 'Ada' })).getByRole('progressbar')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Mochi. With you, 4 packs.' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Tobs. Locked. 3,000 points.' }));
     expect(line()).toBe('Locked. 1,760 points to go.');
