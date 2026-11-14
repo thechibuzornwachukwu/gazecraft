@@ -288,4 +288,5 @@ export const account = {
   'First puzzle': 'Primer puzle',
   '{n} of {total}': '{n} de {total}',
   'Keep your streak': 'Mantén tu racha',
+  'Become a detective': 'Hazte detective',
 } as const;

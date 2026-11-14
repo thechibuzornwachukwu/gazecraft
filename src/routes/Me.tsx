@@ -152,7 +152,7 @@ export function Me() {
 
   return (
     <div className={styles.page}>
-      <PageHeader title={t('You')} action={profile ? <IconLink to="/settings" icon={Settings} label={t('Settings')} /> : auth.enabled ? <TextLink to="/welcome?from=%2Fme">{t('Sign in')}</TextLink> : undefined} />
+      <PageHeader tab title={t('You')} action={profile ? <IconLink to="/settings" icon={Settings} label={t('Settings')} /> : auth.enabled ? <TextLink to="/welcome?from=%2Fme">{t('Ask a grown-up to sign in')}</TextLink> : undefined} />
 
       <section className={styles.stage} aria-label={t('You and your pet')} data-trying={trying?.kind}>
         <div className={styles.cast}>

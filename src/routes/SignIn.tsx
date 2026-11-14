@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { Partner } from '../components/Partner';
 import { Link, Navigate, useSearchParams } from 'react-router-dom';
 import { Button } from '../components/Button';
 import { Field } from '../components/Field';
@@ -111,10 +112,13 @@ export function EmailSignIn({ next, head, foot }: EmailProps) {
       <>
         <div className={styles.head}>
           <h1 className={styles.title}>{t('Check your inbox.')}</h1>
-          <p className={styles.lead}>
-            {t('We sent an email to')} <strong className={styles.strong}>{email.trim()}</strong>
-            {t('. Open the link in it on this device, or type the 6 digit code if it has one.')}
-          </p>
+          <div className={styles.pet}>
+            <Partner moment="loading" size={72} className={styles.face} />
+            <p className={styles.bubble}>
+              {t('We sent an email to')} <strong>{email.trim()}</strong>
+              {t('. Open the link in it on this device, or type the 6 digit code if it has one.')}
+            </p>
+          </div>
         </div>
         <div className={styles.fields}>
           <Field
@@ -315,16 +319,17 @@ export function SignIn() {
         next={next}
         head={
           <div className={styles.head}>
-            <h1 className={styles.title}>
-              {t('Sign in.')}
-            </h1>
-            <p className={styles.lead}>
-              {t('Your scores and run, on every device. See what we keep in')}{' '}
-              <Link to="/privacy" className={styles.inline}>
-                {t('Privacy')}
-              </Link>
-              {t('. Accounts are for players aged 13 and over.')}
-            </p>
+            <h1 className={styles.title}>{t('Become a detective')}</h1>
+            <div className={styles.pet}>
+              <Partner moment="hello" size={72} className={styles.face} />
+              <p className={styles.bubble}>
+                {t('Your scores and run, on every device. See what we keep in')}{' '}
+                <Link to="/privacy" className={styles.inline}>
+                  {t('Privacy')}
+                </Link>
+                {t('. Accounts are for players aged 13 and over.')}
+              </p>
+            </div>
           </div>
         }
         foot={

@@ -252,4 +252,7 @@ export const people: Dict = {
   'Handles need at least 2 letters or numbers.': 'Le pseudo doit avoir au moins 2 lettres ou chiffres.',
   'Handles use a to z, 0 to 9, dots and underscores. Up to 20.': 'Le pseudo utilise a à z, 0 à 9, points et tirets bas. Jusqu’à 20.',
   'That handle is taken. Try another.': 'Ce pseudo est déjà pris. Essaie-en un autre.',
+  'Ask a grown-up to sign in': 'Demande à un adulte de te connecter',
+  'People is where you follow friends and cheer their medals. It needs an account.': 'Ici, tu suis tes amis et tu applaudis leurs médailles. Il faut un compte.',
+  'You can still play with a friend: open any case and tap Play with a friend.': 'Tu peux quand même jouer avec un ami : ouvre une enquête et touche Jouer avec un ami.',
 };

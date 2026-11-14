@@ -243,7 +243,7 @@ describe('Leaders', () => {
   it('a guest sees the board and the way to get on it', async () => {
     open('/leaderboard');
     expect(await screen.findByText('Nobody is on it yet. Finish the whole puzzle signed in and you are.')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/signin?next=%2Fleaderboard');
+    expect(screen.getByRole('link', { name: 'Ask a grown-up to sign in' })).toHaveAttribute('href', '/signin?next=%2Fleaderboard');
     expectNoHoles();
   });
 
@@ -267,19 +267,15 @@ describe('Leaders', () => {
 });
 
 describe('Players', () => {
-  it('a guest: the top players feed, people to follow in it, and search behind an icon', async () => {
+  it('a guest: no strangers to follow and no search, one ask for a grown-up, and what works meanwhile', async () => {
     world.api.suggestedPlayers = ok([{ handle: 'bisi', name: 'Bisi', plays: 0, followers: 0, mutuals: 0 }]);
     open('/players');
     expect(title()).toBe('People');
-    expect(await screen.findByText('No medals won this month yet.')).toBeInTheDocument();
-    const strip = screen.getByRole('region', { name: 'People to follow' });
-    expect(within(strip).getByRole('link', { name: 'Sign in to follow Bisi' })).toHaveAttribute('href', '/signin?next=%2Fu%2Fbisi');
-    // Icons, not words, for every action here.
-    const find = screen.getByRole('link', { name: 'Find people' });
-    expect(find).toHaveAttribute('href', '/players#find');
-    expect(find.textContent).toBe('');
-    expect(screen.queryByRole('textbox')).toBeNull();
-    expect(screen.queryByRole('radio', { name: 'Following' })).toBeNull();
+    expect(screen.getByRole('link', { name: 'Ask a grown-up to sign in' })).toHaveAttribute('href', '/welcome?from=%2Fplayers');
+    expect(screen.getByText(/open any case and tap Play with a friend/)).toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: 'People to follow' })).toBeNull();
+    expect(screen.queryByText('Bisi')).toBeNull();
+    expect(screen.queryByRole('link', { name: 'Find people' })).toBeNull();
     expectNoHoles();
   });
 
@@ -319,6 +315,7 @@ describe('Players', () => {
   });
 
   it('a feed that did not load says so, and never claims to be quiet', async () => {
+    world.me = ADA;
     world.api.squadFeed = fail;
     open('/players');
     expect(await screen.findByText('This did not load. Try again in a moment.')).toBeInTheDocument();
@@ -326,6 +323,7 @@ describe('Players', () => {
   });
 
   it('suggestions with missing fields are dropped, never printed as undefined', async () => {
+    world.me = ADA;
     world.api.suggestedPlayers = ok([null, { handle: 'bisi', name: '', plays: undefined, mutuals: null }, { name: 'No handle' }]);
     open('/players');
     const strip = await screen.findByRole('region', { name: 'People to follow' });

@@ -252,4 +252,7 @@ export const people: Dict = {
   'Handles need at least 2 letters or numbers.': 'Der Benutzername braucht mindestens 2 Buchstaben oder Ziffern.',
   'Handles use a to z, 0 to 9, dots and underscores. Up to 20.': 'Benutzernamen nutzen a bis z, 0 bis 9, Punkte und Unterstriche. Bis zu 20.',
   'That handle is taken. Try another.': 'Dieser Name ist schon vergeben. Versuch einen anderen.',
+  'Ask a grown-up to sign in': 'Bitte einen Erwachsenen, dich anzumelden',
+  'People is where you follow friends and cheer their medals. It needs an account.': 'Hier folgst du Freunden und jubelst über ihre Medaillen. Dafür brauchst du ein Konto.',
+  'You can still play with a friend: open any case and tap Play with a friend.': 'Mit einem Freund spielen geht trotzdem: Öffne einen Fall und tippe auf Mit einem Freund spielen.',
 };

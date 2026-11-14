@@ -92,3 +92,29 @@
   text-underline-offset: 4px;
   text-decoration-color: var(--line-3);
 }
+
+/* The partner says what this step is about (design/V3_STYLE.md, Words). */
+.pet {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+.face {
+  flex: none;
+  width: 72px;
+  height: auto;
+}
+.bubble {
+  margin: 0 0 var(--space-6);
+  padding: 14px var(--space-4);
+  background: var(--fg);
+  color: var(--bg);
+  border-radius: var(--radius-bubble) var(--radius-bubble) var(--radius-bubble) var(--radius-sm);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.bubble a,
+.bubble a:hover {
+  color: inherit;
+}

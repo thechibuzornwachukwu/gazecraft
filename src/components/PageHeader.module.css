@@ -26,3 +26,21 @@
   display: flex;
   align-items: center;
 }
+
+/* A tab on a phone: the dock names the place (design/V3_STYLE.md), so the title steps out of sight, not out of reach. */
+@media (max-width: 640px) {
+  .head[data-tab] {
+    justify-content: flex-end;
+  }
+  .head[data-tab] .title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .head[data-tab]:not(:has(.action)) {
+    display: contents;
+  }
+}

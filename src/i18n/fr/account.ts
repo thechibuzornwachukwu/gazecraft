@@ -290,4 +290,5 @@ export const account: Dict = {
   'First puzzle': 'Premier puzzle',
   '{n} of {total}': '{n} sur {total}',
   'Keep your streak': 'Garde ta série',
+  'Become a detective': 'Deviens détective',
 };

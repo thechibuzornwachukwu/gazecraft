@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { Link, Navigate, useLocation } from 'react-router-dom';
 import { Button } from '../components/Button';
 import { Field } from '../components/Field';
+import { GuestAsk } from '../components/GuestAsk';
 import { PageHeader } from '../components/PageHeader';
 import { PartnerNote } from '../components/PartnerNote';
 import { SkeletonList } from '../components/Skeleton';
@@ -188,11 +189,23 @@ export function Players() {
   }, [q]);
 
   if (!auth.enabled) return <Navigate to="/play" replace />;
+  // A guest is most likely under 13: no strangers to follow, no search. One ask, and what works without an account.
+  if (!me && !auth.loading)
+    return (
+      <div className={styles.page}>
+        <PageHeader tab title={t('People')} />
+        <GuestAsk
+          from="/players"
+          line={t('People is where you follow friends and cheer their medals. It needs an account.')}
+          meanwhile={t('You can still play with a friend: open any case and tap Play with a friend.')}
+        />
+      </div>
+    );
   const searching = finding && q.trim().length > 0;
 
   return (
     <div className={styles.page}>
-      <PageHeader title={t('People')} action={finding ? <IconLink to="/players" icon={X} label={t('Close search')} /> : <IconLink to="/players#find" icon={Search} label={t('Find people')} />} />
+      <PageHeader tab title={t('People')} action={finding ? <IconLink to="/players" icon={X} label={t('Close search')} /> : <IconLink to="/players#find" icon={Search} label={t('Find people')} />} />
 
       {finding && (
         <section className={styles.section} aria-label={t('Search players')}>

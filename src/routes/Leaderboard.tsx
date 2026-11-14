@@ -111,7 +111,7 @@ function GuestNote({ next }: { next: string }) {
   return (
     <p className={styles.guest}>
       <Link to={`/signin?next=${encodeURIComponent(next)}`} className={styles.inline}>
-        {t('Sign in')}
+        {t('Ask a grown-up to sign in')}
       </Link>{' '}
       {t('to get on the board.')}
     </p>
@@ -129,7 +129,7 @@ export function Leaderboard() {
   const board = !signedIn ? 'pack' : asked === 'pack' || asked === 'friends' ? asked : 'league';
   return (
     <div className={styles.page}>
-      <PageHeader title={t('League')} />
+      <PageHeader tab title={t('League')} />
       {signedIn && (
         <div className={styles.switch}>
           <Segmented

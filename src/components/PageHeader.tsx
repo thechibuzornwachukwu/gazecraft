@@ -5,14 +5,16 @@ type Props = {
   title: string;
   /** One action, on the right. An icon button, a small link, or nothing. */
   action?: ReactNode;
+  /** One of the four tabs: on a phone the dock already names it, so the title is for screen readers only. */
+  tab?: boolean;
 };
 
 /**
  * The top of each tab: the title in the same place at the same size, and one action slot. SPEC section 4.
  */
-export function PageHeader({ title, action }: Props) {
+export function PageHeader({ title, action, tab = false }: Props) {
   return (
-    <header className={styles.head}>
+    <header className={styles.head} data-tab={tab || undefined}>
       <h1 className={styles.title}>{title}</h1>
       <div className={styles.side}>
         {action ? <div className={styles.action}>{action}</div> : null}

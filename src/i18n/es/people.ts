@@ -250,4 +250,7 @@ export const people = {
   'Handles need at least 2 letters or numbers.': 'El usuario necesita al menos 2 letras o números.',
   'Handles use a to z, 0 to 9, dots and underscores. Up to 20.': 'El usuario usa de la a a la z, 0 a 9, puntos y guiones bajos. Hasta 20.',
   'That handle is taken. Try another.': 'Ese nombre de usuario ya existe. Prueba otro.',
+  'Ask a grown-up to sign in': 'Pide a un adulto que inicie sesión',
+  'People is where you follow friends and cheer their medals. It needs an account.': 'Aquí sigues a tus amigos y celebras sus medallas. Hace falta una cuenta.',
+  'You can still play with a friend: open any case and tap Play with a friend.': 'Igual puedes jugar con un amigo: abre cualquier caso y toca Jugar con un amigo.',
 } as const;

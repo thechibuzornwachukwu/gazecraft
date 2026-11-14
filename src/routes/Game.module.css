@@ -215,7 +215,7 @@
   padding: 14px var(--space-4);
   background: var(--fg);
   color: var(--bg);
-  border-radius: 18px 18px 18px var(--radius-sm);
+  border-radius: var(--radius-bubble) var(--radius-bubble) var(--radius-bubble) var(--radius-sm);
   font-size: 16px;
   font-weight: 700;
   line-height: 1.35;

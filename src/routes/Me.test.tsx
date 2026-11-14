@@ -67,7 +67,7 @@ describe('You, as a guest', () => {
     show();
     expect(within(stage()).getByText('You')).toBeInTheDocument();
     expect(within(stage()).queryByRole('progressbar')).toBeNull();
-    expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/welcome?from=%2Fme');
+    expect(screen.getByRole('link', { name: 'Ask a grown-up to sign in' })).toHaveAttribute('href', '/welcome?from=%2Fme');
     expect(screen.queryByRole('link', { name: 'Settings' })).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: /^404\./ }));
     expect(within(stage()).getByText('404')).toBeInTheDocument();
