@@ -1,5 +1,5 @@
 import { buildPath } from '../engine/journey';
-import { allGames, caseClues, games, getPassage, SPECIAL_SOURCES } from './catalog';
+import { allGames, caseClues, getPassage, SPECIAL_SOURCES } from './catalog';
 import { caseFiles } from './cases';
 
 // Every language's puzzles: a Spanish player's path holds the Spanish ones, and they must agree too.
