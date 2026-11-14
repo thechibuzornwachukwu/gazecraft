@@ -29,23 +29,11 @@
   white-space: nowrap;
 }
 
-.chips {
-  display: flex;
-  gap: var(--space-2);
-}
-.chip {
-  composes: small from '../styles/type.module.css';
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  height: 36px;
-  padding: 0 var(--space-3) 0 6px;
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  color: var(--fg);
+/* On desktop the header carries the run and the stars. */
+@media (min-width: 641px) {
+  .phoneOnly {
+    display: none;
+  }
 }
 
 /* The partner talks in a bubble that points at it. */
@@ -273,17 +261,9 @@
 .cheer {
   animation: bob var(--dur-pet-bob) ease-in-out infinite;
 }
-.flame,
-.twinkle {
-  animation: twinkle var(--dur-twinkle) ease-in-out infinite;
-}
 @keyframes bob {
   0%, 100% { transform: translateY(0) rotate(-2deg); }
   50% { transform: translateY(-8px) rotate(2deg); }
-}
-@keyframes twinkle {
-  0%, 100% { transform: scale(1) rotate(0); }
-  50% { transform: scale(1.15) rotate(10deg); }
 }
 @keyframes pop {
   0% { transform: scale(0.6); opacity: 0; }
@@ -291,7 +271,7 @@
   100% { transform: scale(1); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .bob, .cheer, .flame, .twinkle, .say { animation: none; }
+  .bob, .cheer, .say { animation: none; }
 }
 
 .dailySub {

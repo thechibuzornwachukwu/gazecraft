@@ -3,6 +3,7 @@ import { ArrowRight, Pointer } from 'lucide-react';
 import * as copy from '../copy';
 import { Button } from '../components/Button';
 import { Icon } from '../components/Icon';
+import { Partner } from '../components/Partner';
 import { TextLink } from '../components/TextLink';
 import { WordList, type WordRow } from '../components/WordList';
 import type { GameDef } from '../games/catalog';
@@ -163,13 +164,18 @@ export function LandingDemo({ guide = false }: { guide?: boolean }) {
   return (
     <div className={styles.demo}>
       <div className={styles.main}>
-        <p id={instructionId} className={styles.instruction}>
-          {guiding
-            ? t('A word is hiding where the hand points. {verb} its first letter, then its last.', { verb: coarse ? t('Tap') : t('Click') })
-            : coarse
-              ? t('Five words are hidden below. Swipe across the letters, or tap the first and then the last.')
-              : t('Five words are hidden below. Drag across the letters to find them.')}
-        </p>
+        {/* The partner talks the player through it: the instruction first, then what each pick did. */}
+        <div className={styles.pet}>
+          <Partner moment={s.msg ? (done ? 'done' : 'found') : 'hello'} size={80} className={styles.petFace} />
+          <p id={instructionId} className={styles.instruction} role="status">
+            {s.msg ||
+              (guiding
+                ? t('A word is hiding where the hand points. {verb} its first letter, then its last.', { verb: coarse ? t('Tap') : t('Click') })
+                : coarse
+                  ? t('Five words are hidden below. Swipe across the letters, or tap the first and then the last.')
+                  : t('Five words are hidden below. Drag across the letters to find them.'))}
+          </p>
+        </div>
         <div ref={stage} className={styles.stage}>
           <mod.Board
             {...mod.boardProps(puzzle)}
@@ -190,9 +196,6 @@ export function LandingDemo({ guide = false }: { guide?: boolean }) {
         <div className={styles.actions}>
           <TextLink onClick={onHint}>{done ? t('Play again') : showing ? t('Show it') : t('Ask for a tip-off')}</TextLink>
           {guiding && <TextLink onClick={endGuide}>{t('Skip the guide')}</TextLink>}
-          <span className={styles.msg} role="status">
-            {s.msg}
-          </span>
         </div>
       </div>
       <WordList

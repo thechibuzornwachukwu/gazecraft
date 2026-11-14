@@ -3,4 +3,16 @@
 # Same checks the workflow had: secrets, lint, types, unit tests, dependency audit.
 # The database security suite needs Docker; run it yourself with `npm run test:db` after DB changes.
 echo "Checking before push. This takes a few minutes."
-npm run verify || { echo; echo "Push stopped. Fix the problem above, then push again."; exit 1; }
+# On Windows, Git runs this hook in Git Bash, where Vitest loads its setup twice and every file fails with
+# "failed to find the current suite". The same checks pass from PowerShell, so they run there.
+if command -v powershell.exe >/dev/null 2>&1; then
+  powershell.exe -NoProfile -NonInteractive -Command "npm run verify; exit \$LASTEXITCODE"
+else
+  npm run verify
+fi
+status=$?
+if [ "$status" -ne 0 ]; then
+  echo
+  echo "Push stopped. Fix the problem above, then push again."
+  exit 1
+fi

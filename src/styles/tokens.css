@@ -73,7 +73,7 @@
   --dur-fast: 150ms; --dur-base: 200ms; --dur-slow: 250ms; --dur-slower: 400ms;
   --ease-std: ease; --ease-out: cubic-bezier(.23,1,.32,1);
   --icon-stroke: 1.75;
-  --tabbar-h: 56px; /* Phone dock height, above the safe area: icons only, so slim */
+  --tabbar-h: 60px; /* Phone dock height, above the safe area: an icon over its word */
   --radius-dock: 22px; /* Phone dock corners */
   --ledge: 4px; /* The hard lower edge on the dock and the daily button: what makes them look pressable */
   --space-6h: 28px;

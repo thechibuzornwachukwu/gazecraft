@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { vi } from 'vitest';
 import type { ComponentProps } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -26,7 +27,7 @@ function show(over: Partial<Props> = {}) {
       <GameResults {...base} {...over} />
     </MemoryRouter>,
   );
-  return [...container.querySelectorAll('section > div:first-child > p')].map((p) => p.textContent);
+  return [...container.querySelectorAll('section > div:first-child > div > p')].map((p) => p.textContent);
 }
 
 /** Opens "More" and reads its lines. */
@@ -70,6 +71,22 @@ describe('GameResults', () => {
     expect(more()).toEqual([]);
     expect(screen.getByText('0/8')).toBeInTheDocument();
     expect(screen.getByText('0:00')).toBeInTheDocument();
+  });
+
+  it('half found or more is a solved puzzle: stamped, with its points', () => {
+    show({ found: 4, total: 8, score: 400 });
+    expect(screen.getByText('Puzzle solved')).toBeInTheDocument();
+    expect(screen.getByLabelText('400 points')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Try again' })).toBeNull();
+  });
+
+  it('under half found: no stamp, no points banked, and Try again leads', () => {
+    const replay = vi.fn();
+    show({ found: 3, total: 8, score: 300, onReplay: replay });
+    expect(screen.queryByText('Puzzle solved')).toBeNull();
+    expect(screen.getByLabelText('0 points')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    expect(replay).toHaveBeenCalled();
   });
 
   it('lines that were never passed leave no empty paragraph', () => {

@@ -6,19 +6,18 @@ import { Dialog } from '../components/Dialog';
 import { Icon } from '../components/Icon';
 import { Partner } from '../components/Partner';
 import { Ring } from '../components/Ring';
-import { clampStars } from '../components/starsLabel';
+import { RunChips } from '../components/RunChips';
 import { pick } from '../copy';
 import { nextAt, partnerName, PARTNERS } from '../engine/partners';
 import { caseFiles, type CaseFile } from '../games/cases';
 import { doneClues } from '../games/path';
-import { t, num, plural } from '../i18n';
+import { t, num } from '../i18n';
 import { useAuth } from '../lib/auth';
 import { useMediaQuery } from '../lib/media';
 import { packHue } from '../lib/packHue';
 import { usePartner } from '../lib/partner';
 import { PROGRESS_EVENT } from '../lib/progress';
 import { newRoomCode } from '../lib/room';
-import { loadStars } from '../lib/starStore';
 import { useStreak, type Streak } from '../lib/useStreak';
 import { useUnlocks } from '../lib/useUnlocks';
 import { TextLink } from '../components/TextLink';
@@ -73,7 +72,6 @@ export function Games() {
   const [shelf, setShelf] = useState(false);
   const [passed, setPassed] = useState(false);
   const pet = usePartner();
-  const stars = useMemo(() => Object.values(loadStars()).reduce<number>((n, s) => n + clampStars(s), 0), []);
 
   // The deck is what is left to do; once every case is closed, it is all of them again.
   const deck = useMemo(() => {
@@ -99,22 +97,7 @@ export function Games() {
       <GameInvites />
 
       <div className={styles.main}>
-        {(run.streak > 0 || stars > 0) && (
-          <div className={styles.chips}>
-            {run.streak > 0 && (
-              <span className={styles.chip} aria-label={plural(run.streak, '{n} day in a row', '{n} days in a row')}>
-                <img className={styles.flame} src="/icons/fluent/fire.webp" alt="" width={26} height={26} />
-                {num(run.streak)}
-              </span>
-            )}
-            {stars > 0 && (
-              <span className={styles.chip} aria-label={plural(stars, '{n} star', '{n} stars')}>
-                <img className={styles.twinkle} src="/icons/fluent/star.webp" alt="" width={24} height={24} />
-                {num(stars)}
-              </span>
-            )}
-          </div>
-        )}
+        <RunChips className={styles.phoneOnly} />
 
         <section className={styles.pet} aria-label={name}>
           <Partner moment={passed ? 'empty' : 'hello'} size={96} className={styles.bob} />

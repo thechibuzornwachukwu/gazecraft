@@ -109,14 +109,14 @@ describe('Header', () => {
     expect(nav).not.toHaveTextContent('How it works');
     expect(screen.getByRole('link', { name: 'Puzzles' }).className).toContain('active');
     expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/signin?next=%2Fplay');
-    expect(screen.getByRole('button', { name: /Switch to/ })).toBeInTheDocument();
-    // The same Play as the dock: it knows what is next. The case that is open.
-    expect(screen.getByRole('link', { name: 'Play the next puzzle' }).getAttribute('href')).toMatch(/^\/play\/[a-z0-9-]+(\/\d+)?$/);
+    // The theme lives in Settings; the dock's places are the way to play.
+    expect(screen.queryByRole('button', { name: /Switch to/ })).toBeNull();
   });
 
-  it('on the landing page: one way in', () => {
+  it('on the landing page: the logo and Sign in, nothing else', () => {
     at('/');
     expect(screen.queryByRole('navigation')).toBeNull();
-    expect(screen.getByRole('link', { name: 'Play' })).toHaveAttribute('href', '/play');
+    expect(screen.getByRole('link', { name: 'Sign in' })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Play' })).toBeNull();
   });
 });

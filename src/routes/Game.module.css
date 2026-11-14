@@ -68,10 +68,11 @@
   gap: var(--space-8);
 }
 .title {
-  composes: gameTitle from '../styles/type.module.css';
+  composes: h2 from '../styles/type.module.css';
   margin: 0;
-  flex: 1;
-  min-width: 0;
+  color: var(--stage-ink);
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
   text-wrap: balance;
 }
 
@@ -134,8 +135,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-6);
-  font-size: 14px;
+  gap: var(--space-3);
 }
 .msg {
   font-weight: 500;
@@ -197,4 +197,99 @@
 }
 .pet {
   flex: none;
+}
+
+/* V3 (design/V3_STYLE.md): the partner's bubble over a case card, the puzzle on the card's paper. */
+.petRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+.petFace {
+  flex: none;
+  width: 80px;
+  height: auto;
+}
+.bubble {
+  margin: 0 0 var(--space-6);
+  padding: 14px var(--space-4);
+  background: var(--fg);
+  color: var(--bg);
+  border-radius: 18px 18px 18px var(--radius-sm);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.caseCard {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-card);
+  box-shadow: 0 8px 0 var(--line-2);
+}
+.band {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 14px 18px;
+  border-radius: calc(var(--radius-card) - 1px) calc(var(--radius-card) - 1px) 0 0;
+  background: color-mix(in srgb, var(--pack) 42%, var(--surface));
+}
+.band img {
+  flex: none;
+}
+.bandText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.bandMeta {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--stage-ink);
+}
+.paper {
+  padding: var(--space-4) var(--space-5) var(--space-5);
+}
+.ask,
+.done {
+  min-height: 52px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-5);
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.ask {
+  padding-left: 6px;
+  border: 1px solid var(--line-2);
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line-2);
+  color: var(--fg);
+}
+.ask img {
+  width: 36px;
+  height: 36px;
+}
+.cost {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.done {
+  border: none;
+  background: var(--fg);
+  color: var(--bg);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--fg) 55%, var(--bg));
+}
+.ask:active,
+.done:active {
+  transform: translateY(3px);
+  box-shadow: none;
 }

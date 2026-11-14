@@ -34,23 +34,83 @@
   border-bottom: 1px solid var(--line);
   padding: var(--landing-band-pad) 0;
 }
-.side {
-  flex: 1 1 260px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-5);
-}
 .h2 {
   composes: h2 from '../styles/type.module.css';
   margin: 0;
 }
-.games {
-  flex: 3 1 520px;
-  min-width: 0;
+/* The one call: lime, a ledge under it, like the Play button on Puzzles. */
+.go {
+  gap: var(--space-3);
+  border-radius: var(--radius-pill);
+  padding: 0 var(--space-6);
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--accent) 60%, var(--fg));
+}
+.go:active {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+.cases {
   margin: 0;
   padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: var(--space-3);
+}
+.case {
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--bg);
+  box-shadow: 0 5px 0 var(--line);
+  color: var(--fg);
+  text-decoration: none;
+}
+.case:hover {
+  color: var(--fg);
+  border-color: var(--line-2);
+}
+.case:active {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+.icon {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--pack) 42%, var(--surface));
+}
+.caseText {
   display: flex;
   flex-direction: column;
-  border-top: 1px solid var(--line-2);
+  gap: 2px;
+  min-width: 0;
+}
+.caseTitle {
+  composes: h3 from '../styles/type.module.css';
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+.caseMeta {
+  composes: label from '../styles/type.module.css';
+  color: var(--muted);
+}
+.all {
+  composes: small from '../styles/type.module.css';
+  align-self: flex-start;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--line-2);
 }

@@ -28,9 +28,13 @@
 }
 .tab {
   height: var(--tabbar-h);
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
   color: var(--tab-hue);
+  text-decoration: none;
   -webkit-tap-highlight-color: transparent;
 }
 /* Every icon in its own colour, always, filled a shade lighter: the dock reads as toys, not text. */
@@ -54,7 +58,7 @@
   display: grid;
   place-items: center;
   width: var(--space-14);
-  height: var(--space-10);
+  height: var(--space-8);
   border: 2px solid transparent;
   border-radius: var(--radius-xl);
   transition:
@@ -85,4 +89,14 @@
   border-radius: var(--radius-pill);
   background: var(--cheer);
   box-shadow: 0 0 0 2px var(--surface);
+}
+/* The tab's plain name, under its icon. Muted until it is the place you are. */
+.word {
+  composes: label from '../styles/type.module.css';
+  font-weight: 800;
+  line-height: 1;
+  color: var(--muted);
+}
+.on .word {
+  color: var(--fg);
 }

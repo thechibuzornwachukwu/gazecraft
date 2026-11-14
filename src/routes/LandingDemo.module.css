@@ -11,11 +11,26 @@
   flex-direction: column;
   gap: var(--space-5);
 }
+/* The partner, and its speech bubble pointing at it (design/V3_STYLE.md, Words). */
+.pet {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+.petFace {
+  flex: none;
+  width: 80px;
+  height: auto;
+}
 .instruction {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--muted);
+  margin: 0 0 var(--space-6);
+  padding: 14px var(--space-4);
+  background: var(--fg);
+  color: var(--bg);
+  border-radius: 18px 18px 18px var(--radius-sm);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.35;
 }
 .actions {
   display: flex;
@@ -23,10 +38,6 @@
   align-items: center;
   gap: var(--space-4);
   font-size: 14px;
-}
-.msg {
-  font-weight: 500;
-  color: var(--subtle);
 }
 .cta {
   margin-top: var(--space-5);

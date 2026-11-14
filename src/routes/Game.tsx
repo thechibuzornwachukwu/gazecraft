@@ -1,12 +1,9 @@
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, UsersRound } from 'lucide-react';
-import { BigClock, Elapsed } from '../components/BigClock';
 import { Icon } from '../components/Icon';
 import { SkeletonPage } from '../components/Skeleton';
 import { MobileBar } from '../components/MobileBar';
-import { Ring } from '../components/Ring';
-import { TextLink } from '../components/TextLink';
 import { WordList, type WordListHandle, type WordRow } from '../components/WordList';
 import { caseClues, getGameDef, getPassage, sponsorFor, type GameDef, type GameType, type Part } from '../games/catalog';
 import { registry } from '../games/registry';
@@ -15,7 +12,8 @@ import { isCleanRead, scoreOf, secondsOf, useGameSession, type Session } from '.
 import { clueId, clueKind } from '../engine/journey';
 import { ClueDone } from '../components/ClueDone';
 import { Partner } from '../components/Partner';
-import { HINT_OF } from '../engine/partners';
+import { HINT_OF, partnerName } from '../engine/partners';
+import { caseIcon } from '../games/cases';
 import { doneClues, nextClueTo } from '../games/path';
 import { packHue } from '../lib/packHue';
 import { countPuzzleToday } from '../lib/goal';
@@ -45,7 +43,7 @@ import { recordScore } from '../lib/scoreStore';
 import { useStreak } from '../lib/useStreak';
 import { GameResults } from './GameResults';
 import { GameReveal } from './GameReveal';
-import { t, plural } from '../i18n';
+import { t } from '../i18n';
 import styles from './Game.module.css';
 import { difficultyName, nameOf } from '../i18n/gameNames';
 
@@ -255,7 +253,6 @@ function GameScreen({ def, part }: ScreenProps) {
     const mood = s.found.length > seen.found ? 'found' : s.wrongs > seen.wrongs ? 'error' : s.hints > seen.hints ? 'loading' : 'empty';
     setSeen({ tally, found: s.found.length, wrongs: s.wrongs, hints: s.hints, mood });
   }
-  const pet = finished ? null : <Partner moment={seen.mood} size={32} className={styles.pet} />;
   const count = `${foundCount} / ${total}`;
   const progress = total ? foundCount / total : 0;
 
@@ -430,10 +427,6 @@ function GameScreen({ def, part }: ScreenProps) {
             )}
           </span>
         </div>
-        <div className={styles.titleRow}>
-          <h1 className={styles.title}>{t('Find {what}', { what: countOf(total, named.noun) })}</h1>
-          <BigClock startAt={s.startAt} endAt={s.endAt} />
-        </div>
       </div>
 
       {inRoom && <RoomBar gameId={def.id} code={roomCode} peers={peers} mates={mates} status={roomStatus} me={myStats} you={{ id: roomId, handle: myHandle, partner: loadPartner().current }} path={sharePath({ id: def.id, code: def.id.startsWith('c-') ? def.id.slice(2).toUpperCase() : undefined })} />}
@@ -445,16 +438,6 @@ function GameScreen({ def, part }: ScreenProps) {
           mine={finished ? scoreOf(s, total, false, secondsOf(s, s.endAt!)) : null}
         />
       )}
-
-      <div className={styles.progress}>
-        <div className={styles.stats}>
-          <span className={styles.tally}>
-            <Ring value={progress} label={t('Found')} />
-            <span className={styles.count}>{count}</span>
-          </span>
-          <span>{plural(s.hints, '{n} tip-off', '{n} tip-offs')}</span>
-        </div>
-      </div>
 
       {finished && (
         <GameResults
@@ -486,9 +469,29 @@ function GameScreen({ def, part }: ScreenProps) {
 
       <div className={styles.columns}>
         <div className={styles.main}>
-          <p id={instructionId} className={styles.instruction}>
-            {HOW[def.type][coarse ? 1 : 0]}
-          </p>
+          {/* The partner talks the player through it: how to play first, then what each pick did. */}
+          {!finished && (
+            <section className={styles.petRow} aria-label={partnerName(loadPartner().current)}>
+              <Partner moment={seen.mood} size={80} className={styles.petFace} />
+              <p id={instructionId} className={styles.bubble} role="status">
+                {s.msg || HOW[def.type][coarse ? 1 : 0]}
+              </p>
+            </section>
+          )}
+          <article className={styles.caseCard} aria-labelledby="case-title">
+            <div className={styles.band}>
+              <img src={caseIcon(def.category)} alt="" width={52} height={52} />
+              <div className={styles.bandText}>
+                <h1 id="case-title" className={styles.title}>
+                  {named.title}
+                </h1>
+                <span className={styles.bandMeta}>
+                  {part ? `${t('Puzzle {n} of {m}', { n: part.at, m: part.of })} · ` : ''}
+                  {t('Find {what}', { what: countOf(total, named.noun) })}
+                </span>
+              </div>
+            </div>
+            <div className={styles.paper}>
           <Board
             {...mod.boardProps(puzzle)}
             found={foundSpans}
@@ -500,26 +503,35 @@ function GameScreen({ def, part }: ScreenProps) {
             onTapStart={g.tapStart}
             onDragStart={g.dragStart}
             onEnd={g.finish}
-            describedBy={instructionId}
+            describedBy={finished ? undefined : instructionId}
           />
+            </div>
+          </article>
           {!finished && (
             <div className={styles.actions}>
-              <TextLink onClick={g.hint}>{t('Ask for a tip-off')}</TextLink>
-              <TextLink onClick={g.finish}>{t("I'm done")}</TextLink>
-              <span className={styles.says} aria-hidden="true">
-                {pet}
-                <span className={styles.msg}>{s.msg}</span>
-              </span>
+              {/* A tip-off in Liar would name the lie: the whole game. Liar has none. */}
+              {def.type !== 'liar' && (
+                <button type="button" className={styles.ask} onClick={g.hint} aria-label={t('Ask {pet} for a tip-off. It costs 25 points.', { pet: partnerName(loadPartner().current) })}>
+                  <Partner moment="loading" size={32} />
+                  {t('Ask {pet}', { pet: partnerName(loadPartner().current) })}
+                  <span className={styles.cost}>{t('−25 points')}</span>
+                </button>
+              )}
+              <button type="button" className={styles.done} onClick={g.finish}>
+                {t("I'm done")}
+              </button>
             </div>
           )}
-          <div className={styles.sr} aria-live="polite" role="status">
-            {s.msg}
-          </div>
+          {finished && (
+            <div className={styles.sr} aria-live="polite" role="status">
+              {s.msg}
+            </div>
+          )}
         </div>
 
         <WordList
           ref={listRef}
-          title={finished ? t('Answers') : def.type === 'liar' ? t('Lies') : def.type === 'groups' ? t('Sets') : t('Hidden above')}
+          title={finished ? t('Answers') : def.type === 'liar' ? t('Lies') : def.type === 'groups' ? t('Sets') : t('Evidence')}
           count={count}
           rows={rows}
         />
@@ -559,9 +571,6 @@ function GameScreen({ def, part }: ScreenProps) {
         <MobileBar
           count={count}
           progress={progress}
-          time={<Elapsed startAt={s.startAt} endAt={s.endAt} />}
-          message={s.msg}
-          pet={pet}
           // A tip-off in Liar would name the lie: the whole game. Liar has none.
           onHint={def.type === 'liar' ? undefined : g.hint}
           onDone={g.finish}

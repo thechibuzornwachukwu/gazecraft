@@ -20,6 +20,9 @@ export default defineConfig({
     setupFiles: ['src/test/setup.ts'],
     // Two workers: fits next to Docker on low-memory machines without start-up timeouts.
     maxWorkers: 2,
+    // A whole run keeps both workers busy, so a page that opens in 1 second alone can take 15. Time is not what
+    // these tests check: a slow machine must not fail them (the pre-push check runs them all at once).
+    testTimeout: 30_000,
     include: ['src/**/*.test.{ts,tsx}', 'worker/test/**/*.unit.test.ts'],
   },
 });

@@ -52,40 +52,71 @@ export function GameResults({ title, line, score, found, total, secs, canReplay,
   const [note, setNote] = useState('');
   const [more, setMore] = useState(false);
   const earned = clampStars(stars);
+  // The game's own rule: at least half found is a solved puzzle (src/engine/stars.ts gives it a star).
+  const solved = total > 0 && found > 0 && found * 2 >= total;
   return (
     <section className={styles.results} aria-labelledby="results-title">
+      {/* The partner says how it went; the case file under it holds the score (design/V3_STYLE.md, Result). */}
       <div className={styles.head}>
         <div className={styles.titleRow}>
           {/* The partner at the end of a game: pleased, and more so when every word was found. */}
-          <Partner moment={total > 0 && found === total ? 'found' : 'done'} size={56} />
+          <Partner moment={total > 0 && found === total ? 'found' : solved ? 'done' : 'empty'} size={80} className={styles.petFace} />
           <h2 id="results-title" className={styles.title}>
             {title}
           </h2>
         </div>
-        {line && <p className={styles.line}>{line}</p>}
-        {earned > 0 && (
-          <p className={styles.stars}>
-            <Stars value={earned} size={20} pop={!!starsUp} />
-            {starsUp && <span>{starsUp}</span>}
-          </p>
-        )}
-        {sponsor?.line && (
-          <p className={styles.with}>
-            {sponsor.line}
-            {sponsor.url && sponsor.host && (
-              <>
-                {' · '}
-                <a href={sponsor.url} target="_blank" rel="sponsored noopener" className={styles.board} onClick={sponsor.onVisit} onAuxClick={sponsor.onVisit}>
-                  {sponsor.host}
-                </a>
-              </>
-            )}
-          </p>
-        )}
+        <div className={styles.file}>
+          {/* At least half found: the stamp. Less banks no points and offers another go. */}
+          {solved && (
+            <span className={styles.stamp} aria-hidden="true">
+              {t('Puzzle solved')}
+            </span>
+          )}
+          <div className={styles.points}>
+            <span className={styles.pointsNum} aria-label={t('{n} points', { n: num(solved ? score : 0) })}>
+              {num(solved ? score : 0)}
+            </span>
+            <span className={styles.pointsSub}>
+              <span aria-hidden="true">{t('points')}</span>
+              <span>
+                {t('{found} of {total} found', { found, total })} · {formatTime(secs)}
+              </span>
+            </span>
+          </div>
+          {line && <p className={styles.line}>{line}</p>}
+          {earned > 0 && (
+            <p className={styles.stars}>
+              <Stars value={earned} size={20} pop={!!starsUp} />
+              {starsUp && <span>{starsUp}</span>}
+            </p>
+          )}
+          {sponsor?.line && (
+            <p className={styles.with}>
+              {sponsor.line}
+              {sponsor.url && sponsor.host && (
+                <>
+                  {' · '}
+                  <a href={sponsor.url} target="_blank" rel="sponsored noopener" className={styles.board} onClick={sponsor.onVisit} onAuxClick={sponsor.onVisit}>
+                    {sponsor.host}
+                  </a>
+                </>
+              )}
+            </p>
+          )}
+        </div>
       </div>
       {/* 2 buttons: the way on, and one other. One accent a screen: on a sitting it is the way on, so Share steps back. */}
       <div className={styles.actions}>
-        {next ? (
+        {!solved && canReplay ? (
+          <>
+            <Button variant="accent" onClick={onReplay}>
+              {t('Try again')}
+            </Button>
+            <Button variant="secondary" to="/play">
+              {t('Packs')}
+            </Button>
+          </>
+        ) : next ? (
           <>
             <Button variant="accent" to={next.to}>
               {next.label}
