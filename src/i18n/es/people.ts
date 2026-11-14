@@ -253,4 +253,11 @@ export const people = {
   'Ask a grown-up to sign in': 'Pide a un adulto que inicie sesión',
   'People is where you follow friends and cheer their medals. It needs an account.': 'Aquí sigues a tus amigos y celebras sus medallas. Hace falta una cuenta.',
   'You can still play with a friend: open any case and tap Play with a friend.': 'Igual puedes jugar con un amigo: abre cualquier caso y toca Jugar con un amigo.',
+  'Medals this month': 'Medallas del mes',
+  'Quiet this month. Invite a friend and their medals land here.': 'Mes tranquilo. Invita a un amigo y sus medallas aparecerán aquí.',
+  'Send someone you know a link. When they join, you play as friends.': 'Envía un enlace a alguien que conozcas. Cuando se una, jugaréis como amigos.',
+  'Link copied': 'Enlace copiado',
+  'Copy your link': 'Copia tu enlace',
+  'Open a room and solve a puzzle with a friend. No account needed.': 'Abre una sala y resuelve un puzle con un amigo. No hace falta cuenta.',
+  'Cheer your friends. Their medals land here.': 'Anima a tus amigos. Sus medallas llegan aquí.',
 } as const;

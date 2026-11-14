@@ -119,7 +119,6 @@ function Result({ card, ref }: { card: ResultCardData; ref?: Ref<HTMLDivElement>
       <Brand date={card.date} />
       <div className={styles.stack} style={{ gap: card.gap }}>
         <div className={styles.heading}>
-          <div className={styles.kicker}>{card.kicker}</div>
           <div className={styles.title} style={{ fontSize: card.titleSize }}>
             {card.title}
           </div>
@@ -184,7 +183,6 @@ function Puzzle({ card, onOverflow, ref }: { card: PuzzleCardData; onOverflow?: 
     >
       <Brand date={card.date}>{card.spoiler && <span className={styles.stamp}>{t('Contains answers')}</span>}</Brand>
       <div className={styles.heading}>
-        <div className={styles.kicker}>{card.kicker}</div>
         {card.showTitle && (
           <div className={styles.ptitle} style={{ fontSize: card.titleSize }}>
             {card.ptitle}

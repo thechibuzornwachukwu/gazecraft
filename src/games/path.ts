@@ -34,3 +34,6 @@ export function nextClueTo(): string | null {
   const next = standing.clues.find((c) => c.state === 'next');
   return next ? (next.n ? `/play/${next.puzzle}/${next.n}` : `/play/${next.puzzle}`) : null;
 }
+
+/** The puzzle a room is opened on: the one the player is on, or the first. A room takes a whole puzzle. */
+export const roomGame = (): string => nextClueTo()?.split('/')[2] ?? games[0]!.id;

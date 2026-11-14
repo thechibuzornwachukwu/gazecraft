@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>People, phone</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&amp;family=Manrope:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#f6f6f7}
+a{color:#111113}a:hover{color:#000000}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(212,240,76,0)}50%{box-shadow:0 0 0 5px rgba(212,240,76,.45)}}
+@keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px)}60%{transform:translateY(-14px)}}
+@keyframes twinkle{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.18) rotate(12deg)}}
+@keyframes flame{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.1) rotate(3deg)}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}
+@keyframes cheer{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes slapL{0%,100%{transform:translateX(0) rotate(0)}40%,58%{transform:translateX(58px) rotate(10deg)}}
+@keyframes slapR{0%,100%{transform:translateX(0) rotate(0)}40%,58%{transform:translateX(-58px) rotate(-10deg)}}
+@keyframes burst{0%,30%{transform:scale(.2) rotate(0);opacity:0}45%{opacity:1}100%{transform:scale(1.5) rotate(35deg);opacity:0}}
+@keyframes stamp{0%{transform:translateX(-50%) scale(1.8) rotate(-14deg);opacity:0}60%{transform:translateX(-50%) scale(.94) rotate(-6deg);opacity:1}100%{transform:translateX(-50%) scale(1) rotate(-8deg);opacity:1}}
+.bob{animation:bob 2.6s ease-in-out infinite;transform-origin:50% 100%} .glow{animation:glow 1.8s ease-in-out infinite}
+.hop{animation:hop 1.4s ease-in-out infinite} .twinkle{animation:twinkle 2.2s ease-in-out infinite}
+.flame{animation:flame 1.1s ease-in-out infinite;transform-origin:50% 90%} .pop{animation:pop .35s ease-out both}
+.cheer{animation:cheer 1.6s ease-in-out infinite}
+.slapL{animation:slapL .7s cubic-bezier(.3,.7,.3,1) both} .slapR{animation:slapR .7s cubic-bezier(.3,.7,.3,1) both}
+.burst{animation:burst .7s ease-out both} .stamp{animation:stamp .4s cubic-bezier(.3,1.4,.5,1) .3s both}
+@media (prefers-reduced-motion: reduce){.bob,.glow,.hop,.twinkle,.flame,.pop,.cheer,.slapL,.slapR,.burst,.stamp{animation:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 1300px; box-sizing: border-box; position: relative; overflow: hidden; background: #f6f6f7; font-family: Manrope, system-ui, sans-serif; color: #111113">
+
+  <main style="padding: 44px 18px 140px; display: flex; flex-direction: column; gap: 20px">
+    <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%)">People</h1>
+
+    <sc-if value="{{returning}}" hint-placeholder-val="{{ true }}">
+      <div style="display: flex; gap: 8px">
+        <span aria-label="3 days in a row" style="display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 12px 0 6px; border-radius: 999px; background: #ffffff; border: 1px solid #e3e3e7; font-size: 15px; font-weight: 800">
+          <img class="flame" src="/_blob/05ee42fd226623caa242489e39309c3a" alt="" style="width: 26px; height: 26px">3
+        </span>
+        <span aria-label="5 stars" style="display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 12px 0 6px; border-radius: 999px; background: #ffffff; border: 1px solid #e3e3e7; font-size: 15px; font-weight: 800">
+          <img class="twinkle" src="/_blob/e0a30d7867daccf828ee24febdd83699" alt="" style="width: 24px; height: 24px">5
+        </span>
+      </div>
+    </sc-if>
+
+    <section aria-label="Mochi" style="display: flex; align-items: flex-end; gap: 10px">
+      <img class="bob" src="{{mochi}}" alt="Mochi the cat" style="width: 96px; height: auto; flex: none">
+      <p role="status" class="pop" style="margin: 0 0 30px; padding: 14px 16px; background: #111113; color: #ffffff; border-radius: 18px 18px 18px 4px; font-size: 16px; font-weight: 700; line-height: 1.35">{{say}}</p>
+    </section>
+
+    <sc-if value="{{friends}}" hint-placeholder-val="{{ true }}">
+      <section aria-label="Chioma nudged you" style="position: relative; display: flex; align-items: center; gap: 14px; padding: 18px 16px 16px; background: #ffffff; border: 1px solid #e3e3e7; border-radius: 20px; box-shadow: 0 6px 0 #e3e3e7">
+        <img src="/_blob/0e5fb23b12e69d5134ffed41f73eff9c" alt="" style="width: 52px; height: 52px; border-radius: 50%; background: #ffc8dc; flex: none">
+        <div style="display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0">
+          <h2 style="margin: 0; font-size: 16px; font-weight: 800; line-height: 1.25">Chioma wants to play with you</h2>
+          <span style="display: inline-flex; align-items: center; gap: 3px; font-size: 13px; font-weight: 700; color: #55555c">
+            <img src="/_blob/05ee42fd226623caa242489e39309c3a" alt="" style="width: 18px; height: 18px">2 days together
+          </span>
+        </div>
+        <a href="GamePhone.dc.html" style="min-height: 48px; padding: 0 20px; display: inline-flex; align-items: center; border-radius: 999px; background: #d4f04c; box-shadow: 0 4px 0 #a8c22c; font-size: 15px; font-weight: 800; color: #111113; text-decoration: none; flex: none">Play</a>
+        <span aria-hidden="true" style="position: absolute; top: -12px; left: 46px; padding: 1px 8px; border: 3px solid #111113; border-radius: 7px; transform: rotate(-8deg); font-family: Bungee, Manrope, sans-serif; font-size: 13px; color: #111113; background: #ffd9b0">NUDGE!</span>
+      </section>
+
+      <section aria-labelledby="streak-title" style="display: flex; flex-direction: column; align-items: center; gap: 16px">
+        <article aria-label="{{streakAria}}" style="position: relative; width: 354px; box-sizing: border-box; padding: 18px 18px 16px; display: flex; flex-direction: column; gap: 10px; background: #ffffff; border: 1px solid #d6d6db; border-radius: 24px; box-shadow: 0 8px 0 #d6d6db">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+            <h2 id="streak-title" style="margin: 0; font-family: Bungee, Manrope, sans-serif; font-weight: 400; font-size: 18px; color: #111113">YOU &amp; TUNDE</h2>
+            <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 800; color: #5a6b00">
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5a6b00" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Both played today
+            </span>
+          </div>
+
+          <div style="position: relative; height: 150px; padding-top: 10px; box-sizing: border-box; display: flex; align-items: flex-start; justify-content: space-between">
+            <div class="{{slapL}}" style="position: relative; z-index: 1; display: flex; align-items: center">
+              <img src="/_blob/7f7dc653e8bd7e13eaad2bdac65ebe80" alt="" style="width: 64px; height: 64px; border-radius: 50%; background: #fdf1e4; border: 3px solid #ffffff; box-shadow: 0 0 0 2px #e3e3e7">
+              <button type="button" onClick="{{five}}" aria-label="{{fiveAria}}" aria-disabled="{{fivedAttr}}" style="width: 52px; height: 52px; margin-left: -6px; padding: 0; border: none; background: none; display: grid; place-items: center; cursor: {{handCursor}}">
+                <svg aria-hidden="true" width="46" height="46" viewBox="0 0 24 24" fill="#ffffff" stroke="#111113" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="transform: rotate(20deg)"><path d="M18 11V6a2 2 0 0 0-4 0v4"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-6-2.3l-3.6-3.6a2 2 0 0 1 2.8-2.8L7 15"/></svg>
+              </button>
+            </div>
+
+            <div style="position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; pointer-events: none">
+              <img class="flame" src="/_blob/05ee42fd226623caa242489e39309c3a" alt="" style="width: {{flameSize}}; height: {{flameSize}}; transition: width .4s cubic-bezier(.2,1.6,.4,1), height .4s cubic-bezier(.2,1.6,.4,1)">
+              <span style="font-family: Bungee, Manrope, sans-serif; font-size: 22px; line-height: 1; color: #111113">3</span>
+              <span style="font-size: 12px; font-weight: 800; color: #55555c">days</span>
+            </div>
+            <sc-if value="{{fived}}" hint-placeholder-val="{{ false }}">
+              <svg class="burst" aria-hidden="true" width="120" height="120" viewBox="0 0 120 120" style="position: absolute; z-index: 2; left: 50%; top: -18px; margin-left: -60px; pointer-events: none"><g stroke="#d4f04c" stroke-width="6" stroke-linecap="round"><path d="M60 8v18"/><path d="M60 94v18"/><path d="M8 60h18"/><path d="M94 60h18"/><path d="m23 23 13 13"/><path d="m84 84 13 13"/><path d="m97 23-13 13"/><path d="M36 84 23 97"/></g><g fill="#f2c94c"><circle cx="40" cy="14" r="4"/><circle cx="104" cy="44" r="4"/><circle cx="18" cy="82" r="4"/><circle cx="82" cy="108" r="4"/></g></svg>
+            </sc-if>
+
+            <div class="{{slapR}}" style="position: relative; z-index: 1; display: flex; align-items: center">
+              <svg aria-hidden="true" width="46" height="46" viewBox="0 0 24 24" fill="#ffffff" stroke="#111113" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin-right: -4px; transform: scaleX(-1) rotate(20deg)"><path d="M18 11V6a2 2 0 0 0-4 0v4"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-6-2.3l-3.6-3.6a2 2 0 0 1 2.8-2.8L7 15"/></svg>
+              <img src="/_blob/17b026fe950ab35628208bdd863f8474" alt="" style="width: 64px; height: 64px; border-radius: 50%; background: #c7dcff; border: 3px solid #ffffff; box-shadow: 0 0 0 2px #e3e3e7">
+            </div>
+          </div>
+          <sc-if value="{{fived}}" hint-placeholder-val="{{ false }}">
+            <span aria-hidden="true" class="stamp" style="position: absolute; z-index: 3; top: 62px; left: 50%; padding: 2px 10px; border: 3px solid #5a6b00; border-radius: 8px; transform: translateX(-50%) rotate(-8deg); font-family: Bungee, Manrope, sans-serif; font-size: 18px; white-space: nowrap; color: #5a6b00; background: #f4fbd6">HIGH FIVE!</span>
+          </sc-if>
+        </article>
+
+        <button type="button" onClick="{{five}}" aria-disabled="{{fivedAttr}}" style="min-height: 56px; padding: 0 26px; display: inline-flex; align-items: center; gap: 10px; border-radius: 999px; border: 1px solid #d6d6db; background: #ffffff; box-shadow: {{fiveShadow}}; font-family: Manrope, sans-serif; font-size: 17px; font-weight: 800; color: #111113; cursor: {{handCursor}}">
+          <sc-if value="{{notFived}}" hint-placeholder-val="{{ true }}"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111113" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-4 0v4"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-6-2.3l-3.6-3.6a2 2 0 0 1 2.8-2.8L7 15"/></svg></sc-if>
+          <sc-if value="{{fived}}" hint-placeholder-val="{{ false }}"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5a6b00" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></sc-if>
+          {{fiveLabel}}
+        </button>
+      </section>
+
+      <section aria-labelledby="medals-title" style="display: flex; flex-direction: column; gap: 12px">
+        <h2 id="medals-title" style="margin: 0; font-family: Bungee, Manrope, sans-serif; font-weight: 400; font-size: 18px; color: #111113">MEDALS THIS MONTH</h2>
+        <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px">
+          <sc-for list="{{medals}}" as="m" hint-placeholder-count="3">
+            <li style="display: flex; align-items: center; gap: 12px; padding: 12px 12px 12px 14px; background: #ffffff; border: 1px solid #e3e3e7; border-radius: 20px">
+              <img src="{{m.avatar}}" alt="" style="width: 44px; height: 44px; border-radius: 50%; background: {{m.bg}}; flex: none">
+              <div style="display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0">
+                <span style="font-size: 15px; font-weight: 800; line-height: 1.3">{{m.name}}</span>
+                <span style="font-size: 13px; font-weight: 700; color: #55555c">{{m.line}}</span>
+              </div>
+              <button type="button" onClick="{{m.toggle}}" aria-pressed="{{m.pressed}}" aria-label="{{m.aria}}" style="min-width: 64px; min-height: 44px; padding: 0 12px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; border-radius: 999px; border: 1px solid {{m.edge}}; background: {{m.fill}}; box-shadow: 0 3px 0 {{m.edge}}; font-family: Manrope, sans-serif; font-size: 14px; font-weight: 800; color: #111113; cursor: pointer; flex: none">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111113" stroke-width="2.4" stroke-linecap="round"><path d="M12 3v4"/><path d="M12 17v4"/><path d="M3 12h4"/><path d="M17 12h4"/><path d="m6 6 2.5 2.5"/><path d="m15.5 15.5 2.5 2.5"/><path d="m6 18 2.5-2.5"/><path d="m15.5 8.5 2.5-2.5"/></svg>{{m.count}}
+              </button>
+            </li>
+          </sc-for>
+        </ul>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{signedIn}}" hint-placeholder-val="{{ true }}">
+      <section aria-labelledby="invite-title" style="display: flex; flex-direction: column; gap: 12px; padding: 18px 16px; background: #ffffff; border: 1px solid #e3e3e7; border-radius: 20px; box-shadow: 0 6px 0 #e3e3e7">
+        <h2 id="invite-title" style="margin: 0; font-family: Bungee, Manrope, sans-serif; font-weight: 400; font-size: 18px; color: #111113">INVITE A FRIEND</h2>
+        <p style="margin: 0; font-size: 15px; font-weight: 700; line-height: 1.4; color: #55555c">Send someone you know a link. When they join, you play as friends.</p>
+        <button type="button" onClick="{{copy}}" style="align-self: flex-start; min-height: 52px; padding: 0 22px; display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; border: {{inviteBorder}}; background: {{inviteFill}}; box-shadow: 0 4px 0 {{inviteEdge}}; font-family: Manrope, sans-serif; font-size: 16px; font-weight: 800; color: #111113; cursor: pointer">
+          <sc-if value="{{notCopied}}" hint-placeholder-val="{{ true }}"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111113" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></sc-if>
+          <sc-if value="{{copied}}" hint-placeholder-val="{{ false }}"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111113" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></sc-if>
+          {{inviteLabel}}
+        </button>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{guest}}" hint-placeholder-val="{{ false }}">
+      <a href="SignInPhone.dc.html" style="align-self: center; min-height: 56px; padding: 0 28px; display: inline-flex; align-items: center; border-radius: 999px; background: #d4f04c; box-shadow: 0 6px 0 #a8c22c; font-size: 17px; font-weight: 800; color: #111113; text-decoration: none">Ask a grown-up to sign in</a>
+      <section aria-labelledby="room-title" style="display: flex; align-items: center; gap: 14px; padding: 18px 16px; background: #ffffff; border: 1px solid #e3e3e7; border-radius: 20px; box-shadow: 0 6px 0 #e3e3e7">
+        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0">
+          <h2 id="room-title" style="margin: 0; font-family: Bungee, Manrope, sans-serif; font-weight: 400; font-size: 17px; color: #111113">PLAY TOGETHER</h2>
+          <p style="margin: 0; font-size: 14px; font-weight: 700; line-height: 1.4; color: #55555c">Open a room and solve a puzzle with a friend. No account needed.</p>
+        </div>
+        <a href="GamePhone.dc.html" aria-label="Play together in a room" style="width: 60px; height: 60px; flex: none; border-radius: 50%; border: 1px solid #d6d6db; background: #ffffff; box-shadow: 0 4px 0 #d6d6db; display: grid; place-items: center">
+          <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2f6fe0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </a>
+      </section>
+    </sc-if>
+  </main>
+
+  <nav aria-label="Tabs" style="position: absolute; left: 12px; right: 12px; bottom: 20px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 6px; background: #ffffff; border: 1px solid #e3e3e7; border-radius: 22px; box-shadow: 0 4px 0 #e3e3e7">
+    <a href="Main.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 52px; text-decoration: none; color: #55555c">
+      <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1f8a58" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8"/></svg>
+      <span style="font-size: 11px; font-weight: 800">Puzzles</span>
+    </a>
+    <a href="PeoplePhone.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 52px; border-radius: 14px; background: #e9f8f0; border: 2px solid #3ec486; text-decoration: none; color: #111113">
+      <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2f6fe0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
+      <span style="font-size: 11px; font-weight: 800">People</span>
+    </a>
+    <a href="LeaguePhone.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 52px; text-decoration: none; color: #55555c">
+      <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8a6100" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3"/><path d="M7 5H4v2a3 3 0 0 0 3 3"/></svg>
+      <span style="font-size: 11px; font-weight: 800">League</span>
+    </a>
+    <a href="YouPhone.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 52px; text-decoration: none; color: #55555c">
+      <img src="/_blob/7f7dc653e8bd7e13eaad2bdac65ebe80" alt="" style="width: 24px; height: 24px; border-radius: 50%">
+      <span style="font-size: 11px; font-weight: 800">You</span>
+    </a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"player":{"editor":"enum","options":["signed in","guest"],"default":"signed in"},"friends":{"editor":"enum","options":["some","none yet"],"default":"some"},"$preview":{"width":390,"height":1300}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { fived: false, cheered: {}, copied: false, last: '' };
+  }
+  renderVals() {
+    const s = this.state;
+    const guest = (this.props.player ?? 'signed in') === 'guest';
+    const none = !guest && (this.props.friends ?? 'some') === 'none yet';
+    const friends = !guest && !none;
+    const medals = [
+      { id: 'zara', name: 'Zara', avatar: '/_blob/b4f80130c01f32dac8bc5a9e2c441205', bg: '#efcfff', line: '1st on In the lab · Today', base: 6 },
+      { id: 'tunde', name: 'Tunde', avatar: '/_blob/17b026fe950ab35628208bdd863f8474', bg: '#c7dcff', line: '1st on Pitch side · Yesterday', base: 3 },
+      { id: 'chioma', name: 'Chioma', avatar: '/_blob/0e5fb23b12e69d5134ffed41f73eff9c', bg: '#ffc8dc', line: '1st on Market day · Tuesday', base: 2 },
+    ].map((m) => {
+      const on = !!s.cheered[m.id];
+      const count = m.base + (on ? 1 : 0);
+      return Object.assign({}, m, {
+        count,
+        pressed: on ? 'true' : 'false',
+        aria: (on ? 'Cheered ' : 'Cheer ') + m.name + ', ' + count + ' cheers',
+        fill: on ? '#e9f8f0' : '#ffffff',
+        edge: on ? '#3ec486' : '#d6d6db',
+        toggle: () => this.setState({ cheered: Object.assign({}, this.state.cheered, { [m.id]: !on }), last: on ? '' : 'cheer:' + m.name }),
+      });
+    });
+    let say = 'Tunde played too! Give him a high five.';
+    if (s.last === 'five') say = 'Up top! Tunde will see it next time he plays.';
+    else if (s.last === 'again') say = 'One high five a day. Come back tomorrow!';
+    else if (s.last === 'copied') say = 'Link copied. Send it to a friend!';
+    else if (s.last.indexOf('cheer:') === 0) say = s.last.slice(6) + ' will love that cheer!';
+    if (none) say = s.copied ? 'Link copied. Send it to a friend!' : 'No friends here yet. Send a link and play together!';
+    if (guest) say = 'Friends and streaks need an account. A grown-up can sign in for you.';
+    const happy = s.last === 'five' || s.last === 'copied' || s.last.indexOf('cheer:') === 0;
+    return {
+      returning: true,
+      guest,
+      signedIn: !guest,
+      friends,
+      say,
+      mochi: guest || none ? '/_blob/72ac21c6abd315fc09fce9f4cd789575' : happy ? '/_blob/d187597c53c1f65f02e75d28f635beff' : '/_blob/72ac21c6abd315fc09fce9f4cd789575',
+      fived: s.fived,
+      notFived: !s.fived,
+      fivedAttr: s.fived ? 'true' : 'false',
+      fiveAria: s.fived ? 'High fived Tunde today' : 'High five Tunde',
+      fiveLabel: s.fived ? 'High fived today' : 'High five',
+      fiveShadow: s.fived ? 'none' : '0 4px 0 #d6d6db',
+      handCursor: s.fived ? 'default' : 'pointer',
+      streakAria: 'You and Tunde, 3 days in a row. Both played today.' + (s.fived ? ' You high fived today.' : ''),
+      slapL: s.fived && s.last === 'five' ? 'slapL' : '',
+      slapR: s.fived && s.last === 'five' ? 'slapR' : '',
+      flameSize: s.fived ? '58px' : '44px',
+      five: () => { if (this.state.fived) { this.setState({ last: 'again' }); return; } this.setState({ fived: true, last: 'five' }); },
+      medals,
+      copied: s.copied,
+      notCopied: !s.copied,
+      inviteLabel: s.copied ? 'Link copied' : 'Copy invite link',
+      inviteFill: none && !s.copied ? '#d4f04c' : s.copied ? '#e9f8f0' : '#ffffff',
+      inviteBorder: none && !s.copied ? 'none' : s.copied ? '1px solid #3ec486' : '1px solid #d6d6db',
+      inviteEdge: none && !s.copied ? '#a8c22c' : s.copied ? '#3ec486' : '#d6d6db',
+      copy: () => this.setState({ copied: true, last: 'copied' }),
+    };
+  }
+}
+</script>
+</body>
+</html>

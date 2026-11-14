@@ -5,9 +5,6 @@
   min-width: 0;
   max-width: 560px;
 }
-.switch {
-  max-width: 420px;
-}
 .cards {
   display: flex;
   flex-direction: column;
@@ -187,29 +184,6 @@
 }
 
 /* People to follow: small cards in a row that scrolls sideways, inside the feed. */
-.strip {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  min-width: 0;
-}
-.stripTitle {
-  composes: h3 from '../styles/type.module.css';
-  margin: 0;
-}
-.stripList {
-  display: flex;
-  gap: var(--space-3);
-  margin: 0;
-  padding: 0 0 var(--ledge);
-  list-style: none;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-}
-.stripList::-webkit-scrollbar {
-  display: none;
-}
 .person {
   flex: none;
   width: 136px;
@@ -262,12 +236,6 @@
     animation: none;
   }
 }
-.stripHead {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-3);
-}
 /* Online now: green, the colour of live things, and the count says it in words too. */
 .online {
   composes: small from '../styles/type.module.css';
@@ -292,16 +260,6 @@
 .face {
   position: relative;
   display: grid;
-}
-.onDot {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: var(--space-3);
-  height: var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--tab-home);
-  box-shadow: 0 0 0 3px var(--surface);
 }
 .actions {
   display: flex;
@@ -333,4 +291,39 @@
   .liveDot {
     animation: none;
   }
+}
+
+/* Section titles in Bungee, as the canvas draws them (design/canvas/PeoplePhone.dc.html). */
+.feedTitle {
+  composes: h3 from '../styles/type.module.css';
+  margin: 0;
+  text-transform: uppercase;
+}
+.invite {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding: var(--space-5);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: 0 6px 0 var(--line-2);
+}
+.inviteButton {
+  min-height: 48px;
+  padding: 0 var(--space-5);
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: 0 5px 0 color-mix(in srgb, var(--accent) 60%, var(--fg));
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+.inviteButton:active {
+  transform: translateY(3px);
+  box-shadow: none;
 }

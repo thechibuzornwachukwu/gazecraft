@@ -9,6 +9,8 @@ import styles from './CaseDeck.module.css';
 
 /** How far a card must travel before letting go sends it. */
 const SEND_AT = 96;
+/** Less movement than this between press and release is a tap. */
+const TAP_SLOP = 8;
 
 type Props = {
   cases: readonly CaseFile[];
@@ -72,6 +74,8 @@ export function CaseDeck({ cases, onPlay, onLater, extra }: Props) {
     if (start?.id !== e.pointerId) return;
     setStart(null);
     if (Math.abs(dx) >= SEND_AT) send(dx < 0 ? -1 : 1);
+    // A tap, not a drag: the card was picked, so it plays, as a swipe right would.
+    else if (Math.abs(dx) < TAP_SLOP) send(1);
     else setDx(0);
   };
 

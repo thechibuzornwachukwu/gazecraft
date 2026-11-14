@@ -255,4 +255,11 @@ export const people: Dict = {
   'Ask a grown-up to sign in': 'Demande à un adulte de te connecter',
   'People is where you follow friends and cheer their medals. It needs an account.': 'Ici, tu suis tes amis et tu applaudis leurs médailles. Il faut un compte.',
   'You can still play with a friend: open any case and tap Play with a friend.': 'Tu peux quand même jouer avec un ami : ouvre une enquête et touche Jouer avec un ami.',
+  'Medals this month': 'Médailles du mois',
+  'Quiet this month. Invite a friend and their medals land here.': 'Mois calme. Invite un ami et ses médailles arriveront ici.',
+  'Send someone you know a link. When they join, you play as friends.': 'Envoie un lien à quelqu’un que tu connais. Quand il arrive, vous jouez entre amis.',
+  'Link copied': 'Lien copié',
+  'Copy your link': 'Copie ton lien',
+  'Open a room and solve a puzzle with a friend. No account needed.': 'Ouvre une salle et résous une énigme avec un ami. Pas besoin de compte.',
+  'Cheer your friends. Their medals land here.': 'Encourage tes amis. Leurs médailles arrivent ici.',
 };

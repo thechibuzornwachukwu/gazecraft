@@ -7,7 +7,7 @@ type Props = {
   /** Why this place needs an account, in one line the partner says. */
   line: string;
   /** What a guest can do without one, so the page is never a dead end. */
-  meanwhile: string;
+  meanwhile?: string;
   /** Where signing in comes back to. */
   from: string;
 };
@@ -28,7 +28,7 @@ export function GuestAsk({ line, meanwhile, from }: Props) {
       <Link to={`/welcome?from=${encodeURIComponent(from)}`} className={styles.go}>
         {t('Ask a grown-up to sign in')}
       </Link>
-      <p className={styles.meanwhile}>{meanwhile}</p>
+      {meanwhile && <p className={styles.meanwhile}>{meanwhile}</p>}
     </section>
   );
 }

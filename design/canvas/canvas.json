@@ -1,0 +1,227 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-11-14T10:00:00Z"
+  },
+  "title": "Gazecraft screens",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "LandingPhone.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 1160,
+      "title": "Landing · Phone",
+      "is_interactive": true
+    },
+    "LandingDesktop.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 1280,
+      "h": 860,
+      "title": "Landing · Desktop",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SignInPhone.dc.html": {
+      "x": 0,
+      "y": 1580,
+      "w": 390,
+      "h": 900,
+      "title": "Sign in · Phone",
+      "is_interactive": true
+    },
+    "SignInDesktop.dc.html": {
+      "x": 470,
+      "y": 1580,
+      "w": 1280,
+      "h": 800,
+      "title": "Sign in · Desktop",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Main.dc.html": {
+      "x": 0,
+      "y": 2900,
+      "w": 390,
+      "h": 1240,
+      "title": "Puzzles · Phone",
+      "is_interactive": true
+    },
+    "PuzzlesDesktop.dc.html": {
+      "x": 470,
+      "y": 2900,
+      "w": 1280,
+      "h": 1000,
+      "title": "Puzzles · Desktop",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "GamePhone.dc.html": {
+      "x": 0,
+      "y": 4560,
+      "w": 390,
+      "h": 1060,
+      "title": "Game · Phone",
+      "is_interactive": true
+    },
+    "GameDesktop.dc.html": {
+      "x": 470,
+      "y": 4560,
+      "w": 1280,
+      "h": 840,
+      "title": "Game · Desktop",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "ResultPhone.dc.html": {
+      "x": 0,
+      "y": 6040,
+      "w": 390,
+      "h": 900,
+      "title": "Result · Phone",
+      "is_interactive": true
+    },
+    "ResultDesktop.dc.html": {
+      "x": 470,
+      "y": 6040,
+      "w": 1280,
+      "h": 860,
+      "title": "Result · Desktop",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "PeoplePhone.dc.html": {
+      "x": 0,
+      "y": 7360,
+      "w": 390,
+      "h": 1300,
+      "title": "People · Phone",
+      "is_interactive": true
+    },
+    "PeopleDesktop.dc.html": {
+      "x": 470,
+      "y": 7360,
+      "w": 1280,
+      "h": 760,
+      "title": "People · Desktop",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "LeaguePhone.dc.html": {
+      "x": 0,
+      "y": 9080,
+      "w": 390,
+      "h": 900,
+      "title": "League · Phone",
+      "is_interactive": true
+    },
+    "LeagueDesktop.dc.html": {
+      "x": 470,
+      "y": 9080,
+      "w": 1280,
+      "h": 780,
+      "title": "League · Desktop",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "YouPhone.dc.html": {
+      "x": 0,
+      "y": 10400,
+      "w": 390,
+      "h": 1660,
+      "title": "You · Phone",
+      "is_interactive": true
+    },
+    "YouDesktop.dc.html": {
+      "x": 470,
+      "y": 10400,
+      "w": 1280,
+      "h": 900,
+      "title": "You · Desktop",
+      "expand": "fill",
+      "is_interactive": true
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "PuzzlesDesktop.dc.html",
+    "LandingPhone.dc.html",
+    "LandingDesktop.dc.html",
+    "SignInPhone.dc.html",
+    "SignInDesktop.dc.html",
+    "GamePhone.dc.html",
+    "GameDesktop.dc.html",
+    "ResultPhone.dc.html",
+    "ResultDesktop.dc.html",
+    "PeoplePhone.dc.html",
+    "PeopleDesktop.dc.html",
+    "LeaguePhone.dc.html",
+    "LeagueDesktop.dc.html",
+    "YouPhone.dc.html",
+    "YouDesktop.dc.html"
+  ],
+  "notes": {
+    "landing": {
+      "x": 0,
+      "y": -300,
+      "text": "Landing: find a word before you sign up",
+      "kind": "title1",
+      "maxW": 1750
+    },
+    "signin": {
+      "x": 0,
+      "y": 1280,
+      "text": "Sign in: your detective badge",
+      "kind": "title1",
+      "maxW": 1750
+    },
+    "puzzles": {
+      "x": 0,
+      "y": 2600,
+      "text": "Puzzles: swipe a case",
+      "kind": "title1",
+      "maxW": 1750
+    },
+    "game": {
+      "x": 0,
+      "y": 4260,
+      "text": "Game: the magnifying glass",
+      "kind": "title1",
+      "maxW": 1750
+    },
+    "result": {
+      "x": 0,
+      "y": 5740,
+      "text": "Result: open the case file",
+      "kind": "title1",
+      "maxW": 1750
+    },
+    "people": {
+      "x": 0,
+      "y": 7060,
+      "text": "People: high five",
+      "kind": "title1",
+      "maxW": 1750
+    },
+    "league": {
+      "x": 0,
+      "y": 8780,
+      "text": "League: the race track",
+      "kind": "title1",
+      "maxW": 1750
+    },
+    "you": {
+      "x": 0,
+      "y": 10100,
+      "text": "You: the sticker album",
+      "kind": "title1",
+      "maxW": 1750
+    }
+  },
+  "designSystems": []
+}

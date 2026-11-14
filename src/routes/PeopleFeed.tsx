@@ -1,17 +1,13 @@
 import { Fragment, useEffect, useState, type ReactNode } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Flame, Gamepad2, Heart, UserCheck, UserPlus } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Flame, Heart, UserCheck, UserPlus } from 'lucide-react';
 import { Avatar } from '../components/Avatar';
+import { copyText } from '../lib/share';
 import { t, plural } from '../i18n';
 import { Icon } from '../components/Icon';
 import { MedalFace } from '../components/Medals';
-import { Segmented } from '../components/Segmented';
 import { Skeleton, SkeletonGroup } from '../components/Skeleton';
-import { cheer, fetchNotifications, follow, inviteToRoom, markNotificationsRead, squadFeed, unfollow, type FeedItem, type PlayerRef } from '../lib/api';
-import { games } from '../games/catalog';
-import { nextClueTo } from '../games/path';
-import { newRoomCode } from '../lib/room';
-import { useOnline } from '../lib/useOnline';
+import { cheer, fetchNotifications, follow, markNotificationsRead, squadFeed, unfollow, type FeedItem, type PlayerRef } from '../lib/api';
 import { medalsOf } from '../lib/medals';
 import { ago, describe, type Note } from '../lib/notifications';
 import { announceRead } from '../lib/useUnread';
@@ -139,92 +135,6 @@ function NoteCard({ n, me }: { n: Note; me?: string }) {
   );
 }
 
-/** The puzzle a room is opened on: the one the player is on, or the first. A room takes a whole puzzle. */
-const roomGame = (): string => nextClueTo()?.split('/')[2] ?? games[0]!.id;
-
-/**
- * Play together, in one tap: follow them if you do not yet (an invite goes only to someone you follow), open a room
- * on your next puzzle, ask them in, and go there to wait. They see it on their games screen.
- */
-function InviteIcon({ me, p }: { me: string; p: PlayerRef }) {
-  const navigate = useNavigate();
-  const [state, setState] = useState<'idle' | 'sending' | 'failed'>('idle');
-  const who = p.name || p.handle;
-  const go = async () => {
-    setState('sending');
-    const game = roomGame();
-    const room = newRoomCode();
-    await follow(me, p.handle).catch(() => false);
-    const r = await inviteToRoom(p.handle, game, room).catch(() => ({ ok: false }));
-    if (!r.ok) return setState('failed');
-    navigate(`/play/${game}?room=${room}`);
-  };
-  return (
-    <button
-      type="button"
-      className={styles.invite}
-      aria-label={state === 'failed' ? t('Invite {who} again', { who }) : t('Play a puzzle with {who}', { who })}
-      data-failed={state === 'failed' || undefined}
-      disabled={state === 'sending'}
-      onClick={() => void go()}
-    >
-      <Icon icon={Gamepad2} size={18} />
-    </button>
-  );
-}
-
-/**
- * People to follow, as a strip of small cards inside the feed, the way a feed suggests friends. Anyone on the game
- * can be here: whoever is online now comes first, with a green dot, and the count of players online heads it.
- */
-function FollowStrip({ people, me, myHandle }: { people: PlayerRef[]; me?: string; myHandle?: string }) {
-  const online = useOnline();
-  const known = new Set(people.map((p) => p.handle));
-  const list = [...[...online.values()].filter((p) => !known.has(p.handle) && p.handle !== myHandle), ...people]
-    .map((p, i) => ({ ...p, on: online.has(p.handle), i }))
-    .sort((a, b) => Number(b.on) - Number(a.on) || a.i - b.i)
-    .slice(0, 20);
-  if (list.length === 0) return null;
-  return (
-    <section className={styles.strip} aria-labelledby="strip-title">
-      <div className={styles.stripHead}>
-        <h2 id="strip-title" className={styles.stripTitle}>
-          {t('People to follow')}
-        </h2>
-        {online.size > 0 && (
-          <span className={styles.online}>
-            <span className={styles.liveDot} aria-hidden="true" />
-            {t('{n} online', { n: online.size })}
-          </span>
-        )}
-      </div>
-      <ul className={styles.stripList}>
-        {list.map((p) => (
-          <li key={p.handle} className={styles.person}>
-            <Link to={`/u/${p.handle}`} className={styles.personLink}>
-              <span className={styles.face}>
-                <Avatar handle={p.handle} size={56} />
-                {p.on && <span className={styles.onDot} role="img" aria-label={t('Online now')} />}
-              </span>
-              <span className={styles.personName}>{p.name || `@${p.handle}`}</span>
-            </Link>
-            {me ? (
-              <span className={styles.actions}>
-                <FollowIcon me={me} handle={p.handle} name={p.name || p.handle} />
-                <InviteIcon me={me} p={p} />
-              </span>
-            ) : (
-              <Link to={`/signin?next=${encodeURIComponent(`/u/${p.handle}`)}`} className={styles.follow} aria-label={t('Sign in to follow {name}', { name: p.name || p.handle })}>
-                <Icon icon={UserPlus} size={18} />
-              </Link>
-            )}
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-
 function FeedSkeleton() {
   return (
     <SkeletonGroup className={styles.cards}>
@@ -245,14 +155,13 @@ function FeedSkeleton() {
 }
 
 /** Where the strip sits: after the third card, or alone when there are no cards. */
-const STRIP_AT = 3;
 
 /**
  * The feed (SPEC section 6, People): medals lately won by you, the people you follow, or the top players,
  * each as a card that can be cheered, with what happened to you in among them. Opening it reads your notifications.
  */
-export function PeopleFeed({ me, myHandle, suggested }: { me?: string; myHandle?: string; suggested: PlayerRef[] }) {
-  const [scope, setScope] = useState<Scope>(me ? 'friends' : 'world');
+export function PeopleFeed({ me, myHandle }: { me?: string; myHandle?: string }) {
+  const scope: Scope = 'friends';
   const [lists, setLists] = useState<Partial<Record<Scope, Entry[] | 'failed'>>>({});
   const list = lists[scope];
   useEffect(() => {
@@ -275,40 +184,42 @@ export function PeopleFeed({ me, myHandle, suggested }: { me?: string; myHandle?
       alive = false;
     };
   }, [scope, list, me]);
-  const strip = <FollowStrip people={suggested} me={me} myHandle={myHandle} />;
   return (
-    <section className={styles.feed} aria-label={t('Feed')}>
-      {me && (
-        <div className={styles.switch}>
-          <Segmented label={t('Whose news')} hideLabel options={[['friends', t('Following')], ['world', t('Top players')]] as const} value={scope} onChange={setScope} />
-        </div>
-      )}
-      {/* People to follow never wait on the feed: whoever is on the game can be found while it loads. */}
+    <section className={styles.feed} aria-labelledby="medals-title">
+      <h2 id="medals-title" className={styles.feedTitle}>
+        {t('Medals this month')}
+      </h2>
       {list === undefined ? (
-        <>
-          <FeedSkeleton />
-          {strip}
-        </>
+        <FeedSkeleton />
       ) : list === 'failed' ? (
-        <>
-          <p className={styles.muted}>{t('This did not load. Try again in a moment.')}</p>
-          {strip}
-        </>
+        <p className={styles.muted}>{t('This did not load. Try again in a moment.')}</p>
       ) : list.length === 0 ? (
-        <>
-          <p className={styles.muted}>{scope === 'friends' ? t('Quiet this month. Follow a few players and their medals land here.') : t('No medals won this month yet.')}</p>
-          {strip}
-        </>
+        <p className={styles.muted}>{t('Quiet this month. Invite a friend and their medals land here.')}</p>
       ) : (
         <div className={styles.cards}>
-          {list.map((e, i) => (
-            <Fragment key={'note' in e ? `n${e.note.id}` : `m${e.medal.handle}-${e.medal.code}`}>
-              {'note' in e ? <NoteCard n={e.note} me={me} /> : <MedalCard f={e.medal} me={me} />}
-              {i === Math.min(STRIP_AT, list.length) - 1 && strip}
-            </Fragment>
+          {list.map((e) => (
+            <Fragment key={'note' in e ? `n${e.note.id}` : `m${e.medal.handle}-${e.medal.code}`}>{'note' in e ? <NoteCard n={e.note} me={me} /> : <MedalCard f={e.medal} me={me} />}</Fragment>
           ))}
         </div>
       )}
+      {myHandle && <InviteFriend handle={myHandle} />}
+    </section>
+  );
+}
+
+/** Invite a friend (design/canvas/PeoplePhone.dc.html): a link to your page. When they join, you play as friends. */
+function InviteFriend({ handle }: { handle: string }) {
+  const [copied, setCopied] = useState(false);
+  const link = `${window.location.origin}/u/${handle}`;
+  return (
+    <section className={styles.invite} aria-labelledby="invite-title">
+      <h2 id="invite-title" className={styles.feedTitle}>
+        {t('Invite a friend')}
+      </h2>
+      <p className={styles.muted}>{t('Send someone you know a link. When they join, you play as friends.')}</p>
+      <button type="button" className={styles.inviteButton} onClick={() => void copyText(link).then((ok) => setCopied(ok))}>
+        {copied ? t('Link copied') : t('Copy your link')}
+      </button>
     </section>
   );
 }

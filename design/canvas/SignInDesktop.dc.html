@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sign in, desktop, detective's desk</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&amp;family=Manrope:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#f6f6f7}
+a{color:#111113}a:hover{color:#000000}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(212,240,76,0)}50%{box-shadow:0 0 0 5px rgba(212,240,76,.45)}}
+@keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px)}60%{transform:translateY(-14px)}}
+@keyframes twinkle{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.18) rotate(12deg)}}
+@keyframes flame{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.1) rotate(3deg)}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}
+@keyframes pop2{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}
+@keyframes cheer{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes slam{0%{transform:scale(2.6) rotate(-4deg);opacity:0}55%{transform:scale(.9) rotate(-12deg);opacity:1}75%{transform:scale(1.05) rotate(-12deg)}100%{transform:scale(1) rotate(-12deg);opacity:1}}
+@keyframes thud{0%,100%{transform:translateY(0) rotate(0)}35%{transform:translateY(6px) rotate(.8deg)}70%{transform:translateY(-2px) rotate(-.3deg)}}
+.bob{animation:bob 2.6s ease-in-out infinite;transform-origin:50% 100%} .glow{animation:glow 1.8s ease-in-out infinite}
+.hop{animation:hop 1.4s ease-in-out infinite} .twinkle{animation:twinkle 2.2s ease-in-out infinite}
+.flame{animation:flame 1.1s ease-in-out infinite;transform-origin:50% 90%} .pop{animation:pop .35s ease-out both}
+.pop2{animation:pop2 .35s ease-out both}
+.cheer{animation:cheer 1.6s ease-in-out infinite}
+.slam{animation:slam .42s cubic-bezier(.3,.7,.3,1) both}
+.thud{animation:thud .4s ease-out .2s both}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{animation:spin .8s linear infinite}
+@media (prefers-reduced-motion: reduce){.bob,.glow,.hop,.twinkle,.flame,.pop,.pop2,.cheer,.slam,.thud,.spin{animation:none}}
+</style>
+</helmet>
+<div style="min-height: 800px; background: #f6f6f7; font-family: Manrope, system-ui, sans-serif; color: #111113">
+
+  <header style="border-bottom: 1px solid #e3e3e7">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 28px; min-height: 44px">
+      <a href="LandingDesktop.dc.html" aria-label="Gazecraft home" style="display: flex; align-items: center; gap: 8px; text-decoration: none">
+        <span aria-hidden="true" style="width: 28px; height: 28px; border-radius: 8px; background: #454552; display: grid; place-items: center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4f04c" stroke-width="2.6" stroke-linecap="round"><circle cx="8" cy="12" r="2"/><circle cx="16" cy="12" r="2"/></svg>
+        </span>
+        <span style="font-family: Bungee, Manrope, sans-serif; font-size: 22px; color: #111113">GAZECRAFT</span>
+      </a>
+    </div>
+  </header>
+
+  <main style="max-width: 1200px; margin: 0 auto; padding: 40px 24px 60px; display: flex; flex-wrap: wrap; gap: 48px; align-items: center">
+
+    <section aria-labelledby="step-title" style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 22px">
+      <ol aria-label="{{stepLabel}}" style="margin: 0; padding: 0; list-style: none; display: flex; align-items: center; gap: 6px">
+        <sc-for list="{{dots}}" as="d" hint-placeholder-count="3">
+          <li aria-hidden="true" style="width: {{d.w}}; height: 10px; box-sizing: border-box; border-radius: 999px; background: {{d.bg}}; border: 1px solid {{d.edge}}; transition: width .25s ease"></li>
+        </sc-for>
+      </ol>
+
+      <h1 id="step-title" style="margin: 0; font-family: Bungee, Manrope, sans-serif; font-weight: 400; font-size: 40px; line-height: 1.08; color: #111113">{{title}}</h1>
+
+      <div style="display: flex; align-items: flex-end; gap: 14px">
+        <img class="bob" src="{{mochi}}" alt="Mochi the cat" style="width: 112px; height: auto; flex: none">
+        <p role="status" class="{{popClass}}" style="margin: 0 0 36px; padding: 16px 20px; max-width: 420px; background: #111113; color: #ffffff; border-radius: 20px 20px 20px 4px; font-size: 18px; font-weight: 700; line-height: 1.35">{{say}}</p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; max-width: 440px">
+        <sc-if value="{{isEmail}}" hint-placeholder-val="{{ true }}">
+          <label for="email" style="font-size: 15px; font-weight: 800; color: #111113">Email</label>
+          <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" value="{{email}}" onInput="{{onEmail}}" onKeyDown="{{onKey}}" aria-describedby="err" aria-invalid="{{invalid}}" style="width: 100%; box-sizing: border-box; min-height: 58px; padding: 0 20px; border-radius: 16px; border: 2px solid #d6d6db; background: #ffffff; font-family: Manrope, system-ui, sans-serif; font-size: 19px; font-weight: 700; color: #111113">
+        </sc-if>
+        <sc-if value="{{isCode}}" hint-placeholder-val="{{ false }}">
+          <label for="code" style="font-size: 15px; font-weight: 800; color: #111113">6-digit code</label>
+          <input id="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" value="{{code}}" onInput="{{onCode}}" onKeyDown="{{onKey}}" aria-describedby="err" aria-invalid="{{invalid}}" style="width: 100%; box-sizing: border-box; min-height: 68px; padding: 0 20px; border-radius: 16px; border: 2px solid #d6d6db; background: #ffffff; font-family: Bungee, Manrope, sans-serif; font-size: 32px; letter-spacing: .45em; text-align: center; color: #111113">
+        </sc-if>
+        <sc-if value="{{isName}}" hint-placeholder-val="{{ false }}">
+          <label for="name" style="font-size: 15px; font-weight: 800; color: #111113">Name</label>
+          <input id="name" type="text" autocomplete="nickname" maxlength="20" value="{{name}}" onInput="{{onName}}" onKeyDown="{{onKey}}" aria-describedby="err" aria-invalid="{{invalid}}" style="width: 100%; box-sizing: border-box; min-height: 58px; padding: 0 20px; border-radius: 16px; border: 2px solid #d6d6db; background: #ffffff; font-family: Manrope, system-ui, sans-serif; font-size: 19px; font-weight: 700; color: #111113">
+        </sc-if>
+        <sc-if value="{{notDone}}" hint-placeholder-val="{{ true }}">
+          <p id="err" role="alert" style="margin: 0; min-height: 20px; font-size: 14px; font-weight: 700; color: #b42318">{{err}}</p>
+          <button type="button" onClick="{{next}}" aria-disabled="{{busy}}" style="min-height: 58px; border-radius: 999px; border: none; background: #d4f04c; box-shadow: 0 6px 0 #a8c22c; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: Manrope, system-ui, sans-serif; font-size: 17px; font-weight: 800; color: #0d0d0e; cursor: {{cursor}}">
+            <sc-if value="{{sending}}" hint-placeholder-val="{{ false }}"><svg aria-hidden="true" class="spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0d0d0e" stroke-width="2.6" stroke-linecap="round"><path d="M12 3a9 9 0 1 0 9 9"/></svg></sc-if>
+            {{action}}
+          </button>
+        </sc-if>
+        <sc-if value="{{isCode}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; justify-content: space-between; gap: 8px; padding-top: 6px">
+            <sc-if value="{{showResend}}" hint-placeholder-val="{{ true }}">
+              <button type="button" onClick="{{resend}}" style="min-height: 44px; padding: 0 4px; border: none; background: none; font-family: Manrope, system-ui, sans-serif; font-size: 15px; font-weight: 800; color: #111113; text-decoration: underline; text-underline-offset: 3px; cursor: pointer">Send a new code</button>
+            </sc-if>
+            <button type="button" onClick="{{back}}" style="min-height: 44px; padding: 0 4px; border: none; background: none; font-family: Manrope, system-ui, sans-serif; font-size: 15px; font-weight: 800; color: #111113; text-decoration: underline; text-underline-offset: 3px; cursor: pointer">Use a different email</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{isDone}}" hint-placeholder-val="{{ false }}">
+          <a href="PuzzlesDesktop.dc.html" class="glow" style="min-height: 58px; border-radius: 999px; background: #d4f04c; box-shadow: 0 6px 0 #a8c22c; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 17px; font-weight: 800; color: #0d0d0e; text-decoration: none">
+            Start playing
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0d0d0e" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+          </a>
+        </sc-if>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 16px; padding-top: 8px">
+          <sc-if value="{{notDone}}" hint-placeholder-val="{{ true }}">
+            <a href="PuzzlesDesktop.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 700; color: #55555c; text-underline-offset: 3px">Keep playing as a guest</a>
+          </sc-if>
+          <p style="margin: 0; font-size: 13px; font-weight: 600; color: #6a6a72">Accounts are for players aged 13 and over.</p>
+        </div>
+      </div>
+    </section>
+
+    <aside style="flex: 1 1 340px; min-width: 0; display: flex; justify-content: center">
+      <section aria-label="{{badgeLabel}}" class="{{badgeClass}}" style="position: relative; width: 100%; max-width: 360px; background: #ffffff; border: 1px solid #e3e3e7; border-radius: 24px; box-shadow: 0 8px 0 #e3e3e7">
+        <div style="position: relative; padding: 30px 20px 14px; border-radius: 23px 23px 0 0; background: #111113; display: flex; align-items: center; justify-content: center; gap: 8px">
+          <span aria-hidden="true" style="position: absolute; top: 10px; left: 50%; width: 56px; height: 10px; margin-left: -28px; border-radius: 5px; background: #f6f6f7"></span>
+          <span aria-hidden="true" style="width: 24px; height: 24px; border-radius: 7px; background: #454552; display: grid; place-items: center">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#d4f04c" stroke-width="2.8" stroke-linecap="round"><circle cx="8" cy="12" r="2"/><circle cx="16" cy="12" r="2"/></svg>
+          </span>
+          <span style="font-family: Bungee, Manrope, sans-serif; font-size: 17px; color: #ffffff">GAZECRAFT</span>
+        </div>
+        <div style="padding: 26px 22px 30px; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center">
+          <sc-if value="{{hasName}}" hint-placeholder-val="{{ true }}">
+            <img src="/_blob/7f7dc653e8bd7e13eaad2bdac65ebe80" alt="" style="width: 112px; height: 112px; border-radius: 50%; background: #fdf1e4; box-sizing: border-box; border: 4px solid {{ring}}">
+          </sc-if>
+          <sc-if value="{{noName}}" hint-placeholder-val="{{ false }}">
+            <span aria-hidden="true" style="width: 112px; height: 112px; border-radius: 50%; overflow: hidden; background: #f6f6f7; box-sizing: border-box; border: 4px dashed #c9c9cf; display: grid; place-items: end center">
+              <svg width="86" height="86" viewBox="0 0 24 24" fill="#d6d6db"><circle cx="12" cy="9" r="4.4"/><path d="M3.5 24c0-5 3.8-8.4 8.5-8.4s8.5 3.4 8.5 8.4z"/></svg>
+            </span>
+          </sc-if>
+          <sc-if value="{{hasName}}" hint-placeholder-val="{{ true }}">
+            <div style="display: flex; flex-direction: column; gap: 4px; min-height: 58px; max-width: 100%">
+              <span style="font-family: Bungee, Manrope, sans-serif; font-size: 28px; line-height: 1.05; color: #111113; overflow-wrap: anywhere">{{shownName}}</span>
+              <span style="font-size: 15px; font-weight: 700; color: #55555c; overflow-wrap: anywhere">{{handle}}</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{noName}}" hint-placeholder-val="{{ false }}">
+            <div aria-hidden="true" style="display: flex; flex-direction: column; align-items: center; gap: 10px; min-height: 58px">
+              <span style="display: block; width: 180px; height: 28px; border-bottom: 2px dashed #c9c9cf"></span>
+              <span style="display: block; width: 100px; height: 12px; border-bottom: 2px dashed #e3e3e7"></span>
+            </div>
+          </sc-if>
+          <div style="display: flex; align-items: center; gap: 18px; padding-top: 10px; border-top: 1px solid #e3e3e7; width: 100%; justify-content: center">
+            <span style="display: inline-flex; align-items: center; gap: 6px; padding-top: 10px; font-size: 14px; font-weight: 800; color: #111113">
+              <img src="/_blob/61938ab8b1d71a1660f0f4326e21fb26" alt="" style="width: 28px; height: 28px">Starter
+            </span>
+            <span style="display: inline-flex; align-items: center; gap: 6px; padding-top: 10px; font-size: 14px; font-weight: 800; color: #111113">
+              <img src="/_blob/f9bac90c57f275dc5e6401be7e1e99b0" alt="" style="width: 28px; height: 28px; object-fit: cover; object-position: top; border-radius: 50%; background: #f6f6f7">Mochi
+            </span>
+          </div>
+        </div>
+        <sc-if value="{{stamped}}" hint-placeholder-val="{{ false }}">
+          <span aria-hidden="true" class="slam" style="position: absolute; left: 50%; top: 168px; margin-left: -110px; width: 220px; box-sizing: border-box; padding: 6px 0; text-align: center; border: 3px solid #5a6b00; border-radius: 10px; transform: rotate(-12deg); font-family: Bungee, Manrope, sans-serif; font-size: 32px; color: #5a6b00; background: rgba(244,251,214,.92)">OFFICIAL</span>
+        </sc-if>
+      </section>
+    </aside>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state":{"editor":"enum","options":["flow","wrong code","code expired","sending","offline"],"default":"flow"},"$preview":{"width":1280,"height":800}}'>
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const STEPS = ['email', 'code', 'name', 'done'];
+const FACE = { wave: '/_blob/72ac21c6abd315fc09fce9f4cd789575', think: '/_blob/f9bac90c57f275dc5e6401be7e1e99b0', found: '/_blob/d187597c53c1f65f02e75d28f635beff', stumped: '/_blob/138a2e49267565bf4ce99a85f687007a' };
+const TITLE = { email: 'BECOME A DETECTIVE', code: 'CHECK YOUR INBOX', name: 'WHAT SHOULD WE CALL YOU?', done: 'WELCOME, DETECTIVE' };
+const ACTION = { email: 'Email me a code', code: 'Check the code', name: 'Stamp my badge' };
+const WRONG = "That code doesn't match. Check the newest email from us.";
+const EXPIRED = 'That code has run out. Get a new one.';
+const OFFLINE = "You're offline. Connect to the internet, then try again.";
+const BLANK = { step: 'email', email: '', code: '', name: '', err: '', kind: '', sending: false, resent: false };
+// The `state` tweak jumps straight to each edge case. In "flow", typing 000000 as the code also shows the wrong code state.
+const PRESET = {
+  'flow': BLANK,
+  'wrong code': Object.assign({}, BLANK, { step: 'code', email: 'ada@example.com', code: '000000', err: WRONG, kind: 'wrong' }),
+  'code expired': Object.assign({}, BLANK, { step: 'code', email: 'ada@example.com', code: '482913', err: EXPIRED, kind: 'expired' }),
+  'sending': Object.assign({}, BLANK, { email: 'ada@example.com', sending: true }),
+  'offline': Object.assign({}, BLANK, { email: 'ada@example.com', err: OFFLINE, kind: 'offline' }),
+};
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = Object.assign({ applied: 'flow', n: 0 }, BLANK);
+  }
+  cur() {
+    const t = PRESET[this.props.state] ? this.props.state : 'flow';
+    return this.state.applied === t ? this.state : Object.assign({}, this.state, PRESET[t], { applied: t });
+  }
+  put(patch) {
+    this.setState(Object.assign({}, this.cur(), patch));
+  }
+  guess(email) {
+    const part = (email.trim().split('@')[0] || '').split(/[^A-Za-z]/).filter(Boolean)[0] || '';
+    return part.length >= 2 ? part.charAt(0).toUpperCase() + part.slice(1).toLowerCase() : 'Ada';
+  }
+  go(patch) {
+    this.put(Object.assign({ err: '', kind: '', n: this.cur().n + 1 }, patch));
+  }
+  fail(err, kind) {
+    this.put({ err, kind: kind || 'invalid', sending: false, n: this.cur().n + 1 });
+  }
+  send(resent) {
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) return this.fail(OFFLINE, 'offline');
+    this.go({ sending: true });
+    setTimeout(() => { if (this.cur().sending) this.go({ sending: false, step: 'code', code: '', resent }); }, 900);
+  }
+  next() {
+    const s = this.cur();
+    if (s.sending) return;
+    if (s.step === 'email') {
+      if (!EMAIL_RE.test(s.email.trim())) return this.fail('That email looks off. Check it and try again.');
+      return this.send(false);
+    }
+    if (s.step === 'code') {
+      if (s.kind === 'expired' || s.kind === 'offline') return this.send(true);
+      if (s.code.length !== 6) return this.fail('The code has 6 digits.');
+      if (s.code === '000000') return this.fail(WRONG, 'wrong');
+      return this.go({ step: 'name', name: this.guess(s.email) });
+    }
+    if (s.step === 'name') {
+      if (!s.name.trim()) return this.fail('Add a name. A nickname is fine.');
+      return this.go({ step: 'done', name: s.name.trim() });
+    }
+  }
+  renderVals() {
+    const s = this.cur();
+    const at = STEPS.indexOf(s.step);
+    const named = at >= 2 && s.name.trim().length > 0;
+    const shown = s.name.trim();
+    const email = s.email.trim();
+    const say = s.sending ? 'Sending it to ' + email + ' now.' : {
+      email: "No password needed. I'll email you a code.",
+      code: s.resent ? 'A fresh code is on its way to ' + email + '.' : 'Sent to ' + email + '. Type the 6 digits.',
+      name: 'Your badge is nearly ready. Is this name right?',
+      done: 'Welcome to the team, Detective ' + shown + '!',
+    }[s.step];
+    // The error is written once, in #err. Mochi only changes face.
+    const face = s.sending ? 'think' : s.err ? 'stumped' : { email: 'wave', code: 'think', name: 'wave', done: 'found' }[s.step];
+    const action = s.sending ? 'Sending your code' : s.kind === 'expired' ? 'Send a new code' : s.kind === 'offline' ? 'Try again' : ACTION[s.step] || '';
+    const dots = [0, 1, 2].map((j) => ({
+      w: j === at ? '28px' : '10px',
+      bg: j < at ? '#111113' : j === at ? '#d4f04c' : '#d6d6db',
+      edge: j === at ? '#a8c22c' : j < at ? '#111113' : '#d6d6db',
+    }));
+    return {
+      dots,
+      stepLabel: at < 3 ? 'Step ' + (at + 1) + ' of 3' : 'All 3 steps done',
+      title: TITLE[s.step],
+      say,
+      mochi: FACE[face],
+      popClass: s.n % 2 ? 'pop2' : 'pop',
+      email: s.email,
+      code: s.code,
+      name: s.name,
+      err: s.err,
+      isEmail: s.step === 'email',
+      isCode: s.step === 'code',
+      isName: s.step === 'name',
+      isDone: s.step === 'done',
+      notDone: s.step !== 'done',
+      action,
+      sending: s.sending,
+      busy: s.sending ? 'true' : 'false',
+      cursor: s.sending ? 'progress' : 'pointer',
+      invalid: s.err ? 'true' : 'false',
+      showResend: s.kind !== 'expired',
+      hasName: named,
+      noName: !named,
+      shownName: shown.toUpperCase(),
+      handle: '@' + (shown.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 20) || 'detective'),
+      stamped: s.step === 'done',
+      badgeClass: s.step === 'done' ? 'thud' : '',
+      badgeLabel: s.step === 'done' ? 'Badge for ' + shown + ', stamped official' : named ? 'Badge for ' + shown + ', not stamped yet' : 'Badge, waiting for a name',
+      ring: s.step === 'done' ? '#d4f04c' : '#e3e3e7',
+      onEmail: (e) => this.put({ email: e.target.value, err: '', kind: '' }),
+      // An expired code stays expired until a new one is sent.
+      onCode: (e) => this.put(Object.assign({ code: e.target.value.replace(/\D/g, '').slice(0, 6) }, this.cur().kind === 'expired' ? {} : { err: '', kind: '' })),
+      onName: (e) => this.put({ name: e.target.value.slice(0, 20), err: '', kind: '' }),
+      onKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); this.next(); } },
+      next: () => this.next(),
+      resend: () => { if (!this.cur().sending) this.send(true); },
+      back: () => this.go({ step: 'email', code: '', sending: false }),
+    };
+  }
+}
+</script>
+</body>
+</html>

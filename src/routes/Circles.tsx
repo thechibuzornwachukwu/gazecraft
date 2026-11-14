@@ -196,7 +196,6 @@ export function Circle() {
         <section className={board.section} aria-labelledby="table-title">
           <div className={board.head}>
             <div className={board.headText}>
-              <span className={board.kicker}>{view === 'today' ? t('Today · Daily #{day}', { day: today }) : t('Last 7 dailies')}</span>
               <h2 id="table-title" className={board.h2}>
                 {view === 'today' ? (rows ? t('{played} of {total} have played', { played, total: rows.length }) : t('Today')) : t('Scores added up')}
               </h2>

@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Landing, phone, detective's desk</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&amp;family=Manrope:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#f6f6f7}
+a{color:#111113}a:hover{color:#000000}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(212,240,76,0)}50%{box-shadow:0 0 0 5px rgba(212,240,76,.45)}}
+@keyframes ledgeglow{0%,100%{box-shadow:0 6px 0 #a8c22c,0 0 0 0 rgba(212,240,76,0)}50%{box-shadow:0 6px 0 #a8c22c,0 0 0 7px rgba(212,240,76,.5)}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}
+@keyframes pop2{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}
+.bob{animation:bob 2.6s ease-in-out infinite;transform-origin:50% 100%} .glow{animation:glow 1.8s ease-in-out infinite}
+.ledgeglow{animation:ledgeglow 1.8s ease-in-out infinite}
+.pop{animation:pop .35s ease-out both}
+.pop2{animation:pop2 .35s ease-out both}
+@media (prefers-reduced-motion: reduce){.bob,.glow,.ledgeglow,.pop,.pop2{animation:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 1160px; box-sizing: border-box; position: relative; overflow: hidden; display: flex; flex-direction: column; background: #f6f6f7; font-family: Manrope, system-ui, sans-serif; color: #111113">
+
+  <header style="padding: 20px 18px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px">
+    <a href="LandingPhone.dc.html" aria-label="Gazecraft home" style="display: flex; align-items: center; gap: 8px; min-height: 44px; text-decoration: none">
+      <span aria-hidden="true" style="width: 28px; height: 28px; border-radius: 8px; background: #454552; display: grid; place-items: center">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4f04c" stroke-width="2.6" stroke-linecap="round"><circle cx="8" cy="12" r="2"/><circle cx="16" cy="12" r="2"/></svg>
+      </span>
+      <span style="font-family: Bungee, Manrope, sans-serif; font-size: 20px; color: #111113">GAZECRAFT</span>
+    </a>
+    <a href="SignInPhone.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; background: #ffffff; border: 1px solid #e3e3e7; box-shadow: 0 4px 0 #e3e3e7; font-size: 15px; font-weight: 800; text-decoration: none; color: #111113">Sign in</a>
+  </header>
+
+  <main style="padding: 26px 18px 40px; display: flex; flex-direction: column; gap: 20px">
+    <h1 style="margin: 0; font-family: Bungee, Manrope, sans-serif; font-weight: 400; font-size: 28px; line-height: 1.08; color: #111113">WORDS ARE HIDING IN THIS SENTENCE</h1>
+
+    <section aria-label="Mochi" style="display: flex; align-items: flex-end; gap: 10px">
+      <img class="bob" src="{{mochi}}" alt="Mochi the cat" style="width: 84px; height: auto; flex: none">
+      <p role="status" class="{{popClass}}" style="margin: 0 0 26px; padding: 13px 16px; background: #111113; color: #ffffff; border-radius: 18px 18px 18px 4px; font-size: 16px; font-weight: 700; line-height: 1.35">{{say}}<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap"> {{tally}}</span></p>
+    </section>
+
+    <section aria-label="Demo sentence" style="display: flex; flex-direction: column; gap: 16px; padding: 18px; background: #ffffff; border: 1px solid #e3e3e7; border-radius: 24px; box-shadow: 0 6px 0 #e3e3e7">
+      <div tabindex="0" role="group" aria-label="Demo sentence. Tap the first letter of a hidden word, then its last, or drag across it. With keys: arrows move letter by letter, Enter marks a letter." onKeyDown="{{key}}" onPointerDown="{{down}}" onPointerMove="{{move}}" onPointerUp="{{up}}" onPointerCancel="{{cancel}}" style="margin: -6px; padding: 6px; border-radius: 12px; outline-offset: 2px; user-select: none; -webkit-user-select: none; touch-action: none">
+        <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap">{{text}}</span>
+        <p aria-hidden="true" style="margin: 0; font-size: 22px; font-weight: 600; line-height: 1.6; letter-spacing: -0.01em; color: #2a2a2e; white-space: pre-wrap"><sc-for list="{{chars}}" as="c" hint-placeholder-count="40"><span data-i="{{c.i}}" style="position: relative; padding: 2px 0; background: {{c.bg}}; color: {{c.ink}}; border-radius: {{c.rad}}; box-shadow: {{c.ring}}; cursor: {{c.cur}}">{{c.t}}<sc-if value="{{c.tick}}" hint-placeholder-val="{{ false }}"><span class="pop" style="position: absolute; top: -12px; right: -9px; width: 18px; height: 18px; border-radius: 50%; background: #111113; display: grid; place-items: center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#d4f04c" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17 19 7"/></svg></span></sc-if></span></sc-for></p>
+      </div>
+      <p aria-live="polite" style="position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap">{{cue}}</p>
+      <ul aria-label="{{foundLabel}}" style="margin: 0; padding: 14px 0 0; border-top: 1px solid #e3e3e7; list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px">
+        <sc-for list="{{slots}}" as="w" hint-placeholder-count="5">
+          <li aria-label="{{w.label}}" style="display: grid; place-items: center; height: 36px; border-radius: 999px; background: {{w.bg}}; border: 1px {{w.line}} {{w.edge}}">
+            <sc-if value="{{w.found}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" class="pop" style="font-size: 13px; font-weight: 800; letter-spacing: .03em; color: #0d0d0e">{{w.w}}</span></sc-if>
+            <sc-if value="{{w.hidden}}" hint-placeholder-val="{{ true }}"><span aria-hidden="true" style="font-size: 12px; font-weight: 800; letter-spacing: 2px; color: #6a6a72">{{w.dots}}</span></sc-if>
+          </li>
+        </sc-for>
+      </ul>
+    </section>
+
+    <div style="display: flex; gap: 12px">
+      <button type="button" onClick="{{reveal}}" style="flex: 1 1 0; min-height: 56px; border-radius: 999px; border: 1px solid #d6d6db; background: #ffffff; box-shadow: 0 4px 0 #d6d6db; font-family: Manrope, system-ui, sans-serif; font-size: 16px; font-weight: 800; color: #111113; cursor: pointer">{{revealLabel}}</button>
+      <a href="Main.dc.html" class="{{goClass}}" style="flex: 1.25 1 0; min-height: 56px; border-radius: 999px; background: #d4f04c; box-shadow: 0 6px 0 #a8c22c; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 16px; font-weight: 800; color: #0d0d0e; text-decoration: none">
+        Start playing
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0d0d0e" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+      </a>
+    </div>
+
+    <section aria-labelledby="cases-title" style="display: flex; flex-direction: column; gap: 6px; padding-top: 18px">
+      <h2 id="cases-title" style="margin: 0; font-family: Bungee, Manrope, sans-serif; font-weight: 400; font-size: 18px; color: #2c2c2e; text-align: center">CASES WAITING</h2>
+      <ul style="position: relative; height: 262px; margin: 0; padding: 0; list-style: none">
+        <li style="position: absolute; left: 50%; top: 22px; width: 150px; margin-left: -75px; transform: translateX(-96px) translateY(24px) rotate(-14deg); transform-origin: 50% 100%; background: #ffffff; border: 1px solid #e3e3e7; border-radius: 20px; overflow: hidden">
+          <div style="height: 104px; background: #c9c0ff; display: grid; place-items: center"><img src="/_blob/7635086556d8c6e73873e2f04285f82e" alt="" style="width: 72px; height: 72px"></div>
+          <div style="padding: 12px 12px 14px; display: flex; flex-direction: column; gap: 4px">
+            <h3 style="margin: 0; font-family: Bungee, Manrope, sans-serif; font-weight: 400; font-size: 15px; line-height: 1.1; color: #141416">IN THE LAB</h3>
+            <span style="font-size: 13px; font-weight: 700; color: #55555c">9 puzzles · Science</span>
+          </div>
+        </li>
+        <li style="position: absolute; left: 50%; top: 22px; width: 150px; margin-left: -75px; transform: translateX(-32px) translateY(4px) rotate(-5deg); transform-origin: 50% 100%; background: #ffffff; border: 1px solid #e3e3e7; border-radius: 20px; overflow: hidden">
+          <div style="height: 104px; background: #a6e9ee; display: grid; place-items: center"><img src="/_blob/f6a3715fa4c1c5b2b0268cba7182e2a3" alt="" style="width: 72px; height: 72px"></div>
+          <div style="padding: 12px 12px 14px; display: flex; flex-direction: column; gap: 4px">
+            <h3 style="margin: 0; font-family: Bungee, Manrope, sans-serif; font-weight: 400; font-size: 15px; line-height: 1.1; color: #141416">PITCH SIDE</h3>
+            <span style="font-size: 13px; font-weight: 700; color: #55555c">7 puzzles · Football</span>
+          </div>
+        </li>
+        <li style="position: absolute; left: 50%; top: 22px; width: 150px; margin-left: -75px; transform: translateX(32px) translateY(4px) rotate(5deg); transform-origin: 50% 100%; background: #ffffff; border: 1px solid #e3e3e7; border-radius: 20px; overflow: hidden">
+          <div style="height: 104px; background: #c9c0ff; display: grid; place-items: center"><img src="/_blob/c63465f1ba526143e4af88d655f94be3" alt="" style="width: 72px; height: 72px"></div>
+          <div style="padding: 12px 12px 14px; display: flex; flex-direction: column; gap: 4px">
+            <h3 style="margin: 0; font-family: Bungee, Manrope, sans-serif; font-weight: 400; font-size: 15px; line-height: 1.1; color: #141416">NIGHT DRIVE</h3>
+            <span style="font-size: 13px; font-weight: 700; color: #55555c">7 puzzles · Science</span>
+          </div>
+        </li>
+        <li style="position: absolute; left: 50%; top: 22px; width: 150px; margin-left: -75px; transform: translateX(96px) translateY(24px) rotate(14deg); transform-origin: 50% 100%; background: #ffffff; border: 1px solid #e3e3e7; border-radius: 20px; overflow: hidden">
+          <div style="height: 104px; background: #c7dcff; display: grid; place-items: center"><img src="/_blob/7fb250dd3c5251cd91cf189dba756682" alt="" style="width: 72px; height: 72px"></div>
+          <div style="padding: 12px 12px 14px; display: flex; flex-direction: column; gap: 4px">
+            <h3 style="margin: 0; font-family: Bungee, Manrope, sans-serif; font-weight: 400; font-size: 15px; line-height: 1.1; color: #141416">SHIP SHAPE</h3>
+            <span style="font-size: 13px; font-weight: 700; color: #55555c">8 puzzles · General</span>
+          </div>
+        </li>
+      </ul>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1160}}'>
+// The app's own demo sentence, verbatim (not a real puzzle, so nothing is spoiled).
+const TEXT = 'This line is a most ordinary sentence. Pat omitted nothing. Linda talked for ages, Pedro mentioned very little, and a big old clock kept the time.';
+const WORDS = [['AMOS', 'a most', 0, 4], ['ATOM', 'Pat omitted', 1, 5], ['DATA', 'Linda talked', 3, 7], ['ROME', 'Pedro mentioned', 3, 7], ['GOLD', 'big old', 2, 6]]
+  .map(([w, p, a, b]) => { const at = TEXT.indexOf(p); return { w, s: at + a, e: at + b }; });
+// "Show me one" order: ATOM first, then the rest in reading order.
+const REVEAL = [1, 0, 2, 3, 4];
+const SAY = { AMOS: 'AMOS! A book of the Bible, tucked in there.', ATOM: "ATOM! You've got the eye.", DATA: 'DATA! Right across the gap.', ROME: 'ROME! A whole city, hiding.', GOLD: 'GOLD! Shiny find.' };
+const HI = 'Tap the first letter of a hidden word, then its last.';
+const FACE = { wave: '/_blob/72ac21c6abd315fc09fce9f4cd789575', think: '/_blob/f9bac90c57f275dc5e6401be7e1e99b0', found: '/_blob/d187597c53c1f65f02e75d28f635beff', stumped: '/_blob/138a2e49267565bf4ce99a85f687007a' };
+const isL = (i) => i >= 0 && i < TEXT.length && /[A-Za-z]/.test(TEXT[i]);
+const wordAt = (i) => { let a = i, b = i; while (isL(a - 1)) a--; while (isL(b + 1)) b++; return TEXT.slice(a, b + 1); };
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { found: [], start: -1, drag: null, cursor: -1, cue: '', tally: '', say: HI, face: 'wave', n: 0 };
+  }
+  at(e) {
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const hit = el && el.closest ? el.closest('[data-i]') : null;
+    return hit ? Number(hit.getAttribute('data-i')) : -1;
+  }
+  tell(say, face, extra) {
+    this.setState(Object.assign({ say, face, tally: '', n: this.state.n + 1, start: -1, drag: null }, extra || {}));
+  }
+  win(k, line) {
+    const found = this.state.found.concat([k]);
+    const tally = found.length + ' of ' + WORDS.length + ' found.';
+    this.tell(found.length === WORDS.length ? "All five! You're a natural. Ready for a real case?" : line, 'found', { found, tally });
+  }
+  pick(a, b) {
+    const lo = Math.min(a, b), hi = Math.max(a, b);
+    const k = WORDS.findIndex((w) => w.s === lo && w.e === hi);
+    if (k < 0) return this.tell('Not that one. Look where one word runs into the next.', 'stumped');
+    if (this.state.found.includes(k)) return this.tell('Got that one already. ' + (WORDS.length - this.state.found.length) + ' more to go.', 'think');
+    this.win(k, SAY[WORDS[k].w]);
+  }
+  tap(i) {
+    const start = this.state.start;
+    if (start < 0) return this.setState({ start: i, drag: null, tally: '', say: 'Now tap its last letter.', face: 'think', n: this.state.n + 1 });
+    if (start === i) return this.setState({ start: -1, drag: null });
+    this.pick(start, i);
+  }
+  renderVals() {
+    const s = this.state;
+    const done = s.found.length === WORDS.length;
+    const sel = new Set();
+    if (s.drag) for (let i = Math.min(s.drag.a, s.drag.b); i <= Math.max(s.drag.a, s.drag.b); i++) sel.add(i);
+    if (s.start >= 0) sel.add(s.start);
+    const owner = new Array(TEXT.length).fill(-1);
+    s.found.forEach((k) => { for (let i = WORDS[k].s; i <= WORDS[k].e; i++) owner[i] = k; });
+    const chars = TEXT.split('').map((t, i) => {
+      const k = owner[i];
+      let bg = 'transparent', ink = '#2a2a2e', rad = '0';
+      if (k >= 0) { bg = '#d4f04c'; ink = '#0d0d0e'; rad = i === WORDS[k].s ? '6px 0 0 6px' : i === WORDS[k].e ? '0 6px 6px 0' : '0'; }
+      if (sel.has(i)) { const p = sel.has(i - 1) ? 0 : 6, q = sel.has(i + 1) ? 0 : 6; bg = '#111113'; ink = '#ffffff'; rad = p + 'px ' + q + 'px ' + q + 'px ' + p + 'px'; }
+      return { t, i, bg, ink, rad, ring: s.cursor === i ? '0 0 0 3px #4f8dff' : 'none', cur: isL(i) ? 'pointer' : 'default', tick: k >= 0 && i === WORDS[k].e };
+    });
+    const slots = WORDS.map((w, k) => {
+      const f = s.found.includes(k);
+      return { w: w.w, found: f, hidden: !f, dots: '•'.repeat(w.w.length), label: f ? w.w + ', found' : 'A ' + w.w.length + ' letter word, still hidden', bg: f ? '#d4f04c' : '#f6f6f7', line: f ? 'solid' : 'dashed', edge: f ? '#a8c22c' : '#c9c9cf' };
+    });
+    return {
+      text: TEXT,
+      chars,
+      slots,
+      foundLabel: 'Found ' + s.found.length + ' of ' + WORDS.length,
+      say: s.say,
+      tally: s.tally,
+      cue: s.cue,
+      mochi: FACE[s.face],
+      popClass: s.n % 2 ? 'pop2' : 'pop',
+      revealLabel: done ? 'Play again' : 'Show me one',
+      goClass: done ? 'ledgeglow' : '',
+      reveal: () => {
+        if (this.state.found.length === WORDS.length) return this.tell(HI, 'wave', { found: [], cursor: -1, cue: '' });
+        const k = REVEAL.find((j) => !this.state.found.includes(j));
+        this.win(k, 'There: ' + WORDS[k].w + '. See how it crosses the gap?');
+      },
+      key: (e) => {
+        const c = this.state.cursor;
+        const step = (dir) => { let i = c + dir; while (i >= 0 && i < TEXT.length && !isL(i)) i += dir; return isL(i) ? i : c; };
+        const move = (i) => this.setState({ cursor: i, cue: TEXT[i].toUpperCase() + ', in ' + wordAt(i) });
+        if (e.key === 'ArrowRight' || (e.key === 'ArrowLeft' && c < 0)) { e.preventDefault(); move(step(1)); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); move(step(-1)); }
+        else if ((e.key === 'Enter' || e.key === ' ') && c >= 0) { e.preventDefault(); this.tap(c); }
+      },
+      down: (e) => {
+        if (e.button > 0) return;
+        const i = this.at(e);
+        if (!isL(i)) return;
+        if (e.currentTarget.setPointerCapture) e.currentTarget.setPointerCapture(e.pointerId);
+        this.setState({ drag: { a: i, b: i } });
+      },
+      move: (e) => {
+        const d = this.state.drag;
+        if (!d) return;
+        const i = this.at(e);
+        if (isL(i) && i !== d.b) this.setState({ drag: { a: d.a, b: i } });
+      },
+      up: () => {
+        const d = this.state.drag;
+        if (!d) return;
+        if (d.a === d.b) this.tap(d.a); else this.pick(d.a, d.b);
+      },
+      cancel: () => this.setState({ drag: null }),
+    };
+  }
+}
+</script>
+</body>
+</html>

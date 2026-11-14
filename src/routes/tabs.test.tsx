@@ -272,7 +272,7 @@ describe('Players', () => {
     open('/players');
     expect(title()).toBe('People');
     expect(screen.getByRole('link', { name: 'Ask a grown-up to sign in' })).toHaveAttribute('href', '/welcome?from=%2Fplayers');
-    expect(screen.getByText(/open any case and tap Play with a friend/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Play together' }).getAttribute('href')).toMatch(/^\/play\/[a-z0-9-]+\?room=/);
     expect(screen.queryByRole('region', { name: 'People to follow' })).toBeNull();
     expect(screen.queryByText('Bisi')).toBeNull();
     expect(screen.queryByRole('link', { name: 'Find people' })).toBeNull();
@@ -295,7 +295,7 @@ describe('Players', () => {
     const read = vi.fn(ok(undefined));
     world.api.markNotificationsRead = read;
     open('/players');
-    const feed = within(await screen.findByRole('region', { name: 'Feed' }));
+    const feed = within(await screen.findByRole('region', { name: 'Medals this month' }));
     await feed.findByText('Kemi followed you.');
     // An unknown medal and the note that repeats your own medal are left out.
     const cards = feed.getAllByRole('article').map((a) => a.textContent ?? '');
@@ -322,20 +322,21 @@ describe('Players', () => {
     expect(screen.queryByText(/No medals won/)).toBeNull();
   });
 
-  it('suggestions with missing fields are dropped, never printed as undefined', async () => {
+  it('signed in: no strangers to follow, and a link to invite a friend in their place', async () => {
     world.me = ADA;
-    world.api.suggestedPlayers = ok([null, { handle: 'bisi', name: '', plays: undefined, mutuals: null }, { name: 'No handle' }]);
+    world.api.suggestedPlayers = ok([{ handle: 'bisi', name: 'Bisi', plays: 0, followers: 0, mutuals: 0 }]);
     open('/players');
-    const strip = await screen.findByRole('region', { name: 'People to follow' });
-    expect(within(strip).getAllByRole('listitem')).toHaveLength(1);
-    expect(strip).toHaveTextContent('@bisi');
+    await screen.findByRole('region', { name: 'Medals this month' });
+    expect(screen.queryByRole('region', { name: 'People to follow' })).toBeNull();
+    expect(screen.queryByText('Bisi')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Copy your link' })).toBeInTheDocument();
     expectNoHoles();
   });
 
   it('signed in and new: friend streaks wait, unless the link asks for them', async () => {
     world.me = ADA;
     const first = open('/players');
-    await screen.findByRole('region', { name: 'Feed' });
+    await screen.findByRole('region', { name: 'Medals this month' });
     // Nobody to suggest: the section is left out, not shown empty.
     expect(screen.queryByText(/You follow everyone here/)).toBeNull();
     expect(screen.queryByRole('heading', { level: 2, name: 'People to follow' })).toBeNull();
@@ -349,7 +350,7 @@ describe('Players', () => {
   it('circles wait for the first daily, unless the link asks for them', async () => {
     world.me = ADA;
     const first = open('/players');
-    await screen.findByRole('region', { name: 'Feed' });
+    await screen.findByRole('region', { name: 'Medals this month' });
     expect(screen.queryByRole('region', { name: 'Circles' })).toBeNull();
     first.unmount();
     open('/players#circles');

@@ -3,12 +3,15 @@ import { Link, Navigate, useLocation } from 'react-router-dom';
 import { Button } from '../components/Button';
 import { Field } from '../components/Field';
 import { GuestAsk } from '../components/GuestAsk';
+import { PartnerSays } from '../components/PartnerSays';
+import { newRoomCode } from '../lib/room';
+import { roomGame } from '../games/path';
 import { PageHeader } from '../components/PageHeader';
 import { PartnerNote } from '../components/PartnerNote';
 import { SkeletonList } from '../components/Skeleton';
 import { IconLink } from '../components/IconLink';
-import { follow, isFollowing, myCircles, searchPlayers, suggestedPlayers, unfollow, type PlayerRef, type Suggested } from '../lib/api';
-import { Search, UserCheck, UserPlus, X } from 'lucide-react';
+import { follow, isFollowing, myCircles, searchPlayers, unfollow, type PlayerRef } from '../lib/api';
+import { Search, UserCheck, UserPlus, UsersRound, X } from 'lucide-react';
 import { Icon } from '../components/Icon';
 import { useStreak } from '../lib/useStreak';
 import { keepUnlocked, useUnlocks } from '../lib/useUnlocks';
@@ -149,7 +152,6 @@ export function Players() {
   const { hash } = useLocation();
   const [q, setQ] = useState('');
   const [hits, setHits] = useState<Rows>([]);
-  const [suggested, setSuggested] = useState<PlayerRef[]>([]);
   const me = auth.profile?.id;
   const myHandle = auth.profile?.handle;
   // A direct link always works: /players#friend-streaks shows the section, and it stays from then on.
@@ -161,16 +163,6 @@ export function Players() {
     if (askedCircles) keepUnlocked(['circles']);
   }, [asked, askedCircles]);
 
-  // Suggestions depend on who is asking: they leave out you and the people you already follow.
-  useEffect(() => {
-    let alive = true;
-    suggestedPlayers(30)
-      .then((r) => alive && setSuggested(clean<Suggested>(r)))
-      .catch(() => {});
-    return () => {
-      alive = false;
-    };
-  }, [me]);
 
   // Search as you type, a beat after the last key.
   useEffect(() => {
@@ -197,8 +189,18 @@ export function Players() {
         <GuestAsk
           from="/players"
           line={t('People is where you follow friends and cheer their medals. It needs an account.')}
-          meanwhile={t('You can still play with a friend: open any case and tap Play with a friend.')}
         />
+        <section className={styles.together} aria-labelledby="together-title">
+          <div>
+            <h2 id="together-title" className={styles.togetherTitle}>
+              {t('Play together')}
+            </h2>
+            <p className={styles.togetherLine}>{t('Open a room and solve a puzzle with a friend. No account needed.')}</p>
+          </div>
+          <Link to={`/play/${roomGame()}?room=${newRoomCode()}`} className={styles.togetherGo} aria-label={t('Play together')}>
+            <Icon icon={UsersRound} size="em" />
+          </Link>
+        </section>
       </div>
     );
   const searching = finding && q.trim().length > 0;
@@ -228,10 +230,12 @@ export function Players() {
         </section>
       )}
 
+      {!finding && <PartnerSays>{t('Cheer your friends. Their medals land here.')}</PartnerSays>}
+
       {/* Friend streaks appear after the first daily. A player already in one, or asked into one, sees it at once. */}
       {!searching && me && <FriendStreaks quiet={!open.friendStreaks && !asked} />}
 
-      {!searching && <PeopleFeed me={me} myHandle={myHandle} suggested={suggested.filter((p) => p.handle !== myHandle)} />}
+      {!searching && <PeopleFeed me={me} myHandle={myHandle} />}
 
       {/* Circles are offered after the first daily too. A player already in one sees them whatever the count says. */}
       {!searching && me && <YourCircles quiet={!open.circles && !askedCircles} />}

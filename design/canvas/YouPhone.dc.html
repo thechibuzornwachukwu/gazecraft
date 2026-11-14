@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>You, phone</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&amp;family=Manrope:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#f6f6f7}
+a{color:#111113}a:hover{color:#000000}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(212,240,76,0)}50%{box-shadow:0 0 0 5px rgba(212,240,76,.45)}}
+@keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px)}60%{transform:translateY(-14px)}}
+@keyframes twinkle{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.18) rotate(12deg)}}
+@keyframes flame{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.1) rotate(3deg)}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}
+@keyframes cheer{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes slap{0%{transform:scale(1.5) rotate(-14deg);opacity:0}60%{transform:scale(.94) rotate(3deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+@keyframes drop{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+.bob{animation:bob 2.6s ease-in-out infinite;transform-origin:50% 100%} .glow{animation:glow 1.8s ease-in-out infinite}
+.hop{animation:hop 1.4s ease-in-out infinite} .twinkle{animation:twinkle 2.2s ease-in-out infinite}
+.flame{animation:flame 1.1s ease-in-out infinite;transform-origin:50% 90%} .pop{animation:pop .35s ease-out both}
+.cheer{animation:cheer 1.6s ease-in-out infinite}
+.slap{animation:slap .4s cubic-bezier(.3,1.4,.5,1) both}
+.drop{animation:drop .3s cubic-bezier(.2,.8,.2,1) both}
+@media (prefers-reduced-motion: reduce){.bob,.glow,.hop,.twinkle,.flame,.pop,.cheer,.slap,.drop{animation:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 1660px; box-sizing: border-box; position: relative; overflow: hidden; background: #f6f6f7; font-family: Manrope, system-ui, sans-serif; color: #111113">
+
+  <main style="padding: 44px 18px 140px; display: flex; flex-direction: column; gap: 20px">
+    <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%)">You</h1>
+
+    <div style="display: flex; align-items: center; gap: 8px">
+      <sc-if value="{{returning}}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; gap: 8px">
+          <span aria-label="3 days in a row" style="display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 12px 0 6px; border-radius: 999px; background: #ffffff; border: 1px solid #e3e3e7; font-size: 15px; font-weight: 800">
+            <img class="flame" src="/_blob/05ee42fd226623caa242489e39309c3a" alt="" style="width: 26px; height: 26px">3
+          </span>
+          <span aria-label="5 stars" style="display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 12px 0 6px; border-radius: 999px; background: #ffffff; border: 1px solid #e3e3e7; font-size: 15px; font-weight: 800">
+            <img class="twinkle" src="/_blob/e0a30d7867daccf828ee24febdd83699" alt="" style="width: 24px; height: 24px">5
+          </span>
+        </div>
+      </sc-if>
+      <button type="button" onClick="{{openSettings}}" aria-label="Settings" aria-haspopup="dialog" style="margin-left: auto; width: 48px; height: 48px; border-radius: 50%; border: 1px solid #d6d6db; background: #ffffff; box-shadow: 0 4px 0 #d6d6db; display: grid; place-items: center; cursor: pointer">
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111113" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+      </button>
+    </div>
+
+    <section aria-label="Ada" style="display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <img src="/_blob/7f7dc653e8bd7e13eaad2bdac65ebe80" alt="" style="width: 56px; height: 56px; border-radius: 50%; background: #fdf1e4; flex: none">
+        <div style="display: flex; flex-direction: column; gap: 3px; min-width: 0">
+          <span style="font-family: Bungee, Manrope, sans-serif; font-size: 24px; line-height: 1; color: #111113">ADA</span>
+          <span style="font-size: 14px; font-weight: 800; color: #55555c">Starter · level 3</span>
+        </div>
+      </div>
+      <div role="progressbar" aria-valuemin="0" aria-valuemax="720" aria-valuenow="140" aria-label="140 of 720 points to level 4" style="height: 8px; border-radius: 4px; background: #e3e3e7; overflow: hidden">
+        <div style="width: 19%; height: 100%; border-radius: 4px; background: #111113"></div>
+      </div>
+      <span style="font-size: 13px; font-weight: 700; color: #55555c">140 of 720 points to level 4</span>
+      <sc-if value="{{guest}}" hint-placeholder-val="{{ false }}">
+        <p style="margin: 0; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; color: #55555c">
+          Saved on this device.
+          <a href="SignInPhone.dc.html" style="min-height: 44px; display: inline-flex; align-items: center; color: #111113; font-weight: 800; text-underline-offset: 4px">Sign in</a>
+        </p>
+      </sc-if>
+    </section>
+
+    <section aria-label="Stage" style="display: flex; flex-direction: column; gap: 8px; padding: 16px; background: #ffffff; border: 1px solid #e3e3e7; border-radius: 24px; box-shadow: 0 6px 0 #e3e3e7">
+      <p role="status" class="pop" style="align-self: flex-start; max-width: 290px; margin: 0; padding: 12px 16px; background: #111113; color: #ffffff; border-radius: 18px 18px 18px 4px; font-size: 16px; font-weight: 700; line-height: 1.35">{{say}}</p>
+      <div style="display: flex; align-items: flex-end; justify-content: space-around; gap: 8px">
+        <button type="button" onClick="{{tapMochi}}" aria-label="{{mochiAria}}" style="width: 140px; height: 196px; padding: 8px 0 6px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 6px; border-radius: 24px; border: 3px dashed {{mochiEdge}}; background: {{mochiFill}}; font-family: Manrope, sans-serif; cursor: pointer">
+          <img class="bob" src="{{mochiArt}}" alt="" style="width: 104px; height: auto; pointer-events: none">
+          <span style="font-size: 13px; font-weight: 800; color: #111113">Mochi</span>
+        </button>
+        <button type="button" id="ada-phone" onClick="{{tapAda}}" aria-label="{{adaAria}}" style="width: 140px; height: 196px; padding: 8px 0 6px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 6px; border-radius: 24px; border: 3px dashed {{adaEdge}}; background: {{adaFill}}; font-family: Manrope, sans-serif; cursor: pointer">
+          <span class="{{adaGlow}}" style="position: relative; width: 120px; height: 120px; flex: none; border-radius: 50%; display: grid; place-items: center; pointer-events: none">
+            <img src="/_blob/7f7dc653e8bd7e13eaad2bdac65ebe80" alt="" style="width: 84px; height: 84px; border-radius: 50%; background: #fdf1e4">
+            <sc-for list="{{pins}}" as="p" hint-placeholder-count="0">
+              <span class="slap" style="position: absolute; left: {{p.x}}; top: {{p.y}}; width: 36px; height: 36px; border-radius: 50%; background: #ffffff; box-shadow: 0 0 0 1px #d6d6db, 0 3px 0 #d6d6db; display: grid; place-items: center; transform: rotate({{p.tilt}})">
+                <img src="{{p.src}}" alt="" style="width: 28px; height: 28px">
+              </span>
+            </sc-for>
+          </span>
+          <span style="font-size: 13px; font-weight: 800; color: #111113">Ada</span>
+        </button>
+      </div>
+    </section>
+
+    <section aria-labelledby="stickers-title" style="display: flex; flex-direction: column; gap: 14px; padding: 16px 16px 20px; background: #dcd3ff; border: 1px solid #c9bdf5; border-radius: 22px; box-shadow: 0 6px 0 #c9bdf5">
+      <h2 id="stickers-title" style="margin: 0; font-family: Bungee, Manrope, sans-serif; font-weight: 400; font-size: 16px; color: #111113">STICKERS</h2>
+      <sc-for list="{{groups}}" as="g" hint-placeholder-count="3">
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <h3 style="margin: 0; font-size: 15px; font-weight: 800; color: #111113">{{g.title}}</h3>
+          <ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+            <sc-for list="{{g.items}}" as="st" hint-placeholder-count="3">
+              <li style="position: relative; z-index: {{st.z}}">
+                <button type="button" aria-label="{{st.aria}}" aria-pressed="{{st.pressed}}" onClick="{{st.click}}" style="position: relative; width: 100%; height: 124px; padding: 8px 4px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px; border-radius: 20px; border: {{st.border}}; background: {{st.bg}}; box-shadow: {{st.shadow}}; transform: {{st.transform}}; transition: transform .25s cubic-bezier(.2,1.3,.4,1), box-shadow .2s; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: pointer; font-family: Manrope, sans-serif">
+                  <span aria-hidden="true" style="height: 50px; flex: none; display: grid; place-items: center; opacity: {{st.artOpacity}}; filter: {{st.filter}}">
+                    <sc-if value="{{st.isImg}}" hint-placeholder-val="{{ true }}"><img src="{{st.src}}" alt="" style="width: 46px; height: 46px; pointer-events: none"></sc-if>
+                    <sc-if value="{{st.isBow}}" hint-placeholder-val="{{ false }}"><svg width="52" height="28" viewBox="0 0 44 24"><path d="M22 12 4 3c-3 6-3 12 0 18z" fill="#f06a5a" stroke="#111113" stroke-width="2" stroke-linejoin="round"/><path d="m22 12 18-9c3 6 3 12 0 18z" fill="#f06a5a" stroke="#111113" stroke-width="2" stroke-linejoin="round"/><rect x="17" y="6" width="10" height="12" rx="3" fill="#ff8bb0" stroke="#111113" stroke-width="2"/></svg></sc-if>
+                    <sc-if value="{{st.isBeanie}}" hint-placeholder-val="{{ false }}"><svg width="56" height="36" viewBox="0 0 70 44"><path d="M8 36C8 15 21 7 35 7s27 8 27 29z" fill="#6aa3ff" stroke="#111113" stroke-width="2"/><path d="M22 34V16M35 34V10M48 34V16" stroke="#111113" stroke-width="1.6" stroke-linecap="round" opacity=".35"/><rect x="5" y="31" width="60" height="11" rx="5.5" fill="#4f8dff" stroke="#111113" stroke-width="2"/><circle cx="35" cy="7" r="6" fill="#ffffff" stroke="#111113" stroke-width="2"/></svg></sc-if>
+                    <sc-if value="{{st.isHat}}" hint-placeholder-val="{{ false }}"><svg width="38" height="46" viewBox="0 0 44 52"><path d="M22 6 38 46c-10 4-22 4-32 0z" fill="#d48cff" stroke="#111113" stroke-width="2" stroke-linejoin="round"/><path d="M14 28h16M10 38h24" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/><circle cx="22" cy="6" r="5" fill="#d4f04c" stroke="#111113" stroke-width="2"/></svg></sc-if>
+                    <sc-if value="{{st.isPin}}" hint-placeholder-val="{{ false }}"><svg width="42" height="42" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#f2c94c" stroke="#111113" stroke-width="1.5"/><path d="m12 6.5 1.7 3.5 3.8.5-2.8 2.6.7 3.8-3.4-1.8-3.4 1.8.7-3.8-2.8-2.6 3.8-.5z" fill="#ffffff" stroke="#111113" stroke-width="1.2" stroke-linejoin="round"/></svg></sc-if>
+                    <sc-if value="{{st.isPhones}}" hint-placeholder-val="{{ false }}"><svg width="46" height="42" viewBox="0 0 24 24" fill="none" stroke="#111113" stroke-width="1.8" stroke-linecap="round"><path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="2.5" y="13" width="5" height="8" rx="2" fill="#4fd1dc"/><rect x="16.5" y="13" width="5" height="8" rx="2" fill="#4fd1dc"/></svg></sc-if>
+                    <sc-if value="{{st.isCrown}}" hint-placeholder-val="{{ false }}"><svg width="50" height="38" viewBox="0 0 26 20"><path d="M3 17 2 5l6 5 5-8 5 8 6-5-1 12z" fill="#f2c94c" stroke="#111113" stroke-width="1.6" stroke-linejoin="round"/><circle cx="13" cy="12" r="1.8" fill="#f06a5a" stroke="#111113" stroke-width="1"/></svg></sc-if>
+                    <sc-if value="{{st.isGold}}" hint-placeholder-val="{{ false }}"><svg width="44" height="44" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6.5" fill="#fbe7a6" stroke="#c98e00" stroke-width="2.4"/><path d="m15 15 6 6" stroke="#c98e00" stroke-width="3" stroke-linecap="round"/></svg></sc-if>
+                    <sc-if value="{{st.isBomber}}" hint-placeholder-val="{{ false }}"><svg width="48" height="42" viewBox="0 0 26 22"><path d="M9 2h8l6 4-2 6-3-1v10H8V11l-3 1-2-6z" fill="#3ec486" stroke="#111113" stroke-width="1.6" stroke-linejoin="round"/><path d="M13 4v17" stroke="#111113" stroke-width="1.4"/><path d="M8 19h10" stroke="#111113" stroke-width="2.4"/></svg></sc-if>
+                  </span>
+                  <span style="display: inline-flex; align-items: center; gap: 3px; font-size: 12px; font-weight: 800; line-height: 1.2; text-align: center; color: #111113">
+                    <sc-if value="{{st.on}}" hint-placeholder-val="{{ false }}"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5a6b00" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></sc-if>{{st.label}}
+                  </span>
+                  <sc-if value="{{st.locked}}" hint-placeholder-val="{{ false }}">
+                    <span style="font-size: 12px; font-weight: 700; line-height: 1.25; text-align: center; color: #55555c">{{st.need}}</span>
+                  </sc-if>
+                  <sc-if value="{{st.peelable}}" hint-placeholder-val="{{ false }}">
+                    <span aria-hidden="true" style="position: absolute; top: -3px; right: -3px; width: {{st.fold}}; height: {{st.fold}}; border-radius: 0 0 0 8px; background: #e3e3e7; clip-path: polygon(0 0, 0 100%, 100% 100%); transition: width .2s, height .2s"></span>
+                  </sc-if>
+                </button>
+              </li>
+            </sc-for>
+          </ul>
+        </div>
+      </sc-for>
+    </section>
+
+    <section aria-labelledby="pets-title" style="display: flex; flex-direction: column; gap: 14px; padding: 16px; background: #ffffff; border: 1px solid #e3e3e7; border-radius: 22px; box-shadow: 0 6px 0 #e3e3e7">
+      <h2 id="pets-title" style="margin: 0; font-family: Bungee, Manrope, sans-serif; font-weight: 400; font-size: 16px; color: #111113">PETS</h2>
+      <ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px">
+        <li aria-label="Mochi, your partner" style="height: 104px; box-sizing: border-box; padding: 8px 2px 6px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; border-radius: 18px; border: 2px solid #3ec486; background: #e9f8f0">
+          <img src="/_blob/72ac21c6abd315fc09fce9f4cd789575" alt="" style="width: 52px; height: auto">
+          <span style="display: inline-flex; align-items: center; gap: 3px; font-size: 12px; font-weight: 800; color: #111113"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1f8a58" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Mochi</span>
+        </li>
+        <sc-for list="{{slots}}" as="sl" hint-placeholder-count="3">
+          <li aria-label="{{sl.aria}}" style="position: relative; height: 104px; box-sizing: border-box; padding: 8px 2px 6px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; border-radius: 18px; background: #2a2a2e">
+            <img src="{{sl.src}}" alt="" style="width: 48px; height: auto; filter: brightness(0); opacity: .9">
+            <span aria-hidden="true" class="twinkle" style="position: absolute; top: 4px; right: 8px; font-family: Bungee, Manrope, sans-serif; font-size: 18px; color: #d4f04c">?</span>
+            <span aria-hidden="true" style="font-size: 12px; font-weight: 800; color: #ffffff">{{sl.label}}</span>
+          </li>
+        </sc-for>
+      </ul>
+    </section>
+  </main>
+
+  <nav aria-label="Tabs" style="position: absolute; left: 12px; right: 12px; bottom: 20px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 6px; background: #ffffff; border: 1px solid #e3e3e7; border-radius: 22px; box-shadow: 0 4px 0 #e3e3e7">
+    <a href="Main.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 52px; text-decoration: none; color: #55555c">
+      <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1f8a58" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8"/></svg>
+      <span style="font-size: 11px; font-weight: 800">Puzzles</span>
+    </a>
+    <a href="PeoplePhone.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 52px; text-decoration: none; color: #55555c">
+      <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2f6fe0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
+      <span style="font-size: 11px; font-weight: 800">People</span>
+    </a>
+    <a href="LeaguePhone.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 52px; text-decoration: none; color: #55555c">
+      <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8a6100" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3"/><path d="M7 5H4v2a3 3 0 0 0 3 3"/></svg>
+      <span style="font-size: 11px; font-weight: 800">League</span>
+    </a>
+    <a href="YouPhone.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 52px; border-radius: 14px; background: #e9f8f0; border: 2px solid #3ec486; text-decoration: none; color: #111113">
+      <img src="/_blob/7f7dc653e8bd7e13eaad2bdac65ebe80" alt="" style="width: 24px; height: 24px; border-radius: 50%">
+      <span style="font-size: 11px; font-weight: 800">You</span>
+    </a>
+  </nav>
+
+  <sc-if value="{{settings}}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; z-index: 30; background: rgba(17,17,19,.45); display: flex; align-items: flex-start">
+      <section role="dialog" aria-modal="true" aria-labelledby="settings-title" class="drop" style="width: 100%; box-sizing: border-box; padding: 44px 18px 24px; background: #f6f6f7; border-radius: 0 0 24px 24px; display: flex; flex-direction: column; gap: 18px">
+        <div style="display: flex; align-items: center; justify-content: space-between">
+          <h2 id="settings-title" style="margin: 0; font-family: Bungee, Manrope, sans-serif; font-weight: 400; font-size: 20px; color: #111113">SETTINGS</h2>
+          <button type="button" onClick="{{closeSettings}}" aria-label="Close" style="width: 44px; height: 44px; border-radius: 50%; border: 1px solid #d6d6db; background: #ffffff; display: grid; place-items: center; cursor: pointer">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#55555c" stroke-width="2.6" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <span id="lang-label" style="font-size: 15px; font-weight: 800">Language</span>
+          <div role="radiogroup" aria-labelledby="lang-label" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+            <sc-for list="{{langs}}" as="o" hint-placeholder-count="4">
+              <button type="button" role="radio" aria-checked="{{o.checked}}" onClick="{{o.pick}}" style="min-height: 48px; padding: 0 4px; border-radius: 14px; border: 1px solid {{o.edge}}; background: {{o.fill}}; font-family: Manrope, sans-serif; font-size: 14px; font-weight: 800; color: {{o.ink}}; cursor: pointer">{{o.name}}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <span id="theme-label" style="font-size: 15px; font-weight: 800">Theme</span>
+          <div role="radiogroup" aria-labelledby="theme-label" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+            <sc-for list="{{themes}}" as="o" hint-placeholder-count="2">
+              <button type="button" role="radio" aria-checked="{{o.checked}}" onClick="{{o.pick}}" style="min-height: 48px; border-radius: 14px; border: 1px solid {{o.edge}}; background: {{o.fill}}; font-family: Manrope, sans-serif; font-size: 15px; font-weight: 800; color: {{o.ink}}; cursor: pointer">{{o.name}}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <button type="button" role="switch" aria-checked="{{soundsOn}}" onClick="{{toggleSounds}}" style="min-height: 52px; padding: 0 14px 0 16px; display: flex; align-items: center; justify-content: space-between; border-radius: 14px; border: 1px solid #e3e3e7; background: #ffffff; font-family: Manrope, sans-serif; font-size: 15px; font-weight: 800; color: #111113; cursor: pointer">
+          Sounds
+          <span aria-hidden="true" style="position: relative; width: 52px; height: 30px; border-radius: 999px; background: {{switchTrack}}; transition: background .2s">
+            <span style="position: absolute; top: 3px; left: {{switchKnob}}; width: 24px; height: 24px; border-radius: 50%; background: #ffffff; box-shadow: 0 1px 2px rgba(17,17,19,.3); transition: left .2s"></span>
+          </span>
+        </button>
+
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <span id="goal-label" style="font-size: 15px; font-weight: 800">Daily goal</span>
+          <div role="radiogroup" aria-labelledby="goal-label" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+            <sc-for list="{{goals}}" as="o" hint-placeholder-count="3">
+              <button type="button" role="radio" aria-checked="{{o.checked}}" onClick="{{o.pick}}" style="min-height: 60px; padding: 6px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 14px; border: 1px solid {{o.edge}}; background: {{o.fill}}; font-family: Manrope, sans-serif; cursor: pointer">
+                <span style="font-size: 15px; font-weight: 800; color: {{o.ink}}">{{o.name}}</span>
+                <span style="font-size: 12px; font-weight: 700; color: {{o.sub}}">{{o.per}}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+
+        <sc-if value="{{signedIn}}" hint-placeholder-val="{{ true }}">
+          <a href="SignInPhone.dc.html" style="align-self: flex-start; min-height: 48px; padding: 0 20px; display: inline-flex; align-items: center; border-radius: 999px; border: 1px solid #d6d6db; background: #ffffff; box-shadow: 0 3px 0 #d6d6db; font-size: 15px; font-weight: 800; color: #111113; text-decoration: none">Sign out</a>
+        </sc-if>
+        <sc-if value="{{guest}}" hint-placeholder-val="{{ false }}">
+          <p style="margin: 0; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; color: #55555c">
+            Saved on this device.
+            <a href="SignInPhone.dc.html" style="min-height: 44px; display: inline-flex; align-items: center; color: #111113; font-weight: 800; text-underline-offset: 4px">Sign in</a>
+          </p>
+        </sc-if>
+      </section>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"player":{"editor":"enum","options":["signed in","guest"],"default":"signed in"},"$preview":{"width":390,"height":1660}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { pins: [], sel: null, last: 'hi', settings: false, lang: 'English', theme: 'Light', sounds: true, goal: 'Regular' };
+  }
+  items() {
+    return {
+      first: { group: 'badge', name: 'First puzzle', src: '/_blob/e0a30d7867daccf828ee24febdd83699', tilt: 5 },
+      run: { group: 'badge', name: '7 day run', src: '/_blob/05ee42fd226623caa242489e39309c3a', tilt: -5, need: 'Play 7 days in a row. 4 to go.' },
+      bow: { group: 'mochi', name: 'Bow tie', art: 'bow', need: 'Finish 3 packs.' },
+      beanie: { group: 'mochi', name: 'Beanie', art: 'beanie', need: 'Finish 10 packs.' },
+      hat: { group: 'mochi', name: 'Party hat', art: 'hat', need: 'Reach the rank of Keen.' },
+      pin: { group: 'ada', name: 'Star pin', art: 'pin', need: 'Finish 1 pack.' },
+      phones: { group: 'ada', name: 'Headphones', art: 'phones', need: 'Finish 5 packs.' },
+      crown: { group: 'ada', name: 'Crown', art: 'crown', need: 'Reach the rank of Keen.' },
+      gold: { group: 'ada', name: 'Gold set', art: 'gold', need: 'Finish 10 packs.' },
+      bomber: { group: 'ada', name: 'Bomber jacket', art: 'bomber', need: 'Reach the rank of Sharp.' },
+    };
+  }
+  stick(id) {
+    if (this.state.pins.indexOf(id) !== -1) { this.setState({ sel: null }); return; }
+    this.setState({ pins: this.state.pins.concat([id]), sel: null, last: 'on:' + id });
+  }
+  tap(id) {
+    const it = this.items()[id];
+    const s = this.state;
+    if (it.need) { this.setState({ sel: null, last: 'need:' + id }); return; }
+    if (s.pins.indexOf(id) !== -1) { this.setState({ pins: s.pins.filter((x) => x !== id), sel: null, last: 'off' }); return; }
+    this.setState({ sel: s.sel === id ? null : id, last: s.sel === id ? 'hi' : 'peel' });
+  }
+  sticker(id) {
+    const it = this.items()[id];
+    const s = this.state;
+    const on = s.pins.indexOf(id) !== -1;
+    const locked = !!it.need;
+    const sel = s.sel === id;
+    const who = it.group === 'mochi' ? 'Mochi' : 'Ada';
+    let bg = '#ffffff';
+    let border = '3px solid #ffffff';
+    let shadow = '0 4px 0 #b9acf0';
+    let transform = 'rotate(' + (it.tilt || 0) + 'deg)';
+    let label = it.name;
+    let aria = it.name + ' badge. Tap to peel it';
+    if (sel) { border = '3px solid #5a6b00'; shadow = '0 12px 0 rgba(17,17,19,.16)'; transform = 'translateY(-8px) rotate(-6deg) scale(1.06)'; aria = it.name + ' peeled. Now tap Ada'; }
+    if (on) { bg = 'transparent'; border = '2px dashed #5a6b00'; shadow = 'none'; transform = 'none'; label = 'On Ada'; aria = 'Take the ' + it.name + ' badge off Ada'; }
+    if (locked) { bg = 'transparent'; border = '2px dashed #6a6a72'; shadow = 'none'; transform = 'none'; aria = it.name + ' for ' + who + ', locked. ' + it.need; }
+    return {
+      id, label, aria, bg, border, shadow, transform, on, locked,
+      need: it.need || '',
+      src: it.src || '',
+      isImg: !!it.src, isBow: it.art === 'bow', isBeanie: it.art === 'beanie', isHat: it.art === 'hat',
+      isPin: it.art === 'pin', isPhones: it.art === 'phones', isCrown: it.art === 'crown', isGold: it.art === 'gold', isBomber: it.art === 'bomber',
+      peelable: !on && !locked,
+      fold: sel ? '24px' : '16px',
+      pressed: sel ? 'true' : 'false',
+      artOpacity: on ? '.35' : locked ? '.45' : '1',
+      filter: locked ? 'grayscale(1)' : 'none',
+      z: sel ? 20 : 1,
+      click: () => this.tap(id),
+    };
+  }
+  renderVals() {
+    const s = this.state;
+    const items = this.items();
+    const guest = (this.props.player ?? 'signed in') === 'guest';
+    let say = 'Tap a badge, then tap Ada to stick it on!';
+    if (s.last === 'peel') say = 'Got it! Now tap Ada.';
+    else if (s.last === 'off') say = 'Off it comes. Stick it back any time.';
+    else if (s.last === 'on:first') say = 'Your First puzzle badge. So shiny!';
+        else if (s.last === 'mochi') say = s.sel ? 'Badges go on Ada. Tap Ada!' : 'Meow! Unlock an outfit and I will wear it.';
+    else if (s.last === 'ada') say = 'Tap a badge first, then tap Ada.';
+    else if (s.last.indexOf('need:') === 0) {
+      const it = items[s.last.slice(5)];
+      say = it.group === 'mochi' ? 'The ' + it.name.toLowerCase() + ' is for me! ' + it.need : 'The ' + it.name.toLowerCase() + ' is for you. ' + it.need;
+    }
+    const spots = [{ x: '-6px', y: '6px', tilt: '-10deg' }, { x: '90px', y: '2px', tilt: '8deg' }];
+    const pins = s.pins.map((id, i) => ({ src: items[id].src, x: spots[i % 2].x, y: spots[i % 2].y, tilt: spots[i % 2].tilt }));
+    const target = !!s.sel;
+    const happy = s.last.indexOf('on:') === 0;
+    const opt = (name, cur, pick, per) => ({
+      name, per: per || '',
+      checked: name === cur ? 'true' : 'false',
+      fill: name === cur ? '#111113' : '#ffffff',
+      edge: name === cur ? '#111113' : '#d6d6db',
+      ink: name === cur ? '#ffffff' : '#111113',
+      sub: name === cur ? '#c4c4ca' : '#55555c',
+      pick: () => this.setState(pick(name)),
+    });
+    const pick = (key) => (name) => ({ [key]: name });
+    return {
+      returning: true,
+      guest,
+      signedIn: !guest,
+      say,
+      mochiArt: happy ? '/_blob/d187597c53c1f65f02e75d28f635beff' : '/_blob/72ac21c6abd315fc09fce9f4cd789575',
+      mochiAria: 'Mochi. Outfits for Mochi are still locked',
+      mochiEdge: 'transparent',
+      mochiFill: '#ffffff',
+      adaAria: target ? 'Stick the ' + items[s.sel].name + ' badge on Ada' : 'Ada, ' + s.pins.length + ' badges on',
+      adaEdge: target ? '#5a6b00' : 'transparent',
+      adaFill: target ? '#f4fbd6' : '#ffffff',
+      adaGlow: target ? 'glow' : '',
+      pins,
+      tapAda: () => { if (this.state.sel) this.stick(this.state.sel); else this.setState({ last: 'ada' }); },
+      tapMochi: () => this.setState({ last: 'mochi' }),
+      groups: [
+        { title: 'Badges', items: ['first', 'run'].map((id) => this.sticker(id)) },
+        { title: 'For Mochi', items: ['bow', 'beanie', 'hat'].map((id) => this.sticker(id)) },
+        { title: 'For Ada', items: ['pin', 'phones', 'crown', 'gold', 'bomber'].map((id) => this.sticker(id)) },
+      ],
+      slots: [
+        { src: '/_blob/2fa91e21cde51d51069fa9063f56cfe3', label: 'At 3,000', aria: 'A new pet slot opens at 3,000 points. You pick who.' },
+        { src: '/_blob/b325ff236415e58d329c7d73f4a47fb4', label: 'At 9,000', aria: 'Another pet slot opens at 9,000 points.' },
+        { src: '/_blob/72507b15ee8cfb2fb62e1d386f82ae8b', label: 'At 20,000', aria: 'The last pet slot opens at 20,000 points.' },
+      ],
+      settings: s.settings,
+      openSettings: () => this.setState({ settings: true }),
+      closeSettings: () => this.setState({ settings: false }),
+      langs: ['English', 'Español', 'Français', 'Deutsch'].map((n) => opt(n, s.lang, pick('lang'))),
+      themes: ['Light', 'Dark'].map((n) => opt(n, s.theme, pick('theme'))),
+      goals: [['Light', '1 a day'], ['Regular', '2 a day'], ['Serious', '4 a day']].map((g) => opt(g[0], s.goal, pick('goal'), g[1])),
+      soundsOn: s.sounds ? 'true' : 'false',
+      switchTrack: s.sounds ? '#1f8a58' : '#a3a3aa',
+      switchKnob: s.sounds ? '25px' : '3px',
+      toggleSounds: () => this.setState({ sounds: !this.state.sounds }),
+    };
+  }
+}
+</script>
+</body>
+</html>

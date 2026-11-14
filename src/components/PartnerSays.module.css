@@ -1,0 +1,32 @@
+.row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+.face {
+  flex: none;
+  height: auto;
+}
+.bubble {
+  margin: 0 0 var(--space-6);
+  padding: 14px var(--space-4);
+  background: var(--fg);
+  color: var(--bg);
+  border-radius: var(--radius-bubble) var(--radius-bubble) var(--radius-bubble) var(--radius-sm);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.35;
+  animation: pop var(--dur-pop) ease-out both;
+}
+.bubble a,
+.bubble a:hover {
+  color: inherit;
+}
+@keyframes pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  70% { transform: scale(1.06); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bubble { animation: none; }
+}

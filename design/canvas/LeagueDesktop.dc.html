@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>League, desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&amp;family=Manrope:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#f6f6f7}
+a{color:#111113}a:hover{color:#000000}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(212,240,76,0)}50%{box-shadow:0 0 0 5px rgba(212,240,76,.45)}}
+@keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px)}60%{transform:translateY(-14px)}}
+@keyframes twinkle{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.18) rotate(12deg)}}
+@keyframes flame{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.1) rotate(3deg)}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}
+@keyframes cheer{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes stamp{0%{transform:translateX(-50%) scale(1.8) rotate(-14deg);opacity:0}60%{transform:translateX(-50%) scale(.94) rotate(-6deg);opacity:1}100%{transform:translateX(-50%) scale(1) rotate(-8deg);opacity:1}}
+.bob{animation:bob 2.6s ease-in-out infinite;transform-origin:50% 100%} .glow{animation:glow 1.8s ease-in-out infinite}
+.hop{animation:hop 1.4s ease-in-out infinite} .twinkle{animation:twinkle 2.2s ease-in-out infinite}
+.flame{animation:flame 1.1s ease-in-out infinite;transform-origin:50% 90%} .pop{animation:pop .35s ease-out both}
+.cheer{animation:cheer 1.6s ease-in-out infinite}
+.stamp{animation:stamp .4s cubic-bezier(.3,1.4,.5,1) .3s both}
+@media (prefers-reduced-motion: reduce){.bob,.glow,.hop,.twinkle,.flame,.pop,.cheer,.stamp{animation:none}}
+</style>
+</helmet>
+<div style="min-height: 780px; background: #f6f6f7; font-family: Manrope, system-ui, sans-serif; color: #111113">
+
+  <header style="border-bottom: 1px solid #e3e3e7">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 28px">
+      <a href="LandingDesktop.dc.html" aria-label="Gazecraft home" style="display: flex; align-items: center; gap: 8px; text-decoration: none">
+        <span aria-hidden="true" style="width: 28px; height: 28px; border-radius: 8px; background: #454552; display: grid; place-items: center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4f04c" stroke-width="2.6" stroke-linecap="round"><circle cx="8" cy="12" r="2"/><circle cx="16" cy="12" r="2"/></svg>
+        </span>
+        <span style="font-family: Bungee, Manrope, sans-serif; font-size: 22px; color: #111113">GAZECRAFT</span>
+      </a>
+      <nav aria-label="Main" style="display: flex; gap: 24px; font-size: 15px; font-weight: 600">
+        <a href="PuzzlesDesktop.dc.html" style="text-decoration: none; color: #6a6a72">Puzzles</a>
+        <a href="PeopleDesktop.dc.html" style="text-decoration: none; color: #6a6a72">People</a>
+        <a href="LeagueDesktop.dc.html" aria-current="page" style="text-decoration: none; color: #111113">League</a>
+      </nav>
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 10px">
+        <sc-if value="{{returning}}" hint-placeholder-val="{{ true }}">
+          <span aria-label="3 days in a row" style="display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 12px 0 6px; border-radius: 999px; background: #ffffff; border: 1px solid #e3e3e7; font-size: 15px; font-weight: 800">
+            <img class="flame" src="/_blob/05ee42fd226623caa242489e39309c3a" alt="" style="width: 26px; height: 26px">3
+          </span>
+          <span aria-label="5 stars" style="display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 12px 0 6px; border-radius: 999px; background: #ffffff; border: 1px solid #e3e3e7; font-size: 15px; font-weight: 800">
+            <img class="twinkle" src="/_blob/e0a30d7867daccf828ee24febdd83699" alt="" style="width: 24px; height: 24px">5
+          </span>
+        </sc-if>
+        <a href="YouDesktop.dc.html" aria-label="You" style="display: grid; place-items: center; width: 44px; height: 44px">
+          <img src="/_blob/7f7dc653e8bd7e13eaad2bdac65ebe80" alt="" style="width: 36px; height: 36px; border-radius: 50%">
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main style="max-width: 1200px; margin: 0 auto; padding: 40px 24px 60px; display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start">
+    <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%)">League</h1>
+
+    <section aria-labelledby="race-title" style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 28px">
+      <h2 id="race-title" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); margin: 0">{{raceTitle}}</h2>
+      <div style="display: flex; align-items: flex-end; gap: 14px">
+        <img class="bob" src="{{mochi}}" alt="Mochi the cat" style="width: 120px; height: auto; flex: none">
+        <p role="status" class="pop" style="margin: 0 0 40px; padding: 16px 20px; max-width: 460px; background: #111113; color: #ffffff; border-radius: 20px 20px 20px 4px; font-size: 18px; font-weight: 700; line-height: 1.35">{{say}}</p>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 40px">
+        <div style="position: relative; width: 560px; max-width: 100%">
+          <div id="track-desk" tabindex="0" aria-label="Standings, scroll to see more" onScroll="{{scrolled}}" style="max-height: 380px; overflow-y: auto; overscroll-behavior: contain; scroll-snap-type: y mandatory; border-radius: 24px; background: #ffd0c9; border: 1px solid #f0b8ae; box-shadow: 0 6px 0 #f0b8ae">
+            <ol aria-label="Standings" style="margin: 0; padding: 0; list-style: none">
+              <sc-for list="{{rows}}" as="r" hint-placeholder-count="7">
+                <sc-if value="{{r.isLine}}" hint-placeholder-val="{{ false }}">
+                  <li aria-label="The top 5 go up to Silver" style="height: 52px; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; gap: 8px; background: #111113; color: #d4f04c">
+                    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4f04c" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 14 6-6 6 6"/></svg>
+                    <span aria-hidden="true" style="font-family: Bungee, Manrope, sans-serif; font-size: 16px">TOP 5 GO UP TO SILVER</span>
+                    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4f04c" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 14 6-6 6 6"/></svg>
+                  </li>
+                </sc-if>
+                <sc-if value="{{r.isRunner}}" hint-placeholder-val="{{ true }}">
+                  <li aria-label="{{r.aria}}" style="height: 64px; box-sizing: border-box; scroll-snap-align: start; display: flex; align-items: center; gap: 10px; padding: 0 16px; background: {{r.lane}}; border-bottom: 2px solid #ffffff">
+                    <span aria-hidden="true" style="width: 24px; flex: none; font-family: Bungee, Manrope, sans-serif; font-size: 17px; color: #111113; text-align: center">{{r.rank}}</span>
+                    <div aria-hidden="true" style="position: relative; flex: 1; height: 44px; min-width: 0">
+                      <span style="position: absolute; left: 0; top: 19px; height: 6px; width: {{r.trail}}; border-radius: 3px; background: {{r.trailColor}}"></span>
+                      <span class="{{r.motion}}" style="position: absolute; top: 2px; left: {{r.x}}; width: 40px; height: 40px; border-radius: 50%; border: 3px solid #ffffff; box-sizing: border-box; background: {{r.bg}}; overflow: hidden; display: grid; place-items: center">
+                        <sc-if value="{{r.hasAvatar}}" hint-placeholder-val="{{ true }}"><img src="{{r.avatar}}" alt="" style="width: 34px; height: 34px"></sc-if>
+                        <sc-if value="{{r.noAvatar}}" hint-placeholder-val="{{ false }}"><span style="font-family: Bungee, Manrope, sans-serif; font-size: 16px; color: #111113">{{r.initial}}</span></sc-if>
+                      </span>
+                    </div>
+                    <span aria-hidden="true" style="width: 76px; flex: none; display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2">
+                      <span style="font-size: 14px; font-weight: 800; color: #111113">{{r.name}}</span>
+                      <span style="font-size: 14px; font-weight: 700; color: #2a2a2e">{{r.pts}}</span>
+                    </span>
+                  </li>
+                </sc-if>
+                <sc-if value="{{r.isTail}}" hint-placeholder-val="{{ false }}">
+                  <li style="height: 52px; scroll-snap-align: start; display: grid; place-items: center; font-size: 14px; font-weight: 800; color: #2a2a2e">{{r.text}}</li>
+                </sc-if>
+              </sc-for>
+            </ol>
+          </div>
+          <sc-if value="{{ended}}" hint-placeholder-val="{{ false }}">
+            <span aria-hidden="true" class="stamp" style="position: absolute; z-index: 2; top: -16px; left: 50%; padding: 3px 14px; border: 3px solid {{stampInk}}; border-radius: 8px; transform: translateX(-50%) rotate(-8deg); font-family: Bungee, Manrope, sans-serif; font-size: 20px; white-space: nowrap; color: {{stampInk}}; background: {{stampFill}}; pointer-events: none">{{stampText}}</span>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{signedIn}}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 20px">
+            <a href="PuzzlesDesktop.dc.html" aria-label="Play a puzzle" style="width: 96px; height: 96px; border-radius: 50%; background: #d4f04c; box-shadow: 0 6px 0 #a8c22c; display: grid; place-items: center">
+              <svg aria-hidden="true" width="38" height="38" viewBox="0 0 24 24" fill="#0d0d0e"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.4-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>
+            </a>
+            <sc-if value="{{showToggle}}" hint-placeholder-val="{{ true }}">
+              <button type="button" onClick="{{toggle}}" style="min-height: 52px; padding: 0 20px; display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; border: 1px solid #d6d6db; background: #ffffff; box-shadow: 0 4px 0 #d6d6db; font-family: Manrope, sans-serif; font-size: 15px; font-weight: 800; color: #111113; cursor: pointer">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111113" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="transform: {{arrowTurn}}; transition: transform .3s"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>{{toggleLabel}}
+              </button>
+            </sc-if>
+          </div>
+        </sc-if>
+        <sc-if value="{{guest}}" hint-placeholder-val="{{ false }}">
+          <a href="SignInDesktop.dc.html" style="min-height: 56px; padding: 0 28px; display: inline-flex; align-items: center; border-radius: 999px; background: #d4f04c; box-shadow: 0 6px 0 #a8c22c; font-size: 17px; font-weight: 800; color: #111113; text-decoration: none">Ask a grown-up to sign in</a>
+        </sc-if>
+      </div>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"player":{"editor":"enum","options":["signed in","guest"],"default":"signed in"},"week":{"editor":"enum","options":["this week","just started","ended, went up","ended, stayed"],"default":"this week"},"$preview":{"width":1280,"height":780}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { top: false };
+    this.trackId = 'track-desk';
+    this.shown = '';
+    setTimeout(() => this.toMe(false), 60);
+  }
+  mode() {
+    if ((this.props.player ?? 'signed in') === 'guest') return 'guest';
+    return this.props.week ?? 'this week';
+  }
+  people(mode) {
+    const ada = { name: 'You', pts: 1240, avatar: '/_blob/7f7dc653e8bd7e13eaad2bdac65ebe80', bg: '#fdf1e4', me: true };
+    const others = [
+      { name: 'Zara', pts: 2180, avatar: '/_blob/b4f80130c01f32dac8bc5a9e2c441205', bg: '#efcfff' },
+      { name: 'Leo', pts: 1960, avatar: '/_blob/8a35e7de62b14ec052490277f8789ba4', bg: '#a6e9ee' },
+      { name: 'Tunde', pts: 1720, avatar: '/_blob/17b026fe950ab35628208bdd863f8474', bg: '#c7dcff' },
+      { name: 'Sam', pts: 1510, avatar: '/_blob/bc15cc2e2d84081c8562e882293e6ce0', bg: '#fbe7a6' },
+      { name: 'Chioma', pts: 1400, avatar: '/_blob/0e5fb23b12e69d5134ffed41f73eff9c', bg: '#ffc8dc' },
+      { name: 'Kemi', pts: 1310, avatar: '', bg: '#ffd9b0' },
+    ];
+    if (mode === 'guest') return { list: [Object.assign({}, ada, { name: 'Your best' })], tail: '', line: false };
+    if (mode === 'just started') return { list: [Object.assign({}, ada, { pts: 0, rank: '-' })], tail: '19 more at the start line', line: false };
+    if (mode === 'ended, went up') {
+      const list = others.slice(0, 4).concat([Object.assign({}, ada, { pts: 1420 })], others.slice(4));
+      return { list, tail: '12 more behind you', line: true };
+    }
+    return { list: others.concat([ada]), tail: '13 more behind you', line: true };
+  }
+  meTop() {
+    const p = this.people(this.mode());
+    const i = p.list.findIndex((x) => x.me);
+    return i * 64 + (p.line && i >= 5 ? 52 : 0);
+  }
+  toMe(smooth) {
+    const el = document.getElementById(this.trackId);
+    if (!el) return;
+    const calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    el.scrollTo({ top: Math.max(0, this.meTop() - 160), behavior: smooth && !calm ? 'smooth' : 'auto' });
+  }
+  toTop() {
+    const el = document.getElementById(this.trackId);
+    if (!el) return;
+    const calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    el.scrollTo({ top: 0, behavior: calm ? 'auto' : 'smooth' });
+  }
+  renderVals() {
+    const s = this.state;
+    const mode = this.mode();
+    if (this.shown !== mode) { this.shown = mode; setTimeout(() => this.toMe(false), 60); }
+    const guest = mode === 'guest';
+    const ended = mode === 'ended, went up' || mode === 'ended, stayed';
+    const max = 2200;
+    const p = this.people(mode);
+    const nth = (n) => n + (n === 1 ? 'st' : n === 2 ? 'nd' : n === 3 ? 'rd' : 'th');
+    const runner = (x, i) => {
+      const rank = x.rank || String(i + 1);
+      const f = (x.pts / max).toFixed(3);
+      const up = rank !== '-' && i < 5;
+      return {
+        isRunner: true, isLine: false, isTail: false,
+        rank,
+        name: x.name,
+        pts: x.pts.toLocaleString('en-US'),
+        avatar: x.avatar,
+        hasAvatar: !!x.avatar,
+        noAvatar: !x.avatar,
+        initial: x.name.charAt(0),
+        bg: x.bg,
+        x: 'calc((100% - 40px) * ' + f + ')',
+        trail: 'calc((100% - 40px) * ' + f + ' + 20px)',
+        trailColor: x.me ? '#5a6b00' : '#ffffff',
+        lane: x.me ? '#d4f04c' : 'transparent',
+        motion: x.me ? 'hop' : up && s.top ? 'cheer' : '',
+        aria: (x.me ? (guest ? 'Your best on this device' : 'You') : x.name) + (guest || rank === '-' ? '' : ', ' + nth(i + 1)) + ', ' + x.pts.toLocaleString('en-US') + ' points',
+      };
+    };
+    let rows = p.list.map(runner);
+    if (p.line) rows = rows.slice(0, 5).concat([{ isRunner: false, isLine: true, isTail: false }], rows.slice(5));
+    if (p.tail) rows = rows.concat([{ isRunner: false, isLine: false, isTail: true, text: p.tail }]);
+    const lines = {
+      'this week': s.top ? 'Zara leads with 2,180. The top 5 go up to Silver on Sunday.' : 'You are 7th of 20 in Bronze. Pass Chioma by Sunday to go up to Silver!',
+      'just started': 'A new week! Everyone in Bronze starts at 0. Play a puzzle to take the lead.',
+      'ended, went up': 'You did it! 5th of 20, so next week you race in Silver.',
+      'ended, stayed': s.top ? 'Zara won the week with 2,180.' : 'Week over. 7th of 20, so you stay in Bronze. A new race starts Monday.',
+      guest: 'Leagues need an account, so this is just your best here. A grown-up can sign in for you.',
+    };
+    const art = {
+      'this week': s.top ? '/_blob/d187597c53c1f65f02e75d28f635beff' : '/_blob/72ac21c6abd315fc09fce9f4cd789575',
+      'just started': '/_blob/72ac21c6abd315fc09fce9f4cd789575',
+      'ended, went up': '/_blob/d187597c53c1f65f02e75d28f635beff',
+      'ended, stayed': '/_blob/f9bac90c57f275dc5e6401be7e1e99b0',
+      guest: '/_blob/72ac21c6abd315fc09fce9f4cd789575',
+    };
+    const wentUp = mode === 'ended, went up';
+    return {
+      returning: true,
+      guest,
+      signedIn: !guest,
+      ended,
+      stampText: wentUp ? 'UP TO SILVER!' : 'STAYED IN BRONZE',
+      stampInk: wentUp ? '#5a6b00' : '#55555c',
+      stampFill: wentUp ? '#f4fbd6' : '#f6f6f7',
+      raceTitle: guest ? 'Your best on this device' : ended ? 'Last week in Bronze' : 'This week in Bronze',
+      rows,
+      mochi: art[mode] || art['this week'],
+      say: lines[mode] || lines['this week'],
+      showToggle: mode === 'this week' || mode === 'ended, stayed',
+      toggleLabel: s.top ? 'Back to me' : 'See the top',
+      arrowTurn: s.top ? 'rotate(180deg)' : 'rotate(0)',
+      toggle: () => { this.until = Date.now() + 700; if (this.state.top) this.toMe(true); else this.toTop(); this.setState({ top: !this.state.top }); },
+      scrolled: (e) => {
+        const el = e.currentTarget;
+        if (!el || Date.now() < (this.until || 0)) return;
+        const top = el.scrollTop < 40;
+        if (top !== this.state.top) this.setState({ top });
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

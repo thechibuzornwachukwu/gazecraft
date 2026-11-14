@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Game, desktop, detective's desk</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&amp;family=Manrope:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#f6f6f7}
+a{color:#111113}a:hover{color:#000000}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(212,240,76,0)}50%{box-shadow:0 0 0 5px rgba(212,240,76,.45)}}
+@keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px)}60%{transform:translateY(-14px)}}
+@keyframes twinkle{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.18) rotate(12deg)}}
+@keyframes flame{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.1) rotate(3deg)}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}
+@keyframes popb{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}
+@keyframes rock{0%,70%,100%{transform:rotate(0)}78%{transform:rotate(-14deg)}86%{transform:rotate(10deg)}94%{transform:rotate(-4deg)}}
+@keyframes stamp{0%{transform:scale(2.2) rotate(-26deg);opacity:0}55%{transform:scale(.9) rotate(-10deg);opacity:1}100%{transform:scale(1) rotate(-12deg);opacity:1}}
+@keyframes shake{0%,100%{left:0}20%{left:-7px}40%{left:6px}60%{left:-4px}80%{left:2px}}
+@keyframes pin{0%{transform:translate(-260px,-120px) rotate(-30deg) scale(1.5);opacity:0}65%{transform:translate(0,6px) rotate(4deg) scale(1);opacity:1}100%{transform:translate(0,0) rotate(0) scale(1);opacity:1}}
+.bob{animation:bob 2.6s ease-in-out infinite;transform-origin:50% 100%}
+.glow{animation:glow 1.8s ease-in-out infinite}
+.hop{animation:hop 1.4s ease-in-out infinite}
+.twinkle{animation:twinkle 2.2s ease-in-out infinite}
+.flame{animation:flame 1.1s ease-in-out infinite;transform-origin:50% 90%}
+.pop{animation:pop .35s ease-out both}
+.popb{animation:popb .35s ease-out both}
+.rock{animation:rock 3.4s ease-in-out 1.2s infinite;transform-origin:30% 30%}
+.stamp{animation:stamp .4s cubic-bezier(.2,.9,.3,1.2) both}
+.shake{animation:shake .45s ease-in-out both}
+.pin{animation:pin .6s cubic-bezier(.2,.8,.3,1.1) both}
+@media (prefers-reduced-motion: reduce){.bob,.glow,.hop,.twinkle,.flame,.pop,.popb,.rock,.stamp,.shake,.pin{animation:none}}
+</style>
+</helmet>
+<div style="min-height: 840px; background: #f6f6f7; font-family: Manrope, system-ui, sans-serif; color: #111113">
+
+  <header style="border-bottom: 1px solid #e3e3e7">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 28px">
+      <a href="LandingDesktop.dc.html" aria-label="Gazecraft home" style="display: flex; align-items: center; gap: 8px; text-decoration: none">
+        <span aria-hidden="true" style="width: 28px; height: 28px; border-radius: 8px; background: #454552; display: grid; place-items: center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4f04c" stroke-width="2.6" stroke-linecap="round"><circle cx="8" cy="12" r="2"/><circle cx="16" cy="12" r="2"/></svg>
+        </span>
+        <span style="font-family: Bungee, Manrope, sans-serif; font-size: 22px; color: #111113">GAZECRAFT</span>
+      </a>
+      <nav aria-label="Main" style="display: flex; gap: 24px; font-size: 15px; font-weight: 600">
+        <a href="PuzzlesDesktop.dc.html" aria-current="page" style="text-decoration: none; color: #111113">Puzzles</a>
+        <a href="PeopleDesktop.dc.html" style="text-decoration: none; color: #6a6a72">People</a>
+        <a href="LeagueDesktop.dc.html" style="text-decoration: none; color: #6a6a72">League</a>
+      </nav>
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 10px">
+        <sc-if value="{{returning}}" hint-placeholder-val="{{ true }}">
+          <span aria-label="3 days in a row" style="display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 12px 0 6px; border-radius: 999px; background: #ffffff; border: 1px solid #e3e3e7; font-size: 15px; font-weight: 800">
+            <img class="flame" src="/_blob/05ee42fd226623caa242489e39309c3a" alt="" style="width: 26px; height: 26px">3
+          </span>
+          <span aria-label="5 stars" style="display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 12px 0 6px; border-radius: 999px; background: #ffffff; border: 1px solid #e3e3e7; font-size: 15px; font-weight: 800">
+            <img class="twinkle" src="/_blob/e0a30d7867daccf828ee24febdd83699" alt="" style="width: 24px; height: 24px">5
+          </span>
+        </sc-if>
+        <a href="YouDesktop.dc.html" aria-label="You" style="display: grid; place-items: center; width: 44px; height: 44px">
+          <img src="/_blob/7f7dc653e8bd7e13eaad2bdac65ebe80" alt="" style="width: 36px; height: 36px; border-radius: 50%">
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main style="max-width: 1200px; margin: 0 auto; padding: 40px 24px 60px; display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start">
+
+    <section aria-label="Play" style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 22px">
+      <div style="display: flex; align-items: center; gap: 10px">
+        <a href="PuzzlesDesktop.dc.html" style="min-height: 44px; display: inline-flex; align-items: center; gap: 6px; padding: 0 16px 0 10px; border-radius: 999px; background: #ffffff; border: 1px solid #e3e3e7; box-shadow: 0 3px 0 #e3e3e7; font-size: 15px; font-weight: 700; text-decoration: none">
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111113" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Puzzles
+        </a>
+        <a href="GameDesktop.dc.html" style="margin-left: auto; min-height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 0 16px 0 12px; border-radius: 999px; background: #ffffff; border: 1px solid #e3e3e7; box-shadow: 0 3px 0 #e3e3e7; font-size: 15px; font-weight: 700; text-decoration: none">
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2f6fe0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Play with a friend
+        </a>
+      </div>
+
+      <div style="display: flex; align-items: flex-end; gap: 14px; min-height: 128px">
+        <img class="bob" src="{{mochi}}" alt="{{mochiAlt}}" style="width: 116px; height: auto; flex: none">
+        <p role="status" class="{{bubbleCls}}" style="margin: 0 0 38px; padding: 16px 20px; max-width: 440px; background: #111113; color: #ffffff; border-radius: 20px 20px 20px 4px; font-size: 18px; font-weight: 700; line-height: 1.35">{{say}}</p>
+      </div>
+
+      <article aria-labelledby="case-title" style="background: #ffffff; border: 1px solid #d6d6db; border-radius: 24px; box-shadow: 0 8px 0 #d6d6db">
+        <div style="display: flex; align-items: center; gap: 14px; padding: 14px 24px; border-radius: 23px 23px 0 0; background: #c9c0ff">
+          <img src="/_blob/7635086556d8c6e73873e2f04285f82e" alt="" style="width: 54px; height: 54px">
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <h1 id="case-title" style="margin: 0; font-family: Bungee, Manrope, sans-serif; font-weight: 400; font-size: 26px; line-height: 1.05; color: #141416">IN THE LAB</h1>
+            <span style="font-size: 14px; font-weight: 800; color: #141416">Puzzle 1 of 9 · find 5 science words</span>
+          </div>
+        </div>
+        <div tabindex="0" role="group" aria-label="Puzzle text. Drag across a hidden word, or click its first letter, then its last. With keys: arrows move, Enter marks a letter." onPointerDown="{{down}}" onPointerMove="{{move}}" onPointerUp="{{up}}" onPointerCancel="{{cancel}}" onKeyDown="{{key}}" style="position: relative; padding: 22px 28px 72px; touch-action: none; user-select: none; -webkit-user-select: none; cursor: pointer; outline-offset: -4px; border-radius: 0 0 23px 23px">
+          <p style="margin: 0; font-size: 28px; font-weight: 600; line-height: 50px; letter-spacing: -0.01em; color: #2a2a2e"><sc-for list="{{chars}}" as="c" hint-placeholder-count="40"><span data-i="{{c.i}}" class="{{c.cls}}" style="position: relative; left: 0; background: {{c.bg}}; color: {{c.ink}}; border-radius: {{c.r}}; box-shadow: {{c.ring}}; text-decoration: {{c.deco}}; text-decoration-color: #5a6b00; text-decoration-thickness: 3px; text-underline-offset: 6px">{{c.t}}<sc-if value="{{c.stamp}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" class="stamp" style="position: absolute; bottom: calc(100% + 4px); left: 50%; margin-left: -48px; width: 96px; box-sizing: border-box; padding: 2px 0; text-align: center; border: 3px solid #5a6b00; border-radius: 8px; transform: rotate(-12deg); background: #f4fbd6; font-family: Bungee, Manrope, sans-serif; font-size: 19px; line-height: 1.2; color: #5a6b00; pointer-events: none; z-index: 4">FOUND</span></sc-if><sc-if value="{{c.hand}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="position: absolute; bottom: calc(100% - 6px); left: 50%; margin-left: -17px; line-height: 0; pointer-events: none; z-index: 3"><svg class="hop" width="34" height="34" viewBox="0 0 24 24" fill="#ffffff" stroke="#111113" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(180 12 12)"><path d="M22 14a8 8 0 0 1-8 8"/><path d="M18 11v-1a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M14 10V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1"/><path d="M10 9.5V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v10"/><path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></g></svg></span></sc-if></span></sc-for></p>
+          <sc-if value="{{lensOn}}" hint-placeholder-val="{{ false }}">
+            <div aria-hidden="true" style="position: absolute; left: {{lensLeft}}; top: {{lensTop}}; width: 104px; height: 104px; box-sizing: border-box; border-radius: 50%; border: 4px solid #111113; background: #ffffff; box-shadow: 0 0 0 3px #d4f04c, 0 8px 18px rgba(17,17,19,.22); overflow: hidden; pointer-events: none; z-index: 6">
+              <p style="position: absolute; left: 0; top: 0; margin: 0; width: {{lensWidth}}; transform-origin: 0 0; transform: {{lensMove}}; font-size: 28px; font-weight: 600; line-height: 50px; letter-spacing: -0.01em; color: #2a2a2e"><sc-for list="{{chars}}" as="c" hint-placeholder-count="40"><span style="background: {{c.bg}}; color: {{c.ink}}; border-radius: {{c.r}}">{{c.t}}</span></sc-for></p>
+            </div>
+          </sc-if>
+          <sc-if value="{{parked}}" hint-placeholder-val="{{ true }}">
+            <span data-glass="1" aria-hidden="true" class="rock" style="position: absolute; right: 20px; bottom: 12px; width: 54px; height: 54px; display: grid; place-items: center; cursor: grab">
+              <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#111113" stroke-width="2.4" stroke-linecap="round"><circle cx="10" cy="10" r="6.5" fill="#f4fbd6"/><path d="m15 15 6 6" stroke-width="3.4"/></svg>
+            </span>
+          </sc-if>
+          <span role="status" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap">{{cursorSay}}</span>
+        </div>
+      </article>
+
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px">
+        <button type="button" onClick="{{ask}}" aria-disabled="{{askOff}}" aria-label="Ask Mochi for a tip-off. It costs 25 points." style="min-height: 56px; display: inline-flex; align-items: center; gap: 10px; padding: 0 10px 0 8px; border-radius: 999px; border: 1px solid #d6d6db; background: #ffffff; box-shadow: 0 4px 0 #d6d6db; font-family: Manrope, system-ui, sans-serif; font-size: 17px; font-weight: 800; color: #111113; cursor: pointer; opacity: {{askOpacity}}">
+          <img src="/_blob/f9bac90c57f275dc5e6401be7e1e99b0" alt="" style="width: 42px; height: 42px; object-fit: cover; object-position: top; border-radius: 50%; background: #f1eeff">
+          Ask Mochi
+          <span style="padding: 5px 11px; border-radius: 999px; background: #f6f6f7; font-size: 14px; font-weight: 800; color: #55555c">−25 points</span>
+        </button>
+        <a href="ResultDesktop.dc.html" style="margin-left: auto; min-height: 44px; display: inline-flex; align-items: center; padding: 0 6px; font-size: 16px; font-weight: 700; color: #55555c; text-decoration: underline; text-underline-offset: 4px">I'm done</a>
+      </div>
+    </section>
+
+    <aside style="flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+      <section aria-labelledby="board-title" style="padding: 18px 18px 24px; background: #ffffff; border: 1px solid #e3e3e7; border-radius: 22px; box-shadow: 0 6px 0 #e3e3e7">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 22px">
+          <h2 id="board-title" style="margin: 0; font-family: Bungee, Manrope, sans-serif; font-weight: 400; font-size: 18px; color: #2c2c2e">EVIDENCE</h2>
+          <span style="font-size: 14px; font-weight: 800; color: #55555c">{{tally}}</span>
+        </div>
+        <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 20px 14px">
+          <sc-for list="{{board}}" as="w" hint-placeholder-count="5">
+            <li aria-label="{{w.aria}}" style="width: calc((100% - 14px) / 2); transform: rotate({{w.rot}})">
+              <div class="{{w.cls}}" style="position: relative; height: 74px; box-sizing: border-box; display: grid; place-items: center; padding: 10px 6px 6px; border-radius: 14px; background: {{w.bg}}; border: 1px solid {{w.line}}; box-shadow: 0 4px 0 {{w.line}}">
+                <span aria-hidden="true" style="position: absolute; top: -7px; left: 50%; margin-left: -7px; width: 14px; height: 14px; border-radius: 50%; background: {{w.pin}}; box-shadow: 0 2px 0 rgba(17,17,19,.25)"></span>
+                <sc-if value="{{w.found}}" hint-placeholder-val="{{ false }}">
+                  <span aria-hidden="true" style="display: flex; align-items: center; gap: 8px">
+                    <span style="font-family: Bungee, Manrope, sans-serif; font-size: 18px; color: #0d0d0e">{{w.label}}</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0d0d0e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  </span>
+                </sc-if>
+                <sc-if value="{{w.open}}" hint-placeholder-val="{{ true }}">
+                  <span aria-hidden="true" style="display: flex; gap: 6px"><sc-for list="{{w.dots}}" as="d" hint-placeholder-count="4"><span style="width: 9px; height: 9px; border-radius: 50%; background: #6a6a72"></span></sc-for></span>
+                </sc-if>
+              </div>
+            </li>
+          </sc-for>
+        </ul>
+      </section>
+    </aside>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":840}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { found: ['ATOM', 'HEAT'], start: null, drag: null, lens: null, flash: null, stamp: null, pinned: null, hint: null, hints: 0, wrongs: 0, pts: 200, cursor: null, mood: 'found', n: 0, say: 'Heat. Got it.' };
+    this.R = 52;
+    this.UP = 60;
+    this.ZOOM = 1.6;
+  }
+  text() {
+    return 'Pat omitted one detail at the lab. Carla serves tea in the attic while Tom asserted that a cider break would help.';
+  }
+  words() {
+    return [
+      { key: 'ATOM', a: 1, b: 5, len: 4 },
+      { key: 'LASER', a: 38, b: 43, len: 5 },
+      { key: 'HEAT', a: 56, b: 60, len: 4 },
+      { key: 'MASS', a: 73, b: 77, len: 4 },
+      { key: 'ACID', a: 89, b: 93, len: 4 },
+    ];
+  }
+  lines() {
+    return {
+      found: ['{w}. Nice.', '{w}. Got it.', 'There it is. {w}.', '{w}. Sharp.', 'Yes. {w}.', '{w}, spotted.', 'Clean find. {w}.'],
+      foundLong: ['{w}. Big one.', '{w}. That took eyes.', 'Long one. {w}.'],
+      lastOne: ['{w}. One left.', '{w}. Just one more.'],
+      wrong: ['Not that one', 'Not quite', 'Nope, keep looking', 'Not hiding there', 'Try another stretch'],
+      close: ['So close. Check the edges.', 'Almost. One letter off.', 'Nearly. Nudge it.'],
+      already: ['Already found', 'Got that one', 'That one is yours'],
+      hint: ['One starts where the hand points', 'Look where the hand points', 'Start at the hand'],
+      hintStill: ['The hand is still on it', 'Same letter. One starts there', 'Still marked. Start at the hand'],
+      tapNext: ['Now tap the last letter', 'Now the last letter'],
+      all: ['All found. Sharp eyes.', 'Nothing got past you.'],
+    };
+  }
+  pick(pool, w) {
+    const p = this.lines()[pool];
+    return p[this.state.n % p.length].replace('{w}', w || '');
+  }
+  isL(ch) { return /[A-Za-z]/.test(ch || ''); }
+  count(x, y) { const T = this.text(); let k = 0; for (let i = x; i <= y; i++) if (this.isL(T[i])) k++; return k; }
+  hit(e) {
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const h = el && el.closest ? el.closest('[data-i]') : null;
+    const i = h ? Number(h.getAttribute('data-i')) : null;
+    return i !== null && this.isL(this.text()[i]) ? i : null;
+  }
+  // Snap to the nearest letter, wherever the pointer lands. Rows count double so a click between lines picks the closer row.
+  near(e) {
+    const T = this.text();
+    const els = e.currentTarget.querySelectorAll('[data-i]');
+    let best = null, bd = Infinity;
+    for (let k = 0; k < els.length; k++) {
+      const i = Number(els[k].getAttribute('data-i'));
+      if (!this.isL(T[i])) continue;
+      const r = els[k].getBoundingClientRect();
+      const dx = Math.max(r.left - e.clientX, 0, e.clientX - r.right);
+      const dy = Math.max(r.top - e.clientY, 0, e.clientY - r.bottom);
+      const d = dx * dx + 4 * dy * dy;
+      if (d < bd) { bd = d; best = i; }
+    }
+    return best;
+  }
+  onGlass(e) {
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    return !!(el && el.closest && el.closest('[data-glass]'));
+  }
+  where(e) {
+    const box = e.currentTarget.getBoundingClientRect();
+    const k = box.width / (e.currentTarget.offsetWidth || box.width);
+    return { x: (e.clientX - box.left) / k, y: (e.clientY - box.top) / k };
+  }
+  measure(e) {
+    const p = e.currentTarget.querySelector('p');
+    this.pl = p ? p.offsetLeft : 28;
+    this.pt = p ? p.offsetTop : 22;
+    this.pw = p ? p.offsetWidth : 700;
+  }
+  judge(a, b) {
+    const T = this.text();
+    const s = this.state;
+    const W = this.words();
+    if (a > b) { const t = a; a = b; b = t; }
+    while (a <= b && !this.isL(T[a])) a++;
+    while (b >= a && !this.isL(T[b])) b--;
+    const base = { start: null, drag: null, lens: null, n: s.n + 1 };
+    if (a > b) { this.setState({ start: null, drag: null, lens: null }); return; }
+    const w = W.find((x) => x.a === a && x.b === b);
+    if (w && s.found.indexOf(w.key) >= 0) { this.setState(Object.assign(base, { say: this.pick('already'), mood: 'idle' })); return; }
+    if (w) { this.win(w, base); return; }
+    const n = this.count(a, b);
+    const near = W.find((x) => s.found.indexOf(x.key) < 0 && Math.max(a, x.a) <= Math.min(b, x.b) && this.count(Math.max(a, x.a), Math.min(b, x.b)) >= Math.max(2, x.len - 1) && n <= x.len + 1);
+    this.setState(Object.assign(base, { flash: { a, b }, wrongs: s.wrongs + 1, say: this.pick(near ? 'close' : 'wrong'), mood: near ? 'close' : 'wrong' }));
+    clearTimeout(this.tFlash);
+    this.tFlash = setTimeout(() => this.setState({ flash: null }), 750);
+  }
+  win(w, base) {
+    const s = this.state;
+    const total = this.words().length;
+    const found = s.found.concat(w.key);
+    const label = w.key.charAt(0) + w.key.slice(1).toLowerCase();
+    const pool = found.length === total ? 'all' : found.length === total - 1 ? 'lastOne' : w.len >= 5 ? 'foundLong' : 'found';
+    this.setState(Object.assign(base, { found, pts: s.pts + 100, stamp: w.key, pinned: w.key, hint: s.hint === w.key ? null : s.hint, flash: null, say: this.pick(pool, label), mood: 'found' }));
+    clearTimeout(this.tStamp);
+    this.tStamp = setTimeout(() => this.setState({ stamp: null }), 1400);
+  }
+  tap(i) {
+    const s = this.state;
+    if (!this.isL(this.text()[i])) { this.setState({ drag: null, lens: null }); return; }
+    if (s.start === null) { this.setState({ start: i, drag: null, lens: null, say: this.pick('tapNext'), mood: 'idle', n: s.n + 1 }); return; }
+    if (s.start === i) { this.setState({ start: null, drag: null, lens: null }); return; }
+    this.judge(s.start, i);
+  }
+  ask() {
+    const s = this.state;
+    if (s.hint && s.found.indexOf(s.hint) < 0) { this.setState({ say: this.pick('hintStill'), mood: 'hint', n: s.n + 1 }); return; }
+    const w = this.words().find((x) => s.found.indexOf(x.key) < 0);
+    if (!w) return;
+    this.setState({ hint: w.key, hints: s.hints + 1, pts: Math.max(0, s.pts - 25), start: null, say: this.pick('hint'), mood: 'hint', n: s.n + 1 });
+  }
+  renderVals() {
+    const s = this.state;
+    const T = this.text();
+    const W = this.words();
+    const inFound = {};
+    W.forEach((w) => { if (s.found.indexOf(w.key) >= 0) for (let i = w.a; i <= w.b; i++) inFound[i] = true; });
+    let sa = -1, sb = -2;
+    if (s.drag && s.drag.from !== null) { sa = Math.min(s.drag.from, s.drag.cur); sb = Math.max(s.drag.from, s.drag.cur); }
+    else if (s.start !== null) { sa = s.start; sb = s.start; }
+    const hw = s.hint ? W.find((x) => x.key === s.hint) : null;
+    const sw = s.stamp ? W.find((x) => x.key === s.stamp) : null;
+    const kind = (i) => (i >= sa && i <= sb ? 's' : s.flash && i >= s.flash.a && i <= s.flash.b ? 'f' : inFound[i] ? 'g' : '');
+    const chars = [];
+    for (let i = 0; i < T.length; i++) {
+      const k = kind(i);
+      const l = k && kind(i - 1) !== k ? '7px' : '0';
+      const r = k && kind(i + 1) !== k ? '7px' : '0';
+      const isHint = !!hw && i === hw.a && k !== 's';
+      const isCur = s.cursor === i;
+      const cls = [];
+      if (isHint && !isCur) cls.push('glow');
+      if (k === 'f') cls.push('shake');
+      chars.push({
+        i,
+        t: T[i],
+        bg: k === 's' ? '#111113' : k === 'f' ? '#ffd0c9' : k === 'g' ? '#d4f04c' : 'transparent',
+        ink: k === 's' ? '#ffffff' : k ? '#0d0d0e' : '#2a2a2e',
+        r: l + ' ' + r + ' ' + r + ' ' + l,
+        deco: k === 'g' ? 'underline' : 'none',
+        ring: isCur ? '0 0 0 3px #2f6fe0' : isHint ? '0 0 0 3px #d4f04c' : 'none',
+        cls: cls.join(' '),
+        stamp: !!sw && i === sw.a,
+        hand: isHint,
+      });
+    }
+    const pins = ['#f06a5a', '#6aa3ff', '#f2c94c', '#3ec486', '#9b8cff'];
+    const rots = ['-3deg', '2deg', '-1.5deg', '3deg', '-2deg'];
+    const board = W.map((w, k) => {
+      const f = s.found.indexOf(w.key) >= 0;
+      const dots = [];
+      for (let j = 0; j < w.len; j++) dots.push({ j });
+      return {
+        label: w.key, found: f, open: !f, dots, rot: rots[k], pin: pins[k],
+        bg: f ? '#d4f04c' : '#ffffff', line: f ? '#a8c22c' : '#e3e3e7',
+        cls: s.pinned === w.key ? 'pin' : '',
+        aria: f ? w.key.charAt(0) + w.key.slice(1).toLowerCase() + ', found' : w.len + ' letters, not found yet',
+      };
+    });
+    const art = {
+      idle: ['/_blob/d187597c53c1f65f02e75d28f635beff', 'Mochi the cat, with a magnifier'],
+      found: ['/_blob/72ac21c6abd315fc09fce9f4cd789575', 'Mochi the cat, waving'],
+      wrong: ['/_blob/138a2e49267565bf4ce99a85f687007a', 'Mochi the cat, stumped'],
+      close: ['/_blob/f9bac90c57f275dc5e6401be7e1e99b0', 'Mochi the cat, thinking'],
+      hint: ['/_blob/f9bac90c57f275dc5e6401be7e1e99b0', 'Mochi the cat, thinking'],
+    }[s.mood];
+    const left = W.length - s.found.length;
+    const R = this.R, Z = this.ZOOM;
+    const L = s.lens;
+    const fx = L ? L.x - (this.pl || 0) : 0;
+    const fy = L ? L.y - (this.pt || 0) : 0;
+    return {
+      returning: true,
+      chars,
+      board,
+      mochi: art[0],
+      mochiAlt: art[1],
+      say: s.say,
+      bubbleCls: s.n % 2 ? 'popb' : 'pop',
+      tally: s.found.length + ' of ' + W.length + ' · ' + s.pts + ' points',
+      lensOn: !!L,
+      parked: !L,
+      lensLeft: L ? (L.x - R) + 'px' : '0px',
+      lensTop: L ? (L.y - this.UP - R) + 'px' : '0px',
+      lensWidth: (this.pw || 700) + 'px',
+      lensMove: 'translate(' + (R - 4 - Z * fx) + 'px, ' + (R - 4 - Z * fy) + 'px) scale(' + Z + ')',
+      cursorSay: s.cursor === null ? '' : T[s.cursor].toUpperCase() + (s.start === s.cursor ? ', marked' : ''),
+      askOff: left ? 'false' : 'true',
+      askOpacity: left ? 1 : 0.5,
+      ask: () => this.ask(),
+      down: (e) => {
+        this.measure(e);
+        const glass = this.onGlass(e);
+        const i = glass ? null : this.near(e);
+        if (i === null && !glass) return;
+        if (e.currentTarget.setPointerCapture) e.currentTarget.setPointerCapture(e.pointerId);
+        this.setState({ drag: { from: i, cur: i, moved: false, carry: glass }, lens: this.where(e), cursor: null });
+      },
+      move: (e) => {
+        const d = this.state.drag;
+        if (!d) return;
+        const pos = this.where(e);
+        // Carrying the parked glass: the pick starts only once it is over a letter.
+        const i = d.from === null ? this.hit(e) : this.near(e);
+        if (i === null || i === d.cur) { this.setState({ lens: pos }); return; }
+        if (d.from === null) this.setState({ lens: pos, drag: { from: i, cur: i, moved: false, carry: true } });
+        else this.setState({ lens: pos, drag: { from: d.from, cur: i, moved: true, carry: d.carry } });
+      },
+      up: () => {
+        const d = this.state.drag;
+        if (!d) return;
+        if (d.from === null) { this.setState({ drag: null, lens: null }); return; }
+        if (d.moved && d.cur !== d.from) { this.setState({ start: null }); this.judge(d.from, d.cur); return; }
+        if (d.carry) { this.setState({ drag: null, lens: null }); return; }
+        this.tap(d.from);
+      },
+      cancel: () => this.setState({ drag: null, lens: null }),
+      key: (e) => {
+        const s2 = this.state;
+        let c = s2.cursor === null ? -1 : s2.cursor;
+        const step = (dir) => { let i = c + dir; while (i >= 0 && i < T.length && !this.isL(T[i])) i += dir; return i >= 0 && i < T.length ? i : c; };
+        if (e.key === 'ArrowRight' || (e.key === 'ArrowLeft' && c < 0)) { e.preventDefault(); this.setState({ cursor: step(1) }); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); this.setState({ cursor: step(-1) }); }
+        else if ((e.key === 'Enter' || e.key === ' ') && s2.cursor !== null) { e.preventDefault(); this.tap(s2.cursor); }
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>
