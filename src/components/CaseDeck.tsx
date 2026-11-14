@@ -16,8 +16,8 @@ type Props = {
   onPlay: (c: CaseFile) => void;
   /** Left, or Later: the next card comes up. */
   onLater?: (c: CaseFile) => void;
-  /** A third round button beside the two, such as Play with a friend. */
-  extra?: ReactNode;
+  /** A third round button beside the two, such as Play with a friend, for the card on top. */
+  extra?: (top: CaseFile) => ReactNode;
 };
 
 /**
@@ -31,6 +31,13 @@ export function CaseDeck({ cases, onPlay, onLater, extra }: Props) {
   const [start, setStart] = useState<{ x: number; id: number } | null>(null);
   const [leaving, setLeaving] = useState<-1 | 0 | 1>(0);
   const [touched, setTouched] = useState(false);
+  // A new list (progress came in from another device) starts again from its first card, so the card on top is
+  // always one the player can see in the list, never a stale index into another order.
+  const [list, setList] = useState(cases);
+  if (list !== cases) {
+    setList(cases);
+    setI(0);
+  }
   const n = cases.length;
   if (n === 0) return null;
   const top = cases[i % n]!;
@@ -107,6 +114,7 @@ export function CaseDeck({ cases, onPlay, onLater, extra }: Props) {
               </span>
             </div>
           </div>
+          {top.find && <p className={styles.teaser}>{top.find}</p>}
           {top.teaser.length > 0 && (
             <p className={styles.teaser}>
               {top.teaser.map((p, k) =>
@@ -143,7 +151,7 @@ export function CaseDeck({ cases, onPlay, onLater, extra }: Props) {
         <button type="button" className={styles.go} onClick={() => send(1)} aria-label={t('Play {title}', { title: top.title })}>
           <Icon icon={Play} size="em" />
         </button>
-        {extra}
+        {extra?.(top)}
       </div>
     </div>
   );

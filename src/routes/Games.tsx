@@ -111,13 +111,11 @@ export function Games() {
             cases={deck}
             onPlay={(c) => navigate(c.to)}
             onLater={() => setPassed(true)}
-            extra={
-              first && (
-                <button type="button" className={styles.friend} onClick={() => together(deck[0]!)} aria-label={t('Play with a friend')}>
-                  <Icon icon={UsersRound} size="em" />
-                </button>
-              )
-            }
+            extra={(top) => (
+              <button type="button" className={styles.friend} onClick={() => together(top)} aria-label={t('Play with a friend')}>
+                <Icon icon={UsersRound} size="em" />
+              </button>
+            )}
           />
           {!wide && (
             <button type="button" className={styles.allButton} onClick={() => setShelf(true)}>

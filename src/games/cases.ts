@@ -4,9 +4,11 @@
 // catalogue it reads.
 
 import { buildPath, clueStates, type Path } from '../engine/journey';
+import { buildHiddenWords, type HiddenWordsPuzzle } from '../engine/hiddenWords';
 import { sentences } from '../engine/text';
+import { t } from '../i18n';
 import { categoryName, titleOf } from '../i18n/gameNames';
-import { games, getPuzzle, SPECIAL_SOURCES, sponsorFor, type GameDef } from './catalog';
+import { games, getPassage, getPuzzle, SPECIAL_SOURCES, sponsorFor } from './catalog';
 
 /** A 3D topic picture per category (public/icons/fluent). A category without one gets the star. */
 const ICON: Record<string, string> = {
@@ -36,13 +38,14 @@ export type CaseFile = {
   teaser: Piece[];
   /** The marked word, as the answer list writes it. */
   word: string;
+  /** What the puzzle Play opens asks for, when it has no sentence to show: a Liar, sums or groups puzzle. */
+  find: string;
   /** Who the pack is with ("With NAME"), when it is. */
   sponsor: string;
 };
 
 /** The first sentence of a puzzle that holds a whole answer, split around it. */
-export function teaserOf(def: Pick<GameDef, 'id'>): { pieces: Piece[]; word: string } {
-  const p = getPuzzle(def.id);
+export function teaserOf(p: HiddenWordsPuzzle | undefined): { pieces: Piece[]; word: string } {
   if (!p) return { pieces: [], word: '' };
   for (const s of sentences(p.text, p.chars)) {
     const a = p.answers
@@ -78,7 +81,10 @@ export function caseFiles(done: Iterable<string>): CaseFile[] {
     const next = mine.find((s) => s.state !== 'done');
     const state = !next ? 'closed' : doneCount > 0 ? 'going' : 'new';
     const at = next ?? mine[0]!;
-    const { pieces, word } = teaserOf(def);
+    // The card shows what Play opens: the next puzzle of the pack, or the whole puzzle once the pack is closed.
+    const opens = state !== 'closed' && at.n ? getPassage(def.id, at.n)?.def : undefined;
+    const words = !opens ? getPuzzle(def.id) : opens.type === 'hidden-words' ? buildHiddenWords(opens) : undefined;
+    const { pieces, word } = teaserOf(words);
     out.push({
       id: def.id,
       title: titleOf(def.id, def.title),
@@ -92,6 +98,7 @@ export function caseFiles(done: Iterable<string>): CaseFile[] {
       state,
       teaser: pieces,
       word,
+      find: words ? '' : t('Find {what}', { what: opens!.noun }),
       sponsor: sponsorFor(def)?.name ?? '',
     });
   });

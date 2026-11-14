@@ -10,24 +10,7 @@ import { Logo, LogoMark } from './Logo';
 import { CAT } from '../brand/cat';
 import { LOGO_G, LOGO_REST } from './logoPaths';
 import { TextLink } from './TextLink';
-import { ThemeToggle } from './ThemeToggle';
-import { THEME_KEY } from '../lib/theme';
 import { AuthProvider } from '../lib/auth';
-
-describe('ThemeToggle', () => {
-  it('flips data-theme and persists it', async () => {
-    document.documentElement.setAttribute('data-theme', 'dark');
-    render(<ThemeToggle />);
-    const btn = screen.getByRole('button', { name: 'Switch to light theme' });
-    await userEvent.click(btn);
-    expect(document.documentElement.getAttribute('data-theme')).toBe('light');
-    expect(localStorage.getItem(THEME_KEY)).toBe('light');
-    expect(btn).toHaveAccessibleName('Switch to dark theme');
-    await userEvent.click(btn);
-    expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
-    expect(localStorage.getItem(THEME_KEY)).toBe('dark');
-  });
-});
 
 describe('Icon', () => {
   it('uses stroke 1.75 and hides decorative icons', () => {

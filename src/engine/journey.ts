@@ -9,7 +9,8 @@ import { buildHiddenWords, type Difficulty, type HiddenWordsPuzzle } from './hid
 import { passages } from './passages';
 import { GROUPS_N, LIAR_N, MIRROR_N, NO_SOURCES, RELAY_N, SERIES_N, SPECIAL_TYPE, specialClues, type SpecialSources, type SpecialType } from './specials';
 
-export type CatalogueItem = { id: string; category: string; text: string; dict: readonly string[] };
+/** `lang`: a puzzle written in another language. It has no special clues: those are made from English word lists. */
+export type CatalogueItem = { id: string; category: string; text: string; dict: readonly string[]; lang?: string };
 
 /**
  * A clue's number says what it is, and it is what the account keeps the clue under, so it never moves:
@@ -99,7 +100,7 @@ export function buildPath(catalogue: readonly CatalogueItem[], src: SpecialSourc
     .map((item) => {
       const puzzle = buildHiddenWords(item);
       const cut = passages(puzzle).length;
-      return { id: item.id, cat: cats.indexOf(item.category), h: hardness(puzzle), order: caseOrder(cut, new Set(specialClues(puzzle, item.id, item.category, src).keys())) };
+      return { id: item.id, cat: cats.indexOf(item.category), h: hardness(puzzle), order: caseOrder(cut, new Set(specialClues(puzzle, item.id, item.category, item.lang ? NO_SOURCES : src).keys())) };
     })
     .sort((a, b) => a.cat - b.cat || a.h - b.h || (a.id < b.id ? -1 : 1));
 
