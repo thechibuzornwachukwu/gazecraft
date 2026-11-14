@@ -66,7 +66,7 @@ export function StreakInvite() {
       </p>
       <div className={styles.actions}>
         {own ? (
-          <Button to="/players#friend-streaks">{t('Your friend streaks')}</Button>
+          <Button to="/players#friend-streaks">{t('Friend streaks')}</Button>
         ) : auth.profile ? (
           <Button variant="accent" onClick={start} disabled={busy}>
             {t('Start the streak')}

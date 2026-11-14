@@ -13,6 +13,7 @@
 }
 .meta {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-5);
   font-size: 13px;
   font-weight: 600;

@@ -1,5 +1,9 @@
 html, body { min-height: 100%; }
-body { font-size: 16px; font-weight: 500; line-height: 1.55; }
+body { font-size: 16px; font-weight: 500; line-height: 1.55; overflow-wrap: break-word; }
+/* Other languages run 20 to 40% longer, and German makes long single words (Datenschutz, Allgemeinwissen).
+   Headings hyphenate by the page's lang (French, Spanish and German have dictionaries in Chrome, Safari and Firefox),
+   break a word only when it cannot fit any other way, and balance their lines. */
+h1, h2, h3 { hyphens: auto; overflow-wrap: anywhere; text-wrap: balance; }
 button, input, textarea, select { font-family: inherit; }
 input::placeholder { color: var(--subtle); }
 #root { min-height: 100vh; display: flex; flex-direction: column; }

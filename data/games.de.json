@@ -105,6 +105,54 @@
         "jan"
       ],
       "text": "Am Bahnhof wartet das Taxi da drüben, aber es ist zu teuer. Mein Vater geht im Regen los, und alle nach ihm. Ich habe nie so nasse Schuhe gehabt. Der Weg ist nicht zu weit. Zu Hause stellt Mama Blumen in meine Vase. Das Haus ist in ganz kurzer Zeit warm. Man nahm sich Zeit, und alle Abende waren ruhig."
+    },
+    {
+      "id": "de-koerper",
+      "type": "hidden-words",
+      "category": "Körper",
+      "title": "Zum Bäcker",
+      "noun": "Körperteile",
+      "difficulty": "Easy",
+      "expectedAnswers": [
+        "Auge",
+        "Bein",
+        "Haut",
+        "Hand",
+        "Nase",
+        "Ohr",
+        "Zeh"
+      ],
+      "dict": [
+        "auge",
+        "bein",
+        "haut",
+        "hand",
+        "nase",
+        "ohr",
+        "zeh",
+        "arm",
+        "fuss",
+        "kopf",
+        "hals",
+        "mund",
+        "zahn",
+        "knie",
+        "bauch",
+        "rucken",
+        "haar",
+        "lippe",
+        "finger",
+        "herz",
+        "kinn",
+        "brust",
+        "stirn",
+        "wange",
+        "ferse",
+        "nacken",
+        "schulter",
+        "daumen"
+      ],
+      "text": "Die alte Frau geht jeden Morgen zum Bäcker. Ich habe in der Tasche Geld für uns beide. Busse fahren vorbei, doch Autos sieht man kaum. Ein paar Leute warten, doch andere gehen schon. Am Markt wollen wir Hanna sehen. Ich bin so froh, rief sie. Zu Hause steht eine Kerze hinter dem Fenster."
     }
   ]
 }

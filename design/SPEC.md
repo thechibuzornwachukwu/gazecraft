@@ -51,13 +51,13 @@ Two faces. Bungee (`--font-display`, 400 only, capitals only) for headings.
 
 | Component | Spec |
 |---|---|
-| Button primary | h48 (36 in header), px20, r8, bg `--fg`, text `--bg` 15/700, hover `--fg-strong` |
+| Button primary | min h48 (36 in header): a long label (other languages run 20 to 40% longer) wraps and the button grows, never clips. px20, r8, bg `--fg`, text `--bg` 15/700, hover `--fg-strong` |
 | Button accent | bg `--accent`, text `--on-accent`, hover `--accent-hover` |
 | Button secondary | 1px `--line-3`, text `--fg`, hover bg `--surface-2` |
 | TextLink | 14/600 `--muted`, underline offset 4 `--line-3`, hover `--fg` |
 | FilterTabs | gap 20, 14/600, active `--fg` + 2px bottom border, else `--subtle` |
 | GameRow | padding 24 0, 1px bottom `--line-2`. Category 84 wide 13/600 `--subtle` (hidden <760). Title `row`. Meta "N words · Level" 14 `--subtle`. Hover padding-left 12 |
-| PageHeader | One per tab (Your Puzzles, Your League, Your People, You). Title is the `h1` at `resultTitle`, left; one action slot on the right (a TextLink, or nothing), baseline aligned, wraps under the title when it does not fit. Same top padding (`--screen-top-game`) on all 4, phone and desktop |
+| PageHeader | One per tab (Your puzzles, Your league, Your people, You). Title is the `h1` at `resultTitle`, left; one action slot on the right (a TextLink, or nothing), baseline aligned, wraps under the title when it does not fit. Same top padding (`--screen-top-game`) on all 4, phone and desktop |
 | ProgressLine | 2px, track `--line`, fill `--bar`. Landing preview only |
 | Ring | An open circle that fills clockwise from 12 o'clock. SVG, 20 (40 for the week), stroke 2.5, track `--line-3`, fill `--fg`. Closed (value 1) it turns `--accent-ink`: the only time it is lime, since lime means found. `value` 0 to 1 is a `progressbar`. `parts` makes a segmented ring (an `img` with a label), 12 degrees open between parts: done `--fg` 2.5, rest `--muted` 1.5 in 3 dashes, empty `--line-3` 1.5, so a rest day never reads by colour alone. A segmented ring closes when no part is empty and at least 1 is done |
 | BigClock | label "Time" / "Final time" 13/600. Digits `clock`, `--subtle` playing, `--fg` finished. Hidden <760 |
@@ -78,10 +78,10 @@ Anything that waits on the network shows the shape of what is coming, in the pla
 
 | Where | Skeleton |
 |---|---|
-| Your League, a puzzle's board, a circle's board | 8 rows (5 in a circle): a 28 circle, a line, a number |
-| Your People: Lately, top players, people to follow, search results | 4 or 5 rows: a 40 circle, 2 lines, a number |
-| Your People: friend streaks | 2 rows: a 40 circle, 2 lines, a number |
-| Your People: Circles, and the list on `/circles` | 2 rows: a line |
+| Your league, a puzzle's board, a circle's board | 8 rows (5 in a circle): a 28 circle, a line, a number |
+| Your people: Lately, top players, people to follow, search results | 4 or 5 rows: a 40 circle, 2 lines, a number |
+| Your people: friend streaks | 2 rows: a 40 circle, 2 lines, a number |
+| Your people: Circles, and the list on `/circles` | 2 rows: a line |
 | A circle `/c/CODE`, before it is known | a title block, then 5 board rows |
 | Player `/u/HANDLE` | an 88 circle beside 3 lines, then 4 rows |
 | You: Badges | 4 pills |
@@ -186,7 +186,7 @@ All but the last are counted by the game as it is played, per puzzle per UTC day
 
 Linked from past days on the leaderboard and listed in the sitemap (last 60).
 
-**Notifications:** no page and no bell. They are lines in the Your People feed, among the medals; an unread one has a 2px `--fg` bar on its leading edge. While any is unread, the Your People tab carries an 8 dot in `--cheer`, checked on each page and once a minute. Opening Your People reads them. `/notifications` redirects there.
+**Notifications:** no page and no bell. They are lines in the Your people feed, among the medals; an unread one has a 2px `--fg` bar on its leading edge. While any is unread, the Your people tab carries an 8 dot in `--cheer`, checked on each page and once a minute. Opening Your people reads them. `/notifications` redirects there.
 
 **Cheers:** signed in, a heart (18, `--tap` square) on every medal in the feed that is not yours: pressed, the heart fills `--cheer` and the count stays in ink. One cheer a player a medal; it tells the owner ("Ada cheered your 30 day run."). Your own medal shows its count, read only. `cheer()` checks the medal exists and is not yours.
 
@@ -202,11 +202,11 @@ Profile section Badges (`#badges`): earned ones as `--fg` pills; on your own pag
 
 **Records on the account:** signed in, every visit brings the account's records (`my_records`, worked out from verified plays): the fastest clean read in each pack, the longest word found, and the best week (most points in one Monday to Sunday week, UTC). The browser keeps the better of each (`mergeRecords`); nothing goes down.
 
-**Friends board:** Your League's middle option (`?board=friends`): you and the people you follow on this week's league points (`friends_board()`). A friend you invited shows as soon as they play signed in. Alone on it: a Find people button.
+**Friends board:** Your league's middle option (`?board=friends`): you and the people you follow on this week's league points (`friends_board()`). A friend you invited shows as soon as they play signed in. Alone on it: a Find people button.
 
 **Room colours:** in a room your finds stay lime; each teammate's are drawn in their own colour (`--mate-1` to `--mate-6`: orange, pink, sky, violet, blue, yellow), first come first, and their dot in the room list matches (`src/lib/mates.ts`).
 
-**Leagues:** signed in, Your League opens on the league (Segmented This week / Friends / This pack, `?board=pack`). A table of up to 20, seated on first look each week (Monday 00:00 UTC), in 1 of 5 tiers named for the medal metals: Bronze, Silver, Gold, Jade, Onyx (`src/lib/league.ts`).
+**Leagues:** signed in, Your league opens on the league (Segmented This week / Friends / This pack, `?board=pack`). A table of up to 20, seated on first look each week (Monday 00:00 UTC), in 1 of 5 tiers named for the medal metals: Bronze, Silver, Gold, Jade, Onyx (`src/lib/league.ts`).
 
 **Rare finds:** a word fewer than 1 in 10 of a puzzle's players found, once 20 or more have played it (`plays_rare`, from the counts in `word_finds` and `puzzle_players`). Fixed when the play is saved.
 
@@ -234,7 +234,7 @@ Profile section Badges (`#badges`): earned ones as `--fg` pills; on your own pag
 **Avatars:** drawn from parts in `src/avatar` . Saved as a code of positions, so part lists are append only.
 
 **Tab bar (phones, app pages):** a floating dock, 12 from the sides and the bottom plus the safe area, `--tabbar-h` 56 high, `--surface` with a 1px `--line-3` border, radius `--radius-dock` 22 and a hard lower edge of `--ledge` 4 in `--line-3`. Icons only, as Duolingo has: each tab is an icon 20 in its own colour (`--tab-home`, `--tab-people`, `--tab-league`, `--tab-you`), filled a shade lighter, its name for screen readers only; the active tab's 56 by 40 pill is outlined and tinted in its colour.
-- 4 slots: Home (house, `/play`), Your People (people, `/players`), Your League (trophy, `/leaderboard`), You (the player's own face).
+- 4 slots: Home (house, `/play`), Your people (people, `/players`), Your league (trophy, `/leaderboard`), You (the player's own face).
 - No Play tab: Home leads with the next puzzle, so a Play tab would be a second door to the same place.
 
 **Outfits, earned:** 5 player pieces are earned and nothing else is: everything that helps someone look like themselves stays free, always. The rules are in `src/avatar/earned.ts`, the drawings in `src/avatar/parts/kit.ts` and the outfit list, all append only.
@@ -278,7 +278,7 @@ Nothing was dropped. Sections are separated by space and a 2px rule on a list, n
 |---|---|---|---|---|
 | Leaders `/leaderboard` | See where you stand | Today's board for your crowd, your row pinned | Day buttons, the line about totals | Circles went to Players (One job a screen, below). "Find players" left the top: Players is a tab, and the empty Following board still links it |
 
-- PageHeader titles: "Your Puzzles", "Your People", "Your League", "You" (`/me`). Settings is "Your settings."
+- PageHeader titles: "Your puzzles", "Your people", "Your league", "You" (`/me`). Settings is "Your settings."
 - Leaders, signed in: the board opens on your crowd.
 - Leaders, Players, You: none that only group.
 
@@ -333,15 +333,15 @@ A stage, the way a runner game shows its characters: who you are is the front of
 - `<IconLink>`: a page action as a 44 square with a 1px `--line-3` border, radius `--radius-lg`.
 - On the path, closed packs fold into one row, "3 packs done" with an Award icon, which opens to show them.
 - You: the week (`<Week>`) is under the rows.
-- Your People holds every person.
-- Circles on Your People (`#circles`), signed in: h2 "Circles" with a secondary "Start a circle" to `/circles`, then each circle as a row (its name, "3 players") to `/c/CODE`, where that circle's board is.
-- Your League is one board at a time, and no circles: today's board for Everyone or Following (Segmented, signed in; `?board=following|everyone`; it opens on Following when you follow anyone).
+- Your people holds every person.
+- Circles on Your people (`#circles`), signed in: h2 "Circles" with a secondary "Start a circle" to `/circles`, then each circle as a row (its name, "3 players") to `/c/CODE`, where that circle's board is.
+- Your league is one board at a time, and no circles: today's board for Everyone or Following (Segmented, signed in; `?board=following|everyone`; it opens on Following when you follow anyone).
 - Your row on a board is pinned in view: it carries the "You" chip on `--surface-2` and sticks to the top or the foot of the screen while the board scrolls past, clear of the dock on a phone.
 - `/u/HANDLE` is the public page only, your own too: PageHeader "Player", earned badges, no records and no badges to aim for.
 
 **Packs are the only way in.** There is no list of games and no filter: the path is the game, and a pack not yet reached cannot be opened from Packs. A sponsored pack carries "With NAME" on its card.
 
-A puzzle played alone has no board of its own any more: its result carries no board link and Your League lists no puzzle boards. `/leaderboard/:id` still opens for old links, and every score is kept.
+A puzzle played alone has no board of its own any more: its result carries no board link and Your league lists no puzzle boards. `/leaderboard/:id` still opens for old links, and every score is kept.
 
 **Guests:** a guest plays 2 games to the end, of any kind. Opening a 3rd shows one screen in place of the game: the pet waving, h1 "Sign in to keep playing", one line saying nothing is lost, an accent "Sign in" to the first minute and a link back to Packs.
 
@@ -369,7 +369,7 @@ One passage of a catalogue puzzle, played as a game of its own: a clue of its pa
 
 - The days of clues are kept in this browser (`gazecraft-days`, UTC day numbers, the last 800).
 - A friend streak counts the days both played.
-- Your League is the board of the pack the player is on and nothing else (`<CaseRanks>`): the puzzle of the next clue on the path, or the first one, under its title, with a secondary "Play it".
+- Your league is the board of the pack the player is on and nothing else (`<CaseRanks>`): the puzzle of the next clue on the path, or the first one, under its title, with a secondary "Play it".
 - Reminders (`remind`, `remindStreak`) and the run line (`streakKeep`) speak of the pack: "Your pack is open.
 
 **Clue done** (`<ClueDone>`, a popup)
@@ -501,8 +501,8 @@ Navigation, on a phone: no bar across the top. Each screen is its title and one 
 | Puzzle, clue | Find the words | Done | Built |
 | Result | Say what happened and lead on | Next clue, or Share | Built: a popup at the finish of a clue, then one line and 2 buttons, the rest behind "More" |
 | You `/me` | Who you are: character and pet | Select, or Wear | Built. Holds the week, badges and records. `/u/HANDLE` is only what others see |
-| Your People `/players` | What your people did, and finding more | Cheer, follow, or play together | Built: a feed of cards (medals large, with a heart to cheer; notifications with their action as an icon), Your people / Top players. People to follow is a strip inside it: anyone on the game, online players first with a green dot and the count online; each card follows, or opens a room on your next puzzle and invites them (following them first). Friend streaks above, circles below, search behind the search icon (`#find`) |
-| Your League `/leaderboard` | Where you stand today | None: it is read | Built: one board at a time, your own row pinned in view |
+| Your people `/players` | What your people did, and finding more | Cheer, follow, or play together | Built: a feed of cards (medals large, with a heart to cheer; notifications with their action as an icon), Your people / Top players. People to follow is a strip inside it: anyone on the game, online players first with a green dot and the count online; each card follows, or opens a room on your next puzzle and invites them (following them first). Friend streaks above, circles below, search behind the search icon (`#find`) |
+| Your league `/leaderboard` | Where you stand today | None: it is read | Built: one board at a time, your own row pinned in view |
 | Settings | The account | Save | Built: account only. Reached from the gear on You |
 | First minute `/welcome` | Make a new player someone | Keep this look | Built: a new player lands in a clue, and the character and pet are asked after the first result |
 | Guest wall | Turn a guest into a player | Sign in | Built: after 2 games |

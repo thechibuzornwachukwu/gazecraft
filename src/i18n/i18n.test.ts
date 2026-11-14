@@ -95,3 +95,13 @@ describe('puzzle names', () => {
     }
   });
 });
+
+describe('the pseudo language', () => {
+  it('accents, pads and brackets a line, and keeps its slots', async () => {
+    const { pseudoize, fill } = await import('./index');
+    expect(pseudoize('Sign in')).toBe('[Sígñ íñ~~~~~~~]');
+    const long = pseudoize('{n} of {total} found');
+    expect(long.startsWith('[{n} öf {total} föüñd')).toBe(true);
+    expect(fill(long, { n: 2, total: 5 })).toContain('2 öf 5');
+  });
+});

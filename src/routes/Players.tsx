@@ -99,7 +99,7 @@ function YourCircles({ quiet }: { quiet: boolean }) {
       .then((l) => {
         if (!alive) return;
         const rows = (Array.isArray(l) ? l : []).filter((c) => c && typeof c.code === 'string' && c.code !== '');
-        setList(rows.map((c) => ({ code: c.code, name: c.name || t('Your circle'), members: count(c.members) })));
+        setList(rows.map((c) => ({ code: c.code, name: c.name || t('Circle'), members: count(c.members) })));
       })
       .catch(() => alive && setList('failed'));
     return () => {
@@ -140,7 +140,7 @@ function YourCircles({ quiet }: { quiet: boolean }) {
   );
 }
 
-/** /players, Your People: the feed, with friend streaks above it and circles below. Search is behind the icon. */
+/** /players, People: the feed, with friend streaks above it and circles below. Search is behind the icon. */
 export function Players() {
   const auth = useAuth();
   const run = useStreak();
@@ -192,7 +192,7 @@ export function Players() {
 
   return (
     <div className={styles.page}>
-      <PageHeader title={t('Your People')} action={finding ? <IconLink to="/players" icon={X} label={t('Close search')} /> : <IconLink to="/players#find" icon={Search} label={t('Find people')} />} />
+      <PageHeader title={t('People')} action={finding ? <IconLink to="/players" icon={X} label={t('Close search')} /> : <IconLink to="/players#find" icon={Search} label={t('Find people')} />} />
 
       {finding && (
         <section className={styles.section} aria-label={t('Search players')}>

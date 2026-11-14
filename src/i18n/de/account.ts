@@ -64,7 +64,7 @@ export const account: Dict = {
   'Keep my account': 'Konto behalten',
   'Sounds': 'Töne',
   'A soft tick per letter as you select, a chime when you find a word.': 'Ein leises Ticken pro Buchstabe beim Auswählen, ein Klang, wenn du ein Wort findest.',
-  'Your data': 'Deine Daten',
+  'Data': 'Daten',
   'Download my data': 'Meine Daten herunterladen',
   'That did not download. Try again.': 'Der Download ging nicht. Versuch es noch einmal.',
   'This browser cannot send reminders. On iPhone, add Gazecraft to your Home Screen and open it from there.': 'Dieser Browser kann keine Erinnerungen senden. Auf dem iPhone: Gazecraft zum Home-Bildschirm hinzufügen und dort öffnen.',

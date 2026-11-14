@@ -21,7 +21,7 @@ import styles from './Circles.module.css';
 
 const people = (n: number) => plural(n, '{n} player', '{n} players');
 
-/** The form to start a circle. Your circles are listed on Your People. */
+/** The form to start a circle. Your circles are listed on People. */
 export function Circles() {
   const auth = useAuth();
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ export function Circles() {
 
   return (
     <div className={board.page}>
-      <Link to="/players#circles" className={board.back} aria-label={t('Your People')}>
+      <Link to="/players#circles" className={board.back} aria-label={t('People')}>
         <Icon icon={ChevronLeft} size={20} />
       </Link>
       <h1 className={board.title}>{t('Start a circle')}</h1>

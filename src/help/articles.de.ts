@@ -163,7 +163,7 @@ export const HELP_ARTICLES_DE: readonly HelpArticle[] = [
       'Eine Woche beginnt am Montag um 00:00 UTC.',
       `Die letzten 5 steigen ab, aber nie in einer Tabelle mit weniger als ${LEAGUE_DOWN_FROM}.`,
       'Ein Rätsel noch einmal zu spielen bringt keine Ligapunkte.',
-      'Du kannst unter Deine Liga austreten und jederzeit wieder beitreten.',
+      'Du kannst unter Liga austreten und jederzeit wieder beitreten.',
     ],
     related: ['points'],
   },
@@ -220,7 +220,7 @@ export const HELP_ARTICLES_DE: readonly HelpArticle[] = [
     slug: 'friend-streaks',
     group: 'Friends',
     title: 'Was ist eine Serie mit Freunden?',
-    answer: 'Eine Serie, die du mit einem Freund hältst: Sie wächst an jedem Tag, an dem ihr beide ein Rätsel abschließt. Starte sie unter Deine Leute oder auf seiner Seite.',
+    answer: 'Eine Serie, die du mit einem Freund hältst: Sie wächst an jedem Tag, an dem ihr beide ein Rätsel abschließt. Starte sie unter Leute oder auf seiner Seite.',
     related: ['runs-and-rest-days'],
   },
   {

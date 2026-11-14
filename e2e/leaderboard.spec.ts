@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 
 test('Ranks is the board of the case the player is on, with a sign in prompt for a guest and no daily', async ({ page }) => {
   await page.goto('/leaderboard');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Your League');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('League');
   await expect(page.locator('[data-case-ranks]')).toBeVisible();
   await expect(page.getByText('Guest scores stay on this device and are never ranked.')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Previous day' })).toHaveCount(0);

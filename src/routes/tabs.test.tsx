@@ -127,9 +127,9 @@ beforeEach(() => emptyWorld());
 describe('Games', () => {
   it('a first visit shows the crew and the path, and no daily and no list of games', async () => {
     open('/play');
-    expect(title()).toBe('Your Puzzles');
+    expect(title()).toBe('Puzzles');
     expect(screen.queryByRole('link', { name: /Daily #\d+/ })).toBeNull();
-    expect(within(screen.getByRole('region', { name: 'Your path' })).getAllByRole('link').length).toBeGreaterThan(0);
+    expect(within(screen.getByRole('region', { name: 'Path' })).getAllByRole('link').length).toBeGreaterThan(0);
     expect(screen.queryByRole('region', { name: 'All games' })).toBeNull();
     expect(screen.getByRole('link', { name: /Change your look and your pet/ })).toHaveAttribute('href', '/me');
     expect(screen.queryByRole('link', { name: 'Make a puzzle' })).toBeNull();
@@ -145,7 +145,7 @@ describe('Games', () => {
     open('/play');
     expect(screen.queryByRole('link', { name: 'Make a puzzle' })).toBeNull();
     expect(screen.queryByText('Play today')).toBeNull();
-    expect(screen.getByRole('region', { name: 'Your path' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Path' })).toBeInTheDocument();
     expectNoHoles();
   });
 
@@ -158,9 +158,9 @@ describe('Games', () => {
 
   it('an old filter in the address changes nothing: there is no list to filter', () => {
     open('/play?f=Nothing');
-    expect(title()).toBe('Your Puzzles');
+    expect(title()).toBe('Puzzles');
     expect(screen.queryByRole('group', { name: 'Filter games' })).toBeNull();
-    expect(screen.getByRole('region', { name: 'Your path' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Path' })).toBeInTheDocument();
   });
 
   it('Cases is the daily and the path: no week, no board link, and Make only once it is unlocked', () => {
@@ -192,7 +192,7 @@ describe('Games', () => {
     world.api.myGameInvites = fail;
     open('/play');
     await Promise.resolve();
-    expect(screen.getByRole('region', { name: 'Your path' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Path' })).toBeInTheDocument();
     expectNoHoles();
   });
 });
@@ -206,7 +206,7 @@ describe('Leaders', () => {
       { rank: 2, handle: 'ada', score: 900, secs: 300, found: 8, total: 12 },
     ]);
     open('/leaderboard?board=pack');
-    expect(title()).toBe('Your League');
+    expect(title()).toBe('League');
     const board = await screen.findByRole('list', { name: 'Top scores' });
     const rows = within(board).getAllByRole('listitem');
     expect(rows.map((r) => r.textContent)).toEqual(['01@bisi12/121:351,650', '02@adaYou8/125:00900']);
@@ -253,7 +253,7 @@ describe('Players', () => {
   it('a guest: the top players feed, people to follow in it, and search behind an icon', async () => {
     world.api.suggestedPlayers = ok([{ handle: 'bisi', name: 'Bisi', plays: 0, followers: 0, mutuals: 0 }]);
     open('/players');
-    expect(title()).toBe('Your People');
+    expect(title()).toBe('People');
     expect(await screen.findByText('No medals won this month yet.')).toBeInTheDocument();
     const strip = screen.getByRole('region', { name: 'People to follow' });
     expect(within(strip).getByRole('link', { name: 'Sign in to follow Bisi' })).toHaveAttribute('href', '/signin?next=%2Fu%2Fbisi');
@@ -262,7 +262,7 @@ describe('Players', () => {
     expect(find).toHaveAttribute('href', '/players#find');
     expect(find.textContent).toBe('');
     expect(screen.queryByRole('textbox')).toBeNull();
-    expect(screen.queryByRole('radio', { name: 'Your people' })).toBeNull();
+    expect(screen.queryByRole('radio', { name: 'Following' })).toBeNull();
     expectNoHoles();
   });
 
@@ -463,7 +463,7 @@ describe('A player\'s page', () => {
   });
 });
 
-describe('the league on Your League', () => {
+describe('the league on League', () => {
   const LEAGUE = {
     tier: 1,
     players: 7,
@@ -490,7 +490,7 @@ describe('the league on Your League', () => {
     expect(await screen.findByRole('link', { name: 'Find people' })).toHaveAttribute('href', '/players#find');
   });
 
-  it('signed in, Your League opens on the league: the tier, the table, the top 5 marked up and nothing marked down', async () => {
+  it('signed in, League opens on the league: the tier, the table, the top 5 marked up and nothing marked down', async () => {
     world.me = ADA;
     world.api.fetchMyLeague = ok(LEAGUE);
     open('/leaderboard');

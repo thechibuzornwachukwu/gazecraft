@@ -71,7 +71,7 @@ export const play = {
   'Invite': 'Invitar',
   'Leave': 'Salir',
   'Best week: {points} points.': 'Mejor semana: {points} puntos.',
-  'Your Puzzles': 'Tus puzles',
+  'Puzzles': 'Puzles',
   'Make a puzzle': 'Crear un puzle',
   'Made by players': 'Hechos por jugadores',
   'Change your look and your pet': 'Cambia tu aspecto y tu mascota',
@@ -134,7 +134,7 @@ export const play = {
   'Lies': 'Mentiras',
   'Sets': 'Grupos',
   '{found} of {total} found': '{found} de {total} encontradas',
-  'Your path': 'Tu camino',
+  'Path': 'Camino',
   'Puzzle {n}': 'Puzle {n}',
   'puzzle {n}': 'puzle {n}',
   'Done. Play again.': 'Hecho. Juega otra vez.',
@@ -199,4 +199,5 @@ export const play = {
   'Copy link': 'Copiar enlace',
   'Contains answers': 'Contiene respuestas',
   'runs that add up to {n}': 'series que suman {n}',
+  'Published': 'Publicados',
 } as const;

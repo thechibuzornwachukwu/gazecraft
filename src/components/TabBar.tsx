@@ -13,7 +13,7 @@ import styles from './TabBar.module.css';
 
 /**
  * Phones only: a slim dock of icons, as Duolingo has. Each tab says what it is by its icon alone, and carries its
- * name for screen readers. Home, Your People, Your League, You. No Play tab: Home leads with the next puzzle, so a
+ * name for screen readers. Home, People, League, You. No Play tab: Home leads with the next puzzle, so a
  * Play tab would be a second door to the same place. Desktop keeps the header links.
  * It slides below the screen on a scroll down and back on any scroll up, as the header does.
  */
@@ -22,7 +22,7 @@ export function TabBar() {
   const { profile } = useAuth();
   const ref = useRef<HTMLElement>(null);
   const tucked = useTucked(ref, pathname, true);
-  // Something new for you: a dot on Your People, where it is told. Read there, so it never shows there.
+  // Something new for you: a dot on People, where it is told. Read there, so it never shows there.
   const unread = useUnread(pathname);
   const news = unread > 0 && pathname !== '/players';
   // You: the player's own character, or a guest's.
@@ -32,8 +32,8 @@ export function TabBar() {
   return (
     <nav ref={ref} className={[styles.bar, tucked && styles.tucked].filter(Boolean).join(' ')} aria-label={t('Tabs')} data-tucked={tucked || undefined}>
       <Tab to="/play" icon={<Icon icon={House} size={20} />} label={t('Home')} hue="home" />
-      <Tab to="/players" icon={<Icon icon={Users} size={20} />} hue="people" label={news ? t('Your People, {n} new', { n: unread }) : t('Your People')} dot={news} />
-      <Tab to="/leaderboard" icon={<Icon icon={Trophy} size={20} />} label={t('Your League')} hue="league" />
+      <Tab to="/players" icon={<Icon icon={Users} size={20} />} hue="people" label={news ? t('People, {n} new', { n: unread }) : t('People')} dot={news} />
+      <Tab to="/leaderboard" icon={<Icon icon={Trophy} size={20} />} label={t('League')} hue="league" />
       <Tab to="/me" icon={profile ? <Avatar handle={profile.handle} size={28} /> : <Avatar parts={starter} size={28} />} label={t('You')} hue="you" active={onYou} />
     </nav>
   );

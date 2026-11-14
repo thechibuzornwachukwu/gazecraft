@@ -88,7 +88,7 @@
   --pack-naija: #3ec486; --pack-football: #4fd1dc; --pack-general: #6aa3ff; --pack-science: #9b8cff;
   --pack-ai: #d48cff; --pack-health: #ff8bb0; --pack-bible: #f06a5a; --pack-names: #ff9f43;
   --pack-history: #f2c94c; --pack-other: #6aa3ff;
-  /* A cheer on a medal: warm, and the one red on Your People. */
+  /* A cheer on a medal: warm, and the one red on Your people. */
   --cheer: var(--pack-bible);
   /* Teammates in a room, first come first: never lime, which is yours. Each 5:1 or more with --paper-ink. */
   --mate-1: #ff9f43; --mate-2: #ff8bb0; --mate-3: #4fd1dc; --mate-4: #9b8cff; --mate-5: #6aa3ff; --mate-6: #f2c94c;

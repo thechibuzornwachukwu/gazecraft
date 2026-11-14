@@ -62,7 +62,7 @@ export const account = {
   'Keep my account': 'Conservar mi cuenta',
   'Sounds': 'Sonidos',
   'A soft tick per letter as you select, a chime when you find a word.': 'Un clic suave por letra al seleccionar, y una campanita al encontrar una palabra.',
-  'Your data': 'Tus datos',
+  'Data': 'Datos',
   'Download my data': 'Descargar mis datos',
   'That did not download. Try again.': 'No se pudo descargar. Inténtalo otra vez.',
   'This browser cannot send reminders. On iPhone, add Gazecraft to your Home Screen and open it from there.': 'Este navegador no puede enviar recordatorios. En iPhone, añade Gazecraft a tu pantalla de inicio y ábrelo desde ahí.',

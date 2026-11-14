@@ -66,7 +66,7 @@ function safePath(catalogue: readonly JourneyGame[]): Path {
  * line. A list of links in order. Done clues can be replayed, the next one carries the player's avatar, the rest
  * are locked. A closed case is a link to its whole puzzle.
  */
-export function Journey({ catalogue = games, path, done, stars, title = t('Your path'), className }: Props) {
+export function Journey({ catalogue = games, path, done, stars, title = t('Path'), className }: Props) {
   const { profile, enabled } = useAuth();
   const navigate = useNavigate();
   const headId = useId();
@@ -290,7 +290,7 @@ export function Journey({ catalogue = games, path, done, stars, title = t('Your 
   return (
     <section className={[styles.journey, className].filter(Boolean).join(' ')} aria-labelledby={headId} data-journey={state}>
       <header className={styles.head}>
-        <h2 id={headId} className={styles.title}>
+        <h2 id={headId} className={styles.srOnly}>
           {title}
         </h2>
         {view.total > 0 && (

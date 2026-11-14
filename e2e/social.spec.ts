@@ -31,7 +31,7 @@ test('friend streak: a link starts it in one tap, and either side can end it', a
   await newPlayer(page, 'Ada');
   // A new player has not unlocked friend streaks yet (1 daily). The direct link always works.
   await page.goto('/players');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Your People');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('People');
   await expect(page.getByRole('region', { name: 'Friend streaks' })).toHaveCount(0);
   await page.goto('/players#friend-streaks');
   const mine = page.getByRole('region', { name: 'Friend streaks' });
@@ -100,7 +100,7 @@ test('make a puzzle: every word is checked as you type', async ({ page }) => {
   await newPlayer(page, 'Maker');
   // The link on the games screen appears after 5 plays. The address always works.
   await page.goto('/play');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Your Puzzles');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Puzzles');
   await expect(page.getByRole('link', { name: 'Make a puzzle' })).toHaveCount(0);
   await page.goto('/make');
   await expect(page).toHaveURL(/\/make$/);
@@ -137,7 +137,7 @@ test('puzzle board switches between Solo and Together', async ({ page }) => {
   await audit(page, 'together board');
 });
 
-test('Your People: a follow puts a dot on the tab and a line in the feed; a cheer reaches the medal', async ({ page, browser }) => {
+test('People: a follow puts a dot on the tab and a line in the feed; a cheer reaches the medal', async ({ page, browser }) => {
   const me = await newPlayer(page, 'Zainab');
   await page.goto('/players');
   await expect(page.getByRole('region', { name: 'Feed' })).toBeVisible();
@@ -157,7 +157,7 @@ test('Your People: a follow puts a dot on the tab and a line in the feed; a chee
   await expect(row).toBeVisible();
   await expect(row.getByRole('link')).toHaveAttribute('href', /^\/u\/emeka_/);
   await audit(page, 'your people');
-  // No page of its own any more: the old address opens Your People.
+  // No page of its own any more: the old address opens People.
   await page.goto('/notifications');
   await expect(page).toHaveURL(/\/players$/);
   await expect(page.locator('header').getByRole('link', { name: /Notifications/ })).toHaveCount(0);
@@ -166,7 +166,7 @@ test('Your People: a follow puts a dot on the tab and a line in the feed; a chee
 test.describe('phone', () => {
   test.use({ hasTouch: true, isMobile: true, viewport: { width: 375, height: 740 } });
 
-  test('something new puts a dot on Your People, and opening it clears the dot', async ({ page, browser }) => {
+  test('something new puts a dot on People, and opening it clears the dot', async ({ page, browser }) => {
     const me = await newPlayer(page, 'Tolu');
     const ctx = await browser.newContext();
     const other = await ctx.newPage();
@@ -178,11 +178,11 @@ test.describe('phone', () => {
 
     await page.goto('/play');
     const tabs = page.getByRole('navigation', { name: 'Tabs' });
-    await tabs.getByRole('link', { name: 'Your People, 1 new' }).click();
+    await tabs.getByRole('link', { name: 'People, 1 new' }).click();
     await expect(page).toHaveURL(/\/players$/);
     await expect(page.getByRole('article').filter({ hasText: 'Kemi followed you.' })).toBeVisible();
     await page.goto('/play');
-    await expect(tabs.getByRole('link', { name: 'Your People', exact: true })).toBeVisible();
+    await expect(tabs.getByRole('link', { name: 'People', exact: true })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   });
 });

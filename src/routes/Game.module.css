@@ -30,6 +30,8 @@
 }
 .metaEnd {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   align-items: center;
   gap: var(--space-3);
 }
@@ -58,7 +60,6 @@
 }
 .level {
   color: var(--subtle);
-  white-space: nowrap;
 }
 .titleRow {
   display: flex;

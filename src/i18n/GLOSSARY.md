@@ -7,8 +7,8 @@ One word per thing, in every language. Screens, help and copy pools use these.
 | Puzzles (the home tab) | Puzles | Puzzles | Rätsel |
 | puzzle | puzle | puzzle | Rätsel |
 | pack | paquete | paquet | Paket |
-| Your People | Tu gente | Tes amis | Deine Leute |
-| Your League | Tu liga | Ta ligue | Deine Liga |
+| People (the tab) | Gente | Amis | Leute |
+| League (the tab) | Liga | Ligue | Liga |
 | You | Tú | Toi | Du |
 | Settings | Ajustes | Réglages | Einstellungen |
 | Make | Crear | Créer | Erstellen |

@@ -211,7 +211,7 @@ describe('the dock', () => {
   const links = () => within(screen.getByRole('navigation', { name: 'Tabs' })).getAllByRole('link');
   it('4 coloured icons, no words, and no second door to Home', () => {
     dock();
-    expect(links().map((a) => a.getAttribute('aria-label'))).toEqual(['Home', 'Your People', 'Your League', 'You']);
+    expect(links().map((a) => a.getAttribute('aria-label'))).toEqual(['Home', 'People', 'League', 'You']);
     expect(links().map((a) => a.getAttribute('data-hue'))).toEqual(['home', 'people', 'league', 'you']);
     expect(links().every((a) => a.textContent === '')).toBe(true);
     expect(new Set(links().map((a) => a.getAttribute('href'))).size).toBe(4);

@@ -1,6 +1,8 @@
 .button {
-  height: 48px;
-  padding: 0 var(--space-5);
+  /* A floor, not a fixed height: a label that runs long in another language wraps and the button grows. */
+  min-height: 48px;
+  max-width: 100%;
+  padding: var(--space-2) var(--space-5);
   border-radius: var(--radius-lg);
   border: none;
   display: inline-flex;
@@ -9,8 +11,9 @@
   gap: var(--space-2);
   font-size: 15px;
   font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
+  line-height: 1.2;
+  text-align: center;
+  text-wrap: balance;
   cursor: pointer;
   text-decoration: none;
   transition:
@@ -28,13 +31,13 @@
   opacity: 0.6;
 }
 .sm {
-  height: 36px;
-  padding: 0 var(--space-4);
+  min-height: 36px;
+  padding: var(--space-1) var(--space-4);
   font-size: 14px;
 }
 .touch {
-  height: 44px;
-  padding: 0 var(--space-3h);
+  min-height: 44px;
+  padding: var(--space-1) var(--space-3h);
   font-size: 14px;
 }
 

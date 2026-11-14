@@ -166,7 +166,7 @@ export const HELP_ARTICLES_ES: readonly HelpArticle[] = [
       'La semana empieza el lunes a las 00:00 UTC.',
       `Los 5 últimos bajan de división, pero nunca en una tabla de menos de ${LEAGUE_DOWN_FROM}.`,
       'Repetir un puzle no da puntos de liga.',
-      'Puedes salir desde Tu liga y volver a entrar cuando quieras.',
+      'Puedes salir desde Liga y volver a entrar cuando quieras.',
     ],
     related: ['points'],
   },
@@ -225,7 +225,7 @@ export const HELP_ARTICLES_ES: readonly HelpArticle[] = [
     slug: 'friend-streaks',
     group: 'Friends',
     title: '¿Qué es una racha con un amigo?',
-    answer: 'Una racha que llevas con un amigo: crece cada día que los dos terminan un puzle. Empieza una desde Tu gente o desde su página.',
+    answer: 'Una racha que llevas con un amigo: crece cada día que los dos terminan un puzle. Empieza una desde Gente o desde su página.',
     related: ['runs-and-rest-days'],
   },
 

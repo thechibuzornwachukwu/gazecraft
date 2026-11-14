@@ -87,8 +87,10 @@
    The landing page's section links are a scroll away, and the app's links live in the tab bar. */
 @media (max-width: 640px) {
   .inner {
-    flex-wrap: nowrap;
+    /* One row in every language today; a label that ever runs long drops the buttons under the logo, never off the edge. */
+    flex-wrap: wrap;
     column-gap: var(--space-3);
+    row-gap: var(--space-2);
   }
   .nav,
   .appOnly,

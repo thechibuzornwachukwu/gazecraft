@@ -129,7 +129,7 @@ export function Leaderboard() {
   const board = !signedIn ? 'pack' : asked === 'pack' || asked === 'friends' ? asked : 'league';
   return (
     <div className={styles.page}>
-      <PageHeader title={t('Your League')} />
+      <PageHeader title={t('League')} />
       {signedIn && (
         <div className={styles.switch}>
           <Segmented
@@ -333,7 +333,7 @@ export function GameLeaderboard() {
 
   return (
     <div className={styles.page}>
-      <Link to="/leaderboard" className={styles.back} aria-label={t('Your League')}>
+      <Link to="/leaderboard" className={styles.back} aria-label={t('League')}>
         <Icon icon={ChevronLeft} size={20} />
       </Link>
       <h1 className={styles.title}>

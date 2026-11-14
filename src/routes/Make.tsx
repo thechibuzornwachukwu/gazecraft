@@ -344,7 +344,7 @@ export function Make() {
 
       <section className={styles.section} aria-labelledby="mine-title">
         <h2 id="mine-title" className={styles.h2}>
-          {t('Your puzzles')}
+          {t('Published')}
         </h2>
         {mine == null ? (
           <SkeletonList rows={3} />

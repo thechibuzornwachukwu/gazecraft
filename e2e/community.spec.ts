@@ -8,7 +8,7 @@ test('players page: search by handle, wildcards find nothing, lists render', asy
   await other.close();
 
   await page.goto('/players');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Your People');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('People');
   // The feed leads, with people to follow inside it. Search is behind an icon.
   await expect(page.getByRole('region', { name: 'Feed' })).toBeVisible();
   await expect(page.getByRole('region', { name: 'People to follow' })).toBeVisible();

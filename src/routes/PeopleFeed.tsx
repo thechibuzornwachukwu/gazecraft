@@ -248,7 +248,7 @@ function FeedSkeleton() {
 const STRIP_AT = 3;
 
 /**
- * The feed (SPEC section 6, Your People): medals lately won by you, the people you follow, or the top players,
+ * The feed (SPEC section 6, People): medals lately won by you, the people you follow, or the top players,
  * each as a card that can be cheered, with what happened to you in among them. Opening it reads your notifications.
  */
 export function PeopleFeed({ me, myHandle, suggested }: { me?: string; myHandle?: string; suggested: PlayerRef[] }) {
@@ -280,7 +280,7 @@ export function PeopleFeed({ me, myHandle, suggested }: { me?: string; myHandle?
     <section className={styles.feed} aria-label={t('Feed')}>
       {me && (
         <div className={styles.switch}>
-          <Segmented label={t('Whose news')} hideLabel options={[['friends', t('Your people')], ['world', t('Top players')]] as const} value={scope} onChange={setScope} />
+          <Segmented label={t('Whose news')} hideLabel options={[['friends', t('Following')], ['world', t('Top players')]] as const} value={scope} onChange={setScope} />
         </div>
       )}
       {/* People to follow never wait on the feed: whoever is on the game can be found while it loads. */}

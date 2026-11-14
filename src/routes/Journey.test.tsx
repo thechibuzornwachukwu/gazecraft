@@ -55,7 +55,7 @@ describe('Journey', () => {
     expect([...container.querySelectorAll('[data-clue]')].map((el) => el.getAttribute('data-clue'))).toEqual(ids);
     expect(states(container)).toEqual(['next', ...ids.slice(1).map(() => 'locked')]);
     expect(container.querySelector('[data-journey]')!.getAttribute('data-journey')).toBe('going');
-    expect(screen.getByRole('heading', { level: 2, name: 'Your path' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'Path' })).toBeInTheDocument();
     expect(screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent)).toEqual(path.cases.map((c) => titleOf(c.id)));
     expect(text(container)).toContain(`0 of ${all.length} puzzles`);
   });
@@ -244,7 +244,7 @@ describe('Journey: empty and missing', () => {
     expect(container.querySelectorAll('[data-case]')).toHaveLength(0);
     expect(screen.queryByRole('link')).toBeNull();
     expect(screen.queryByRole('progressbar')).toBeNull();
-    expect(screen.getByRole('heading', { level: 2, name: 'Your path' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'Path' })).toBeInTheDocument();
   });
 
   it('a malformed path falls back to one built from the catalogue', () => {

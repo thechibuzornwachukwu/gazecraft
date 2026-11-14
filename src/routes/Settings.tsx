@@ -248,7 +248,7 @@ function MyData({ handle }: { handle: string }) {
   return (
     <section className={styles.section} aria-labelledby="s-data">
       <h2 id="s-data" className={styles.h2}>
-        {t('Your data')}
+        {t('Data')}
       </h2>
       <div className={styles.row}>
         <Button variant="secondary" onClick={download} disabled={state === 'busy'}>

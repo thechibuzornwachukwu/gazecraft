@@ -163,7 +163,7 @@ export const HELP_ARTICLES_FR: readonly HelpArticle[] = [
       'Une semaine commence le lundi à 00:00 UTC.',
       `Les 5 derniers descendent d’une division, mais jamais dans un tableau de moins de ${LEAGUE_DOWN_FROM}.`,
       'Rejouer un puzzle ne rapporte aucun point de ligue.',
-      'Tu peux quitter la ligue depuis Ta ligue, et revenir quand tu veux.',
+      'Tu peux quitter la ligue depuis Ligue, et revenir quand tu veux.',
     ],
     related: ['points'],
   },
@@ -220,7 +220,7 @@ export const HELP_ARTICLES_FR: readonly HelpArticle[] = [
     slug: 'friend-streaks',
     group: 'Friends',
     title: 'C’est quoi, une série entre amis ?',
-    answer: 'Une série que tu tiens avec un ami : elle grandit chaque jour où vous finissez tous les deux un puzzle. Lance-la depuis Tes amis ou depuis sa page.',
+    answer: 'Une série que tu tiens avec un ami : elle grandit chaque jour où vous finissez tous les deux un puzzle. Lance-la depuis Amis ou depuis sa page.',
     related: ['runs-and-rest-days'],
   },
   {

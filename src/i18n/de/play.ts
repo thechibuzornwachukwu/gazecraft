@@ -73,7 +73,7 @@ export const play: Dict = {
   'Invite': 'Einladen',
   'Leave': 'Verlassen',
   'Best week: {points} points.': 'Beste Woche: {points} Punkte.',
-  'Your Puzzles': 'Deine Rätsel',
+  'Puzzles': 'Rätsel',
   'Make a puzzle': 'Ein Rätsel erstellen',
   'Made by players': 'Von Spielern',
   'Change your look and your pet': 'Ändere dein Aussehen und dein Haustier',
@@ -136,7 +136,7 @@ export const play: Dict = {
   'Lies': 'Lügen',
   'Sets': 'Gruppen',
   '{found} of {total} found': '{found} von {total} gefunden',
-  'Your path': 'Dein Weg',
+  'Path': 'Weg',
   'Puzzle {n}': 'Rätsel {n}',
   'puzzle {n}': 'Rätsel {n}',
   'Done. Play again.': 'Geschafft. Noch mal spielen.',
@@ -201,4 +201,5 @@ export const play: Dict = {
   'Copy link': 'Link kopieren',
   'Contains answers': 'Enthält Antworten',
   'runs that add up to {n}': 'Reihen, die {n} ergeben',
+  'Published': 'Veröffentlicht',
 };
