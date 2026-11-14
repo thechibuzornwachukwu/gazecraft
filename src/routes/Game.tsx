@@ -13,7 +13,7 @@ import { clueId, clueKind } from '../engine/journey';
 import { ClueDone } from '../components/ClueDone';
 import { Partner } from '../components/Partner';
 import { HINT_OF, partnerName } from '../engine/partners';
-import { caseIcon } from '../games/cases';
+import { baseCategory, caseIcon } from '../games/cases';
 import { doneClues, nextClueTo } from '../games/path';
 import { packHue } from '../lib/packHue';
 import { countPuzzleToday } from '../lib/goal';
@@ -400,7 +400,7 @@ function GameScreen({ def, part }: ScreenProps) {
   const resultLine = perfect ? t('Every answer found.') : t('The ones you missed are shaded below.');
 
   return (
-    <div className={styles.screen} style={{ '--pack': packHue(def.category) } as CSSProperties}>
+    <div className={styles.screen} style={{ '--pack': packHue(baseCategory(def.category)) } as CSSProperties}>
       <div className={styles.top}>
         <div className={styles.meta}>
           <Link to="/play" className={styles.back} aria-label={t('Packs')}>

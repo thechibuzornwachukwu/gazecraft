@@ -11,7 +11,7 @@ import { pick } from '../copy';
 import { nextAt, partnerName, PARTNERS } from '../engine/partners';
 import { caseFiles, type CaseFile } from '../games/cases';
 import { doneClues } from '../games/path';
-import { t, num } from '../i18n';
+import { lang, t, num } from '../i18n';
 import { useAuth } from '../lib/auth';
 import { useMediaQuery } from '../lib/media';
 import { packHue } from '../lib/packHue';
@@ -73,23 +73,38 @@ export function Games() {
   const [passed, setPassed] = useState(false);
   const pet = usePartner();
 
+  // Your language first (BUILD_PLAN set 12a): in Spanish, French or German the deck holds the puzzles written in
+  // it, and the English packs wait on their own shelf. A hidden word cannot be translated, so they stay English.
+  const mine = useMemo(() => (lang === 'en' ? all : all.filter((c) => c.lang === lang)), [all]);
+  const english = useMemo(() => (lang === 'en' ? [] : all.filter((c) => !c.lang)), [all]);
   // The deck is what is left to do; once every case is closed, it is all of them again.
   const deck = useMemo(() => {
-    const left = all.filter((c) => c.state !== 'closed');
-    return left.length ? left : all;
-  }, [all]);
+    const own = mine.length ? mine : all;
+    const left = own.filter((c) => c.state !== 'closed');
+    return left.length ? left : own;
+  }, [mine, all]);
   const first = deck[0];
   const name = partnerName(pet.current);
   const say = passed
     ? t('No problem. How about this one?')
     : first?.state === 'going'
       ? t('Welcome back! {title} is waiting. Swipe right to go on.', { title: first.title })
-      : all.length > 0 && all.every((c) => c.state === 'closed')
+      : deck.length > 0 && deck.every((c) => c.state === 'closed')
         ? t('Every case is closed. Play any of them again.')
         : t('Hi, detective! I am {pet}. Swipe right on a case you like.', { pet: name });
 
   const together = (c: CaseFile) => navigate(`/play/${c.id}?room=${newRoomCode()}`);
-  const shelfList = <Shelf cases={all} onPick={() => setShelf(false)} />;
+  const shelfList = (
+    <>
+      <Shelf cases={mine.length ? mine : all} onPick={() => setShelf(false)} />
+      {mine.length > 0 && english.length > 0 && (
+        <>
+          <h3 className={styles.shelfPart}>{t('Practise English')}</h3>
+          <Shelf cases={english} onPick={() => setShelf(false)} />
+        </>
+      )}
+    </>
+  );
 
   return (
     <div className={styles.screen}>

@@ -14,7 +14,22 @@ import { games, getPassage, getPuzzle, SPECIAL_SOURCES, sponsorFor } from './cat
 const ICON: Record<string, string> = {
   Bible: 'sun', Science: 'microscope', AI: 'brain', History: 'comet', General: 'rainbow', Names: 'star', Football: 'soccer-ball', Health: 'stethoscope', Naija: 'fire',
 };
-export const caseIcon = (category: string): string => `/icons/fluent/${ICON[category] ?? 'star'}.webp`;
+/**
+ * A puzzle written in Spanish, French or German names its category in that language. Each maps to the English
+ * category nearest it, for the pack's colour, and to an icon of its own, so a shelf of them is not one blue star.
+ */
+const LOCAL: Record<string, readonly [base: string, icon: string]> = {
+  Animales: ['General', 'zebra'], Animaux: ['General', 'zebra'], Tiere: ['General', 'zebra'],
+  Colores: ['General', 'rainbow'], Couleurs: ['General', 'rainbow'],
+  Frutas: ['Health', 'red-apple'], Comida: ['Health', 'watermelon'], Cuisine: ['Health', 'watermelon'],
+  Cuerpo: ['Health', 'anatomical-heart'], Corps: ['Health', 'anatomical-heart'], Körper: ['Health', 'anatomical-heart'],
+  Países: ['History', 'airplane'], Pays: ['History', 'airplane'],
+  Ciudades: ['History', 'bus'], Villes: ['History', 'bus'],
+  Nombres: ['Names', 'star'], Prénoms: ['Names', 'star'], Namen: ['Names', 'star'],
+};
+/** The English category a pack is coloured by. */
+export const baseCategory = (category: string): string => LOCAL[category]?.[0] ?? category;
+export const caseIcon = (category: string): string => `/icons/fluent/${LOCAL[category]?.[1] ?? ICON[category] ?? 'star'}.webp`;
 
 /** A piece of the teaser sentence: plain text, or the hidden word that shows. */
 export type Piece = { text: string; hit: boolean };
@@ -42,6 +57,8 @@ export type CaseFile = {
   find: string;
   /** Who the pack is with ("With NAME"), when it is. */
   sponsor: string;
+  /** The language the puzzle is written in, when it is not English. */
+  lang?: string;
 };
 
 /** The first sentence of a puzzle that holds a whole answer, split around it. */
@@ -89,7 +106,7 @@ export function caseFiles(done: Iterable<string>): CaseFile[] {
       id: def.id,
       title: titleOf(def.id, def.title),
       category: categoryName(def.category),
-      categoryKey: def.category,
+      categoryKey: baseCategory(def.category),
       icon: caseIcon(def.category),
       done: doneCount,
       total: mine.length,
@@ -100,6 +117,7 @@ export function caseFiles(done: Iterable<string>): CaseFile[] {
       word,
       find: words ? '' : t('Find {what}', { what: opens!.noun }),
       sponsor: sponsorFor(def)?.name ?? '',
+      lang: def.lang,
     });
   });
   const rank = { going: 0, new: 1, closed: 2 } as const;

@@ -234,4 +234,5 @@ export const play = {
   'Evidence': 'Pruebas',
   'Puzzle solved': 'Puzle resuelto',
   'points': 'puntos',
+  'Practise English': 'Practica inglés',
 } as const;

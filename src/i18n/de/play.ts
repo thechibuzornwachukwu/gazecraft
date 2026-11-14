@@ -236,4 +236,5 @@ export const play: Dict = {
   'Evidence': 'Beweise',
   'Puzzle solved': 'Rätsel gelöst',
   'points': 'Punkte',
+  'Practise English': 'Englisch üben',
 };

@@ -199,6 +199,11 @@
   color: var(--fg);
   cursor: pointer;
 }
+/* The English packs, under a language's own: a small heading, the same tiles. */
+.shelfPart {
+  composes: h3 from '../styles/type.module.css';
+  margin: var(--space-5) 0 0;
+}
 .shelf {
   margin: 0;
   padding: 0;
