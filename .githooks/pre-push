@@ -3,16 +3,26 @@
 # Same checks the workflow had: secrets, lint, types, unit tests, dependency audit.
 # The database security suite needs Docker; run it yourself with `npm run test:db` after DB changes.
 echo "Checking before push. This takes a few minutes."
+
 # On Windows, Git runs this hook in Git Bash, where Vitest loads its setup twice and every file fails with
 # "failed to find the current suite". The same checks pass from PowerShell, so they run there.
-if command -v powershell.exe >/dev/null 2>&1; then
-  powershell.exe -NoProfile -NonInteractive -Command "npm run verify; exit \$LASTEXITCODE"
-else
-  npm run verify
-fi
-status=$?
-if [ "$status" -ne 0 ]; then
+verify() {
+  if command -v powershell.exe >/dev/null 2>&1; then
+    powershell.exe -NoProfile -NonInteractive -Command "npm run verify; exit \$LASTEXITCODE"
+  else
+    npm run verify
+  fi
+}
+
+# Vitest starts a process per test file, and on a busy Windows machine a few of those starts time out
+# ("Failed to start forks worker"): every test that ran passed, yet the run fails. One more run clears it.
+# A real failure fails both times.
+if ! verify; then
   echo
-  echo "Push stopped. Fix the problem above, then push again."
-  exit 1
+  echo "The checks failed. Running them once more, in case a test worker failed to start."
+  if ! verify; then
+    echo
+    echo "Push stopped. Fix the problem above, then push again."
+    exit 1
+  fi
 fi
