@@ -18,7 +18,7 @@ Read the doc for the area you touch, and only that one:
 ## Commands
 
 - Dev: `npm run dev`. Worker: `npm run worker:dev`.
-- Check everything: `npm run verify` (secrets, lint, types, unit tests, audit). The pre-push hook runs it.
+- Check everything: `npm run verify` (secrets, lint, types, unit tests, audit). The pre-push hook runs it. Run a push on its own: a deploy or another test run beside it can crash a test worker ("Unhandled Errors") and stop the push.
 - Unit tests: run Vitest from PowerShell, never Git Bash. In Git Bash every file fails with "failed to find the current suite". Read the `Test Files` line, not only the exit code.
 - Database tests: `npm run test:db`, with Docker running. Required after any change in `supabase/migrations`.
 - Deploy, in this order: `npx supabase db push`, `npm run deploy:api`, `npm run deploy:site`.
