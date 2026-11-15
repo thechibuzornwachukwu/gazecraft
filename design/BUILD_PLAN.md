@@ -8,6 +8,22 @@ Each item names who champions it. **Opus**: engines, the server, data, money, an
 
 One set at a time. Each set is small, works on its own and leaves the live game whole. After each set: lint, typecheck, unit tests and the browser tests pass.
 
+### 13. V3 to the letter
+
+The screens took the headline of each artboard in `design/canvas/` but not the whole of it: they were compared as stripped text, never as pictures. Rebuild one screen at a time until a screenshot of the app matches a screenshot of its artboard, phone and desktop, side by side, and show the owner the pair.
+
+Cheapest way: screenshot the 16 artboards once from the published canvas (https://claude.ai/artifact/JbKLCbSBKMWk8APcB2aLUw) in the owner's browser into `design/canvas/shots/`, so later work compares images and never re-reads the markup. One screen per session.
+
+- [ ] **Sonnet.** **13a. Puzzle.** The magnifier lens over the letters; FOUND stamped on the found word, not the card corner; ticks on found letters; the Evidence board as the artboard draws it (a slot per word, dots per letter), not the old list renamed.
+- [ ] **Sonnet.** **13b. Result.** The case file cover flips open (thud); star art; "Where the last one hid" and "3 still hiding" as the artboard draws them, not the old carousel; the new share sheet.
+- [ ] **Sonnet.** **13c. People, signed in.** The nudge card (a friend wants to play), the friend streak card with its high five, medal rows with cheer counts. Today the old cards are restyled.
+- [ ] **Sonnet.** **13d. You.** Stickers to peel (outfits and gear), the pets on the stage tappable, pins on the avatar, Settings in a sheet.
+- [ ] **Sonnet.** **13e. League.** See the top / Back to me, the end-of-week stamp (UP TO SILVER! or STAYED IN BRONZE), the Play button. Decide whether the This week / Friends / This pack switch stays.
+- [ ] **Sonnet.** **13f. Sign in.** Step dots in the header, a title per step, the OFFICIAL stamp on the badge when saved, the welcome step.
+- [ ] **Sonnet.** **13g. Puzzles and Landing, the details.** Open the case after a pick; the found tally in the landing bubble and ticks on found letters.
+- [ ] **Sonnet.** **13h. Desktop.** Every desktop artboard; only Landing and Puzzles were checked at 1280.
+- [ ] **Sonnet.** **13i. Loading.** Skeletons in the V3 shapes (case card, lanes, badge), not the old rows.
+
 ### 12. Your language first
 
 A Spanish player today gets the 8 Spanish puzzles first, then all 25 English packs with "(en inglés)" on them. A hidden-word sentence cannot be translated: each one is written in its own language, so every language needs its own puzzles.
