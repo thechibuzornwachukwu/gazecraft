@@ -14,6 +14,7 @@ import { ClueDone } from '../components/ClueDone';
 import { Partner } from '../components/Partner';
 import { HINT_OF, partnerName } from '../engine/partners';
 import { baseCategory, caseIcon, kindName } from '../games/cases';
+import { scoreLines } from '../engine/score';
 import { doneClues, nextClueTo } from '../games/path';
 import { packHue } from '../lib/packHue';
 import { countPuzzleToday } from '../lib/goal';
@@ -461,6 +462,8 @@ function GameScreen({ def, part }: ScreenProps) {
           skills={lines}
           records={ended?.records}
           sponsor={sponsor && { ...sponsor, onVisit: () => countEvent(def.id, 'click') }}
+          cover={named.title}
+          parts={scoreLines({ found: foundCount, total, hints: s.hints, misses: 0, secs: secondsOf(s, s.endAt!) })}
         >
           <GameReveal items={reveal} past={pastLine} />
           {auth.enabled && def.id.startsWith('c-') && <RatePuzzle code={def.id.slice(2).toUpperCase()} />}

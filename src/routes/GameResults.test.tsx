@@ -89,6 +89,16 @@ describe('GameResults', () => {
     expect(replay).toHaveBeenCalled();
   });
 
+  it('under a case file cover, the score waits until the cover is opened, then shows how it was made', () => {
+    show({ found: 5, total: 8, score: 475, cover: 'In the lab', parts: [{ kind: 'found', n: 5, points: 500 }, { kind: 'tipoffs', n: 1, points: -25 }] });
+    expect(screen.queryByLabelText('475 points')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: /Case file/ }));
+    expect(screen.getByLabelText('475 points')).toBeInTheDocument();
+    const parts = screen.getByRole('list', { name: 'How you scored' });
+    expect(parts).toHaveTextContent('5 found+500');
+    expect(parts).toHaveTextContent('1 tip-off−25');
+  });
+
   it('lines that were never passed leave no empty paragraph', () => {
     expect(show()).toEqual(['The ones you missed are shaded below.']);
     expect(more()).toEqual([]);

@@ -245,4 +245,11 @@ export const play: Dict = {
   'Relay': 'Relais',
   'Groups': 'Groupes',
   'Next up: {kind}': 'Ensuite : {kind}',
+  'Case file is ready. Open it up!': 'Le dossier est prêt. Ouvre-le !',
+  'Case file': 'Dossier',
+  'Tap to open': 'Touche pour ouvrir',
+  'How you scored': 'Ton score en détail',
+  '{n} wrong pick': '{n} erreur',
+  '{n} wrong picks': '{n} erreurs',
+  'Time bonus': 'Bonus de temps',
 };

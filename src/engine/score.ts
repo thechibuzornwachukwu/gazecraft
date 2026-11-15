@@ -20,3 +20,18 @@ export function score({ found, total, hints, misses, secs }: ScoreInput): number
     found * FIND_POINTS - hints * TIP_OFF_COST - misses * MISS_COST + (found === total ? Math.max(0, TIME_BONUS - secs) : 0),
   );
 }
+
+/** One line of how a score was made, for the result's case file: "4 found +400", "Time bonus +472". */
+export type ScoreLine = { kind: 'found' | 'tipoffs' | 'misses' | 'bonus'; n: number; points: number };
+
+/** The same sum as `score`, line by line. Lines worth nothing are left out. */
+export function scoreLines({ found, total, hints, misses, secs }: ScoreInput): ScoreLine[] {
+  const bonus = found === total ? Math.max(0, TIME_BONUS - secs) : 0;
+  const lines: ScoreLine[] = [
+    { kind: 'found', n: found, points: found * FIND_POINTS },
+    { kind: 'tipoffs', n: hints, points: -hints * TIP_OFF_COST },
+    { kind: 'misses', n: misses, points: -misses * MISS_COST },
+    { kind: 'bonus', n: 1, points: bonus },
+  ];
+  return lines.filter((l) => l.points !== 0);
+}

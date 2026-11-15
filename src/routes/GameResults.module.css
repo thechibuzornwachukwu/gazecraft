@@ -94,7 +94,6 @@
   align-items: center;
   gap: var(--space-3) var(--space-6);
   padding-top: var(--space-5);
-  border-top: 1px solid var(--line);
 }
 .rateButtons {
   display: flex;
@@ -172,7 +171,6 @@
   align-items: center;
   gap: var(--space-3) var(--space-6);
   padding-top: var(--space-5);
-  border-top: 1px solid var(--line);
 }
 .guestText {
   flex: 1 1 260px;
@@ -235,5 +233,72 @@
   flex-direction: column;
   gap: var(--space-5);
   padding-top: var(--space-5);
-  border-top: 1px solid var(--line);
+}
+
+/* The case file's cover (design/canvas/ResultPhone.dc.html): a folder the player opens to see how it went. */
+.cover {
+  width: 100%;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  padding: var(--space-6);
+  border: none;
+  border-radius: var(--radius-card);
+  background: color-mix(in srgb, var(--accent) 55%, var(--surface));
+  box-shadow: 0 8px 0 color-mix(in srgb, var(--accent) 60%, var(--fg));
+  color: var(--on-accent);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  animation: wiggle var(--dur-twinkle) ease-in-out 1s infinite;
+}
+.cover:active {
+  transform: translateY(4px);
+  box-shadow: none;
+}
+.coverLabel {
+  font-family: var(--font-display);
+  font-size: 30px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.coverCase {
+  font-size: 16px;
+  font-weight: 800;
+}
+.coverTap {
+  font-size: 14px;
+  font-weight: 700;
+  opacity: 0.75;
+}
+@keyframes wiggle {
+  0%, 85%, 100% { transform: rotate(0); }
+  90% { transform: rotate(-1.5deg); }
+  95% { transform: rotate(1.5deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cover { animation: none; }
+}
+/* How the score was made: a line each, the points lined up on the right. */
+.parts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: 15px;
+  font-weight: 700;
+}
+.parts li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  max-width: 28ch;
+}
+.partPoints {
+  font-variant-numeric: tabular-nums;
 }

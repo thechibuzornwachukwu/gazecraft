@@ -5,8 +5,9 @@ import { Button } from '../components/Button';
 import { Icon } from '../components/Icon';
 import { Partner } from '../components/Partner';
 import { clampStars, Stars } from '../components/Stars';
-import { formatTime } from '../engine/time';
-import { t, num } from '../i18n';
+import { formatTime } from '../engine/time';
+import type { ScoreLine } from '../engine/score';
+import { t, num, plural } from '../i18n';
 import styles from './GameResults.module.css';
 
 type Props = {
@@ -42,18 +43,40 @@ type Props = {
   sponsor?: { line: string; url?: string; host?: string; /** The link was opened. */ onVisit?: () => void };
   /** Extra actions under the result (the reminder ask). */
   children?: ReactNode;
+  /** The case's title: the result waits under a case file cover until it is opened (design/canvas/ResultPhone.dc.html). */
+  cover?: string;
+  /** How the score was made, line by line (`scoreLines`). Shown only when the puzzle is solved: under half banks nothing. */
+  parts?: readonly ScoreLine[];
 };
 
 /** Lines worth a paragraph: no blanks, none twice. */
 const lines = (l?: readonly string[]) => [...new Set((l ?? []).filter((x) => typeof x === 'string' && x.trim() !== ''))];
 
-export function GameResults({ title, line, score, found, total, secs, canReplay, onReplay, onShare, onText, next, boardPath, guest, guestLine, guestAction, stars, starsUp, skills, records, sponsor, children }: Props) {
+export function GameResults({ title, line, score, found, total, secs, canReplay, onReplay, onShare, onText, next, boardPath, guest, guestLine, guestAction, stars, starsUp, skills, records, sponsor, children, cover, parts }: Props) {
+  const [opened, setOpened] = useState(!cover);
   const { pathname } = useLocation();
   const [note, setNote] = useState('');
   const [more, setMore] = useState(false);
   const earned = clampStars(stars);
   // The game's own rule: at least half found is a solved puzzle (src/engine/stars.ts gives it a star).
   const solved = total > 0 && found > 0 && found * 2 >= total;
+  if (!opened) {
+    return (
+      <section className={styles.results} aria-labelledby="results-title">
+        <div className={styles.titleRow}>
+          <Partner moment="done" size={80} className={styles.petFace} />
+          <h2 id="results-title" className={styles.title}>
+            {t('Case file is ready. Open it up!')}
+          </h2>
+        </div>
+        <button type="button" className={styles.cover} onClick={() => setOpened(true)}>
+          <span className={styles.coverLabel}>{t('Case file')}</span>
+          <span className={styles.coverCase}>{cover}</span>
+          <span className={styles.coverTap}>{t('Tap to open')}</span>
+        </button>
+      </section>
+    );
+  }
   return (
     <section className={styles.results} aria-labelledby="results-title">
       {/* The partner says how it went; the case file under it holds the score (design/V3_STYLE.md, Result). */}
@@ -71,6 +94,19 @@ export function GameResults({ title, line, score, found, total, secs, canReplay,
             <span className={styles.stamp} aria-hidden="true">
               {t('Puzzle solved')}
             </span>
+          )}
+          {solved && parts && parts.length > 0 && (
+            <ul className={styles.parts} aria-label={t('How you scored')}>
+              {parts.map((l) => (
+                <li key={l.kind}>
+                  <span>{partLabel(l)}</span>
+                  <span className={styles.partPoints}>
+                    {l.points > 0 ? '+' : '−'}
+                    {num(Math.abs(l.points))}
+                  </span>
+                </li>
+              ))}
+            </ul>
           )}
           <div className={styles.points}>
             <span className={styles.pointsNum} aria-label={t('{n} points', { n: num(solved ? score : 0) })}>
@@ -205,4 +241,12 @@ export function GameResults({ title, line, score, found, total, secs, canReplay,
       )}
     </section>
   );
+}
+
+/** A score line in words: "4 found", "1 tip-off", "Time bonus". */
+function partLabel(l: ScoreLine): string {
+  if (l.kind === 'found') return t('{n} found', { n: l.n });
+  if (l.kind === 'tipoffs') return plural(l.n, '{n} tip-off', '{n} tip-offs');
+  if (l.kind === 'misses') return plural(l.n, '{n} wrong pick', '{n} wrong picks');
+  return t('Time bonus');
 }

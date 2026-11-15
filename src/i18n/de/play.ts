@@ -245,4 +245,11 @@ export const play: Dict = {
   'Relay': 'Staffel',
   'Groups': 'Gruppen',
   'Next up: {kind}': 'Als Nächstes: {kind}',
+  'Case file is ready. Open it up!': 'Die Akte ist fertig. Mach sie auf!',
+  'Case file': 'Akte',
+  'Tap to open': 'Zum Öffnen tippen',
+  'How you scored': 'So hast du gepunktet',
+  '{n} wrong pick': '{n} Fehlgriff',
+  '{n} wrong picks': '{n} Fehlgriffe',
+  'Time bonus': 'Zeitbonus',
 };

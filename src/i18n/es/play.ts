@@ -243,4 +243,11 @@ export const play = {
   'Relay': 'Relevo',
   'Groups': 'Grupos',
   'Next up: {kind}': 'Ahora: {kind}',
+  'Case file is ready. Open it up!': 'El expediente está listo. ¡Ábrelo!',
+  'Case file': 'Expediente',
+  'Tap to open': 'Toca para abrir',
+  'How you scored': 'Cómo puntuaste',
+  '{n} wrong pick': '{n} fallo',
+  '{n} wrong picks': '{n} fallos',
+  'Time bonus': 'Bonus de tiempo',
 } as const;
