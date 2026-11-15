@@ -409,6 +409,9 @@ function GameScreen({ def, part }: ScreenProps) {
 
   const Board = mod.Board;
   const named = nameOf(def);
+  // A pack mixes rounds, and only a word round is about the pack's topic: a number round in French names is Hidden
+  // sums, not French names. It is titled by what it is, with the pack's name under it.
+  const heading = def.type === 'hidden-words' ? named.title : kindName(def.type);
   const perfect = foundCount === total;
   const resultLine = perfect ? t('Every answer found.') : t('The ones you missed are shaded below.');
 
@@ -497,12 +500,12 @@ function GameScreen({ def, part }: ScreenProps) {
             <div className={styles.band}>
               <img src={caseIcon(def.category)} alt="" width={52} height={52} />
               <div className={styles.bandText}>
-                <h1 id="case-title" className={styles.title}>
-                  {named.title}
+                <h1 id="case-title" className={styles.title} data-kind={def.type}>
+                  {heading}
                 </h1>
                 <span className={styles.bandMeta}>
+                  {def.type !== 'hidden-words' ? `${named.title} · ` : ''}
                   {part ? `${t('Puzzle {n} of {m}', { n: part.at, m: part.of })} · ` : ''}
-                  {def.type !== 'hidden-words' ? `${kindName(def.type)} · ` : ''}
                   {t('Find {what}', { what: countOf(total, named.noun) })}
                 </span>
               </div>
@@ -607,6 +610,8 @@ function shareGame(def: GameDef, difficulty: string, part?: Part): ShareGame {
   return {
     id: def.id,
     ...nameOf(def),
+    // The share card names the round the same way the screen does.
+    ...(def.type === 'hidden-words' ? {} : { title: kindName(def.type) }),
     difficulty: difficultyName(difficulty),
     text: def.text,
     path: part ? `/play/${def.id}/${part.n}` : sharePath({ id: def.id, code }),
