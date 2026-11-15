@@ -291,4 +291,6 @@ export const account = {
   'Become a detective': 'Hazte detective',
   'Detective': 'Detective',
   'Saved on this device.': 'Guardado en este dispositivo.',
+  'detective': 'detective',
+  'Your detective badge': 'Tu placa de detective',
 } as const;

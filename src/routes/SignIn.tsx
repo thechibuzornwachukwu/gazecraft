@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { Partner } from '../components/Partner';
+import { DetectiveBadge } from '../components/DetectiveBadge';
 import { Link, Navigate, useSearchParams } from 'react-router-dom';
 import { Button } from '../components/Button';
 import { Field } from '../components/Field';
@@ -257,6 +258,7 @@ export function ProfileForm({ userId, exists, name: name0, handle: handle0, hand
   return (
     <form className={styles.form} onSubmit={save} noValidate>
       {head}
+      <DetectiveBadge name={name} handle={handle} />
       <div className={styles.fields}>
         <Field label={t('Name')} autoComplete="name" placeholder={t('Ada Obi')} value={name} maxLength={40} onChange={(e) => onName(e.target.value)} />
         <Field
@@ -330,6 +332,7 @@ export function SignIn() {
                 {t('. Accounts are for players aged 13 and over.')}
               </p>
             </div>
+            <DetectiveBadge name="" handle="" />
           </div>
         }
         foot={

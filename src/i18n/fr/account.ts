@@ -293,4 +293,6 @@ export const account: Dict = {
   'Become a detective': 'Deviens détective',
   'Detective': 'Détective',
   'Saved on this device.': 'Enregistré sur cet appareil.',
+  'detective': 'detective',
+  'Your detective badge': 'Ton badge de détective',
 };
