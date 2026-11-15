@@ -252,4 +252,7 @@ export const play: Dict = {
   '{n} wrong pick': '{n} Fehlgriff',
   '{n} wrong picks': '{n} Fehlgriffe',
   'Time bonus': 'Zeitbonus',
+  'Found!': 'Gefunden!',
+  'Show me one': 'Zeig mir eins',
+  'Not found yet': 'Noch nicht gefunden',
 };

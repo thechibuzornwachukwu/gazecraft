@@ -250,4 +250,7 @@ export const play = {
   '{n} wrong pick': '{n} fallo',
   '{n} wrong picks': '{n} fallos',
   'Time bonus': 'Bonus de tiempo',
+  'Found!': '¡Encontrada!',
+  'Show me one': 'Enséñame una',
+  'Not found yet': 'Aún sin encontrar',
 } as const;

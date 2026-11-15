@@ -11,10 +11,26 @@
 .stack {
   display: flex;
   flex-direction: column;
-  gap: var(--screen-gap);
+  gap: var(--space-6);
+}
+/* The side column's heading: a section title, not a second headline. */
+.sideTitle {
+  composes: h3 from '../styles/type.module.css';
+  margin: 0;
+  font-size: 20px;
+  text-transform: uppercase;
+}
+.split {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-12);
+  padding-top: var(--landing-hero-top);
+  padding-bottom: var(--section-gap);
 }
 .hero {
-  padding: var(--landing-hero-top) 0 var(--section-gap);
+  flex: 999 1 560px;
+  min-width: 0;
   scroll-margin-top: var(--space-6);
 }
 .display {
@@ -28,12 +44,6 @@
   gap: var(--space-3);
 }
 
-.band {
-  background: var(--surface);
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  padding: var(--landing-band-pad) 0;
-}
 .h2 {
   composes: h2 from '../styles/type.module.css';
   margin: 0;
@@ -113,4 +123,9 @@
   text-decoration: underline;
   text-underline-offset: 4px;
   text-decoration-color: var(--line-2);
+}
+
+.side {
+  flex: 1 1 340px;
+  min-width: 0;
 }

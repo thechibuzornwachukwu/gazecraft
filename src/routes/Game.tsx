@@ -241,6 +241,18 @@ function GameScreen({ def, part }: ScreenProps) {
   }, [part, finished, signedIn, inRoom, roomCode, s.endAt, s.startAt, s.log, s.sent, def.id]);
 
   const foundCount = s.found.length;
+  // A find thuds a FOUND stamp onto the case card for a moment (design/canvas/GamePhone.dc.html). Not on load.
+  const [stamp, setStamp] = useState(0);
+  const lastFound = useRef(foundCount);
+  useEffect(() => {
+    if (foundCount > lastFound.current && !finished) {
+      setStamp((n) => n + 1);
+      const id = window.setTimeout(() => setStamp(0), 1100);
+      lastFound.current = foundCount;
+      return () => window.clearTimeout(id);
+    }
+    lastFound.current = foundCount;
+  }, [foundCount, finished]);
   // The clues of this case, for the row of marks at the top. Read once a visit: it does not change mid clue.
   const trail = useMemo(() => {
     if (!part) return [];
@@ -496,6 +508,11 @@ function GameScreen({ def, part }: ScreenProps) {
               </div>
             </div>
             <div className={styles.paper}>
+              {stamp > 0 && (
+                <span key={stamp} className={styles.foundStamp} aria-hidden="true">
+                  {t('Found!')}
+                </span>
+              )}
           <Board
             {...mod.boardProps(puzzle)}
             found={foundSpans}

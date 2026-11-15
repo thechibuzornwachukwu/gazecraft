@@ -27,9 +27,10 @@ export function Landing() {
   const [play] = useState(playNext);
   const cases = useMemo(() => oneEach(), []);
   return (
-    <>
+    // Two columns on a wide screen, the demo and the cases waiting (design/canvas/LandingDesktop.dc.html); one on a phone.
+    <div className={`${styles.wrap} ${styles.split}`}>
       <section id="how" className={styles.hero} aria-labelledby="hero-title">
-        <div className={`${styles.wrap} ${styles.stack}`}>
+        <div className={styles.stack}>
           <h1 id="hero-title" className={styles.display}>
             {t('Words are hiding in this sentence.')}
           </h1>
@@ -43,9 +44,9 @@ export function Landing() {
         </div>
       </section>
 
-      <section id="games" className={styles.band} aria-labelledby="games-title">
-        <div className={`${styles.wrap} ${styles.stack}`}>
-          <h2 id="games-title" className={styles.h2}>
+      <section id="games" className={styles.side} aria-labelledby="games-title">
+        <div className={styles.stack}>
+          <h2 id="games-title" className={styles.sideTitle}>
             {t('Cases waiting')}
           </h2>
           <ul className={styles.cases}>
@@ -71,6 +72,6 @@ export function Landing() {
           </Link>
         </div>
       </section>
-    </>
+    </div>
   );
 }

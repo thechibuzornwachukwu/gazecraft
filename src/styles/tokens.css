@@ -145,7 +145,8 @@
   --dur-glow: 1800ms;       /* CaseDeck: the PLAY! stamp's glow, one cycle */
   --dur-pet-bob: 2600ms;    /* Puzzles: the partner beside the bubble, one cycle */
   --radius-bubble: 18px;    /* The partner's speech bubble: round, but for the corner that points at the partner */
-  --dur-pop: 350ms;         /* Puzzles: the bubble when the partner says something new */
+  --dur-pop: 350ms;
+  --dur-stamp: 1100ms;      /* The FOUND stamp: thud, hold, lift away */         /* Puzzles: the bubble when the partner says something new */
   --dur-twinkle: 2200ms;    /* Puzzles: the run and star chips, one cycle */
   --burst-delay: 0ms;       /* How long the paper waits before it flies */
   --burst-reach: 150px;     /* How far the paper flies */

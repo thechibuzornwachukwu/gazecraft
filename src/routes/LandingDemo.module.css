@@ -71,3 +71,62 @@
 .hand[data-down] svg {
   scale: 0.84;
 }
+
+/* The demo as the canvas draws it: the sentence and its chips on a white card with a ledge. */
+.main {
+  padding: var(--space-6) var(--space-6) var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: 0 6px 0 var(--line);
+}
+.slots {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.slot {
+  min-width: 56px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  color: var(--muted);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+.slot[data-found] {
+  background: var(--accent);
+  color: var(--on-accent);
+  letter-spacing: 0;
+  animation: pop var(--dur-pop) ease-out both;
+}
+.show {
+  min-height: 48px;
+  padding: 0 var(--space-5);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line-2);
+  font: inherit;
+  font-weight: 800;
+  color: var(--fg);
+  cursor: pointer;
+}
+.show:active {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+@keyframes pop {
+  0% { transform: scale(0.6); }
+  70% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .slot[data-found] { animation: none; }
+}

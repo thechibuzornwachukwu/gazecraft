@@ -4,11 +4,10 @@ import * as copy from '../copy';
 import { Button } from '../components/Button';
 import { Icon } from '../components/Icon';
 import { Partner } from '../components/Partner';
-import { TextLink } from '../components/TextLink';
-import { WordList, type WordRow } from '../components/WordList';
+import type { WordRow } from '../components/WordList';
 import type { GameDef } from '../games/catalog';
 import { registry } from '../games/registry';
-import { applyHint, applyPick, newSession, type Session } from '../games/session';
+import { applyPick, newSession, type Session } from '../games/session';
 import { guideSeen, markDemoDone, markGuideSeen } from '../lib/firstMinute';
 import { useCoarsePointer, useMediaQuery } from '../lib/media';
 import { chime } from '../lib/sound';
@@ -120,7 +119,6 @@ export function LandingDemo({ guide = false }: { guide?: boolean }) {
   const foundSpans = useMemo(() => s.found.map((f) => f.span), [s.found]);
   const done = s.found.length === total;
   const next = mod.hint(puzzle, foundSet);
-  const showing = !!next && s.hintLi === next.at;
 
   // Copy picks happen here, never inside a state updater (StrictMode runs updaters twice).
   const pick = (a: number, b: number) => {
@@ -136,8 +134,6 @@ export function LandingDemo({ guide = false }: { guide?: boolean }) {
   const onHint = () => {
     if (done) return setS(newSession(0));
     if (!next) return;
-    if (!showing) return setS(applyHint(s, next, copy));
-    // Second press on the same mark reveals the word.
     const a = puzzle.answers.find((x) => x.key === next.key)!;
     const [x, y] = a.spans[0]!;
     endGuide();
@@ -193,24 +189,26 @@ export function LandingDemo({ guide = false }: { guide?: boolean }) {
           />
           {guiding && <GuideHand stage={stage} first={lead[0]} last={lead[1]} />}
         </div>
+        {/* The words to find: a chip each, its letters as dots until it is found. */}
+        <ul className={styles.slots} aria-label={t('{found} of {total} found', { found: s.found.length, total })}>
+          {rows.map((r) => (
+            <li key={r.key} className={styles.slot} data-found={r.state === 'found' || undefined} aria-label={r.state === 'found' ? r.label : t('Not found yet')}>
+              {r.state === 'found' ? r.label : '•'.repeat(r.length)}
+            </li>
+          ))}
+        </ul>
         <div className={styles.actions}>
-          <TextLink onClick={onHint}>{done ? t('Play again') : showing ? t('Show it') : t('Ask for a tip-off')}</TextLink>
-          {guiding && <TextLink onClick={endGuide}>{t('Skip the guide')}</TextLink>}
-        </div>
-      </div>
-      <WordList
-        title={t('Hidden above')}
-        count={`${s.found.length} / ${total}`}
-        rows={rows}
-        footer={
-          done && (
-            <Button variant="accent" to={`/play/${NEXT}`} className={styles.cta}>
+          <button type="button" className={styles.show} onClick={onHint}>
+            {done ? t('Play again') : t('Show me one')}
+          </button>
+          {done && (
+            <Button variant="accent" to={`/play/${NEXT}`}>
               {t('That was the warm up. Now find {n}.', { n: NEXT_COUNT })}
               <Icon icon={ArrowRight} size={16} />
             </Button>
-          )
-        }
-      />
+          )}
+        </div>
+      </div>
     </div>
   );
 }
