@@ -10,7 +10,7 @@ describe('page metadata', () => {
     const p = pageFor('/', O);
     expect(p.title).toBe('Gazecraft: free hidden word puzzle game');
     expect(p.title.length).toBeLessThanOrEqual(60);
-    expect(p.description).toMatch(/word puzzle game/);
+    expect(p.description).toMatch(/^"Pat omitted" hides ATOM\./);
     expect(p.body).toMatch(/<h1>Gazecraft: a free hidden word puzzle game<\/h1>/);
     expect(JSON.stringify(p.jsonLd)).toContain('word search');
     // A game that takes focus, never one that promises it.
@@ -21,11 +21,14 @@ describe('page metadata', () => {
     expect(p.body.indexOf('/play/general')).toBeLessThan(p.body.indexOf('/play/bible'));
   });
 
-  it('a puzzle page asks the question, dares its own crowd and ships its paragraph as text', () => {
+  it('a puzzle page asks the question, shows its first hidden word and ships its paragraph as text', () => {
     const p = pageFor('/play/bible', O);
-    expect(p.title).toBe("Can you find 30 books of the Bible? You won't find them all. · Gazecraft");
-    expect(p.description).toMatch(/^Know your Bible\? Prove it\./);
-    expect(pageFor('/play/football', O).description).toMatch(/^Call yourself a football fan\?/);
+    expect(p.title).toBe('Can you find 30 books of the Bible? · Gazecraft');
+    expect(p.description).toMatch(/^"a mos" hides AMOS\. 29 more books of the Bible are hiding in the same paragraph\./);
+    // No dare and no taunt: the reader is never told they will fail.
+    expect(p.description).not.toMatch(/won't|will still miss|prove it|admit defeat/i);
+    // A round that is not about the pack's topic says what it is, with the plain image.
+    expect(pageFor('/play/bible/34', O)).toMatchObject({ title: 'Liar, in The classic · Gazecraft', image: '/og/default.png' });
     expect(p.image).toBe('/og/bible.png');
     expect(p.canonical).toBe('/play/bible');
     expect(p.body).toContain('This is a most remarkable puzzle');
@@ -66,7 +69,7 @@ describe('page metadata', () => {
   });
 
   it('the home description carries the promise, and no public page claims a result', () => {
-    expect(pageFor('/', O).description).toContain('Slow down. Look closer.');
+    expect(pageFor('/', O).description).toContain('Words hide across the gaps in real sentences.');
     expect(pageFor('/', O).description.length).toBeLessThanOrEqual(160);
     for (const path of ['/', '/play', '/play/general', '/play/science', '/leaderboard', '/players', '/privacy']) {
       const p = pageFor(path, O);

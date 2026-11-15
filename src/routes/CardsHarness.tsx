@@ -86,7 +86,7 @@ export function OgHarness() {
   const w = g && sponsorFor(g);
   const sponsor = q.get('with') === '1' ? WITH.sponsor : w ? pick('sponsorWith', { name: w.name }) : undefined;
   const input: OgInput = g
-    ? { kind: 'game', title: g.title, noun: g.noun, text: g.text, dict: g.dict, daily: q.get('daily') === '1', sponsor }
+    ? { kind: 'game', title: g.title, noun: g.noun, text: g.text, dict: g.dict, category: g.category, daily: q.get('daily') === '1', sponsor }
     : { kind: 'default' };
   return <OgCard input={input} />;
 }

@@ -253,4 +253,8 @@ export const play = {
   'Found!': '¡Encontrada!',
   'Show me one': 'Enséñame una',
   'Not found yet': 'Aún sin encontrar',
+  '{word} is in there. Can you find {n} more?': '{word} está ahí. ¿Encuentras {n} más?',
+  "Today's puzzle": 'El puzle de hoy',
+  'Find {n} {noun}': 'Encuentra {n} {noun}',
+  'A new one every day. How many can you find?': 'Uno nuevo cada día. ¿Cuántas encuentras?',
 } as const;

@@ -15,9 +15,8 @@ const data = gamesFile as unknown as { games: Game[]; dailyPool: string[]; filte
 const games = [...data.games].sort((a, b) => data.filters.indexOf(a.category) - data.filters.indexOf(b.category));
 
 export const SITE = 'Gazecraft';
-export const TAGLINE = 'Find it. Figure it out.';
 export const PITCH =
-  'A free word puzzle game in your browser. Words and numbers hide in plain sight inside ordinary sentences. Lock in for 3 minutes and find them all.';
+  'A free word puzzle game in your browser. Words hide across the gaps in real sentences: in "Pat omitted", ATOM is hiding. No download and no account.';
 
 /** What people type when they look for a game like this. Honest about what it is: a word puzzle, never a promise. */
 export const SEARCH_TERMS = ['word puzzle', 'hidden words', 'word search', 'word game', 'brain teaser', 'puzzle game', 'free online game', 'number puzzle', 'play with friends'];
@@ -51,12 +50,34 @@ export const esc = (s: string) =>
 const count = (g: Game) => buildHiddenWords(g).answers.length;
 const level = (g: Game) => buildHiddenWords(g).difficulty;
 const question = (g: Game) => `Can you find ${count(g)} ${g.noun}?`;
+/** The first hidden word of a puzzle and the letters it hides in: "le, Mon" and LEMON. Null when there is none. */
+function example(g: Game): { phrase: string; word: string } | null {
+  const p = buildHiddenWords(g);
+  const a = p.answers.flatMap((x) => x.spans.map((span) => ({ label: x.label, span }))).sort((x, y) => x.span[0] - y.span[0])[0];
+  if (!a) return null;
+  const from = p.chars.findIndex((c) => c.li === a.span[0]);
+  const to = p.chars.findIndex((c) => c.li === a.span[1]) + 1;
+  return { phrase: p.chars.slice(from, to).map((c) => c.ch).join(''), word: a.label.toUpperCase() };
+}
 /** "With NAME." on a sponsored puzzle, else nothing. The same rule and the same line as the app. */
 function withLine(g: Game): string {
   const s = sponsorOf(g.sponsor);
   // "Chi Farms Ltd." already ends its own sentence.
   return s ? `${pick('sponsorWith', { name: s.name }).replace(/\.$/, '')}.` : '';
 }
+/**
+ * The rounds that are not about a pack's topic, by clue number, and what each asks. The numbers are the engine's
+ * (src/engine/journey.ts SUMS_FROM, 21 to 29; src/engine/specials.ts, 31 to 35), written here so the page builder
+ * loads no translations.
+ */
+const ROUNDS: Record<number, readonly [name: string, ask: string]> = {
+  21: ['Hidden sums', 'Find the runs of digits that add up to the target.'],
+  31: ['Mirror', 'Find the words that read right to left.'],
+  32: ['Relay', 'Find the chain where each word starts as the last one ends.'],
+  33: ['Series', 'Find the runs of digits that step up or down evenly.'],
+  34: ['Liar', 'Spot the statements that are false.'],
+  35: ['Groups', 'Sort 16 words into 4 groups of 4.'],
+};
 /** Joins sentences, leaving out the empty ones. */
 const say = (...parts: string[]) => parts.filter(Boolean).join(' ');
 
@@ -110,9 +131,9 @@ function home(origin: string): Page {
   const list = games.map((g) => `<li><a href="/play/${g.id}">${esc(question(g))}</a> ${esc(g.category)}, ${esc(level(g))}.</li>`).join('');
   return {
     title: 'Gazecraft: free hidden word puzzle game',
-    description: '"Pat omitted" hides ATOM. A free word puzzle game: words hide across the gaps in real sentences. Lock in for 3 minutes. Slow down. Look closer.',
+    description: `"Pat omitted" hides ATOM. Words hide across the gaps in real sentences. ${games.length} packs, free, no account needed.`,
     image: '/og/default.png',
-    imageAlt: 'Gazecraft. Find it. Figure it out.',
+    imageAlt: 'A Gazecraft case card: "This line is a most ordinary sentence", with "a most" lit up because it hides AMOS.',
     canonical: '/',
     jsonLd: [
       { ...GAME_LD, url: `${origin}/` },
@@ -133,24 +154,17 @@ function home(origin: string): Page {
   };
 }
 
-/** A dare for each puzzle's own crowd, used when that puzzle's link is shared. */
-const DARE: Record<string, string> = {
-  Bible: 'Know your Bible? Prove it. The books are hiding in one ordinary paragraph, and your eyes will slide right past them.',
-  Names: 'Think you know your names? They are hiding in plain sight. You will read straight past some of them.',
-  Football: 'Call yourself a football fan? The players are hiding in one paragraph. Find them all or admit defeat.',
-  Health: 'Medical mind? Every term is right there on the page. Your eyes will still skip a few.',
-  Science: 'Science brain? The words are right in front of you. Seeing them is another matter.',
-  AI: 'Work with AI? These words are hiding in a paragraph about something else. Spot them yourself.',
-  History: 'Know your history? It is hiding in plain sight. You will read right past some of it.',
-  Naija: 'Naija to the bone? The names are hiding in one ordinary paragraph. You will read straight past some of them.',
-  General: 'Sharp eyes? Everything you need is in one short paragraph. You will still miss some.',
-};
-
 function gamePage(origin: string, g: Game): Page {
   const q = question(g);
+  const ex = example(g);
+  const more = count(g) - 1;
   return {
-    title: `${q} You won't find them all. · Gazecraft`,
-    description: say(`${DARE[g.category] ?? DARE.General} ${level(g)}, free, no sign up.`, withLine(g)),
+    title: `${q} · Gazecraft`,
+    description: say(
+      ex ? `"${ex.phrase}" hides ${ex.word}. ${more} more ${g.noun} are hiding in the same paragraph.` : `${count(g)} ${g.noun} are hiding in one paragraph.`,
+      `${level(g)}, free, no sign up.`,
+      withLine(g),
+    ),
     image: `/og/${g.id}.png`,
     imageAlt: say(`Gazecraft puzzle: ${q}`, withLine(g)),
     canonical: `/play/${g.id}`,
@@ -245,16 +259,26 @@ export function pageFor(path: string, origin: string): Page {
     const g = games.find((x) => x.id === play[1]);
     return g ? gamePage(origin, g) : home(origin);
   }
+  // A puzzle of a pack. A word round is the pack's own words: its preview. Any other round is not about the pack's
+  // topic (a number round in French names), so it says what it is, with the plain image and no word from the pack.
+  const part = clean.match(/^\/play\/([a-z0-9-]{2,40})\/(\d{1,2})$/);
+  if (part) {
+    const g = games.find((x) => x.id === part[1]);
+    if (!g) return home(origin);
+    const round = ROUNDS[Number(part[2])] ?? (Number(part[2]) >= 21 && Number(part[2]) <= 29 ? ROUNDS[21] : undefined);
+    if (!round) return { ...gamePage(origin, g), canonical: clean };
+    return simple(clean, `${round[0]}, in ${g.title} · Gazecraft`, `${round[1]} A round in ${g.title}, free, no sign up.`, '');
+  }
 
   // There is no daily any more. An old link to one, or to its answers, is the cases.
   if (/^\/d\/\d{1,6}(\/answers)?$/.test(clean)) return { ...home(origin), canonical: '/play', noindex: true };
 
   if (clean === '/play') {
     const list = games.map((g) => `<li><a href="/play/${g.id}">${esc(question(g))}</a></li>`).join('');
-    return simple('/play', 'Puzzles · Gazecraft', `${games.length} packs, a puzzle at a time. Every answer is in plain sight. You will still miss some.`, `<ul>${list}</ul>`);
+    return simple('/play', 'Puzzles · Gazecraft', `${games.length} packs of puzzles. In each, words hide across the gaps in real sentences, a few minutes a puzzle.`, `<ul>${list}</ul>`);
   }
-  if (clean === '/leaderboard') return simple('/leaderboard', 'League · Gazecraft', 'The best scores on the pack you are on, on Gazecraft.', '');
-  if (clean === '/players') return simple('/players', 'People · Gazecraft', 'What your friends and the best players on Gazecraft have won lately, and people to follow.', '');
+  if (clean === '/leaderboard') return simple('/leaderboard', 'League · Gazecraft', "This week's league on Gazecraft: every word you find moves you along the track.", '');
+  if (clean === '/players') return simple('/players', 'People · Gazecraft', "Your friends' medals this month on Gazecraft, and a link to invite more.", '');
   if (clean === '/privacy') return simple('/privacy', 'Privacy · Gazecraft', 'What Gazecraft keeps, why, and how to delete it.', '');
   if (clean === '/help') {
     const list = HELP_ARTICLES.map((a) => `<li><a href="/help/${a.slug}">${esc(a.title)}</a></li>`).join('');
@@ -302,7 +326,7 @@ export function llmsTxt(origin: string): string {
     '## Key pages',
     `- [Home](${origin}/): what Gazecraft is and a playable example`,
     `- [Packs](${origin}/play): every pack, a puzzle at a time`,
-    `- [League](${origin}/leaderboard): the best scores on the pack you are on`,
+    `- [League](${origin}/leaderboard): this week's league, where every word you find moves you along`,
     `- [Players](${origin}/players): find players to follow`,
     `- [Privacy](${origin}/privacy): what is stored and how to delete it`,
     '',

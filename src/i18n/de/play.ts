@@ -255,4 +255,8 @@ export const play: Dict = {
   'Found!': 'Gefunden!',
   'Show me one': 'Zeig mir eins',
   'Not found yet': 'Noch nicht gefunden',
+  '{word} is in there. Can you find {n} more?': '{word} ist da drin. Findest du {n} weitere?',
+  "Today's puzzle": 'Das Rätsel von heute',
+  'Find {n} {noun}': 'Finde {n} {noun}',
+  'A new one every day. How many can you find?': 'Jeden Tag ein neues. Wie viele findest du?',
 };
