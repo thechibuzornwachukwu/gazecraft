@@ -266,4 +266,7 @@ export const people: Dict = {
   'Top {n} go up to {tier}': 'Les {n} premiers montent en {tier}',
   'You are in the top {n}. Keep it up and you go up to {tier}.': 'Tu es dans les {n} premiers. Continue et tu montes en {tier}.',
   'Every word you find moves you along. The top {n} go up.': 'Chaque mot trouvé te fait avancer. Les {n} premiers montent.',
+  'See the top': 'Voir les premiers',
+  'Back to me': 'Revenir à moi',
+  'Standings, scroll to see more': 'Classement, fais défiler pour voir plus',
 };

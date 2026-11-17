@@ -266,4 +266,7 @@ export const people: Dict = {
   'Top {n} go up to {tier}': 'Die besten {n} steigen auf in {tier}',
   'You are in the top {n}. Keep it up and you go up to {tier}.': 'Du bist unter den besten {n}. Mach weiter, dann steigst du auf in {tier}.',
   'Every word you find moves you along. The top {n} go up.': 'Jedes gefundene Wort bringt dich weiter. Die besten {n} steigen auf.',
+  'See the top': 'Zur Spitze',
+  'Back to me': 'Zurück zu mir',
+  'Standings, scroll to see more': 'Rangliste, scrolle für mehr',
 };

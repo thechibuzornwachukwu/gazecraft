@@ -286,14 +286,71 @@
   margin: 0;
   text-transform: uppercase;
 }
+/* The race scrolls in its own box, so the leaders and your lane are one tap apart. */
+.raceBox {
+  position: relative;
+  max-height: 380px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--line-2);
+  box-shadow: 0 6px 0 var(--line-2);
+}
 .race {
   margin: 0;
   padding: 0;
   list-style: none;
-  border-radius: var(--radius-card);
-  overflow: hidden;
-  border: 1px solid var(--line-2);
-  box-shadow: 0 6px 0 var(--line-2);
+}
+.calls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-5);
+  margin-top: var(--space-2);
+}
+.toggle {
+  composes: body from '../styles/type.module.css';
+  min-height: 56px;
+  padding: 0 var(--space-5);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line-3);
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line-3);
+  font-family: inherit;
+  font-weight: 800;
+  color: var(--fg);
+  cursor: pointer;
+}
+.toggle svg {
+  transition: transform var(--dur-slow) var(--ease-std);
+}
+.toggle[data-top] svg {
+  transform: rotate(180deg);
+}
+/* The primary action: the big round lime Play, as on the Puzzles card. */
+.go {
+  width: 84px;
+  height: 84px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--accent) 60%, var(--fg));
+  color: var(--on-accent);
+}
+.go svg {
+  width: 34px;
+  height: 34px;
+  fill: currentColor;
+}
+.toggle:active,
+.go:active {
+  transform: translateY(3px);
+  box-shadow: none;
 }
 .lane {
   min-height: 64px;

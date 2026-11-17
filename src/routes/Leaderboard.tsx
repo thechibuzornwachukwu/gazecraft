@@ -1,6 +1,6 @@
-import { Fragment, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
+import { ArrowUp, ChevronLeft, Play } from 'lucide-react';
 import { Button } from '../components/Button';
 import { PartnerSays } from '../components/PartnerSays';
 import { Icon } from '../components/Icon';
@@ -208,6 +208,62 @@ function FriendsBoard() {
   );
 }
 
+const calm = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+
+/**
+ * The race in a box that scrolls (design/canvas/LeaguePhone.dc.html). It opens on your own lane; See the top and
+ * Back to me move between the leaders and you, and show only when the leaders and you do not fit in one view.
+ */
+function Race({ children }: { children: ReactNode }) {
+  const box = useRef<HTMLDivElement>(null);
+  const [far, setFar] = useState(false);
+  const [top, setTop] = useState(false);
+  const until = useRef(0);
+  // Your lane sits a little below the top of the box, so the runners just ahead of you show too.
+  const meAt = () => Math.max(0, (box.current?.querySelector<HTMLElement>('[data-mine]')?.offsetTop ?? 0) - 160);
+  useLayoutEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    const mine = el.querySelector<HTMLElement>('[data-mine]');
+    const away = !!mine && mine.offsetTop + mine.offsetHeight > el.clientHeight;
+    setFar(away);
+    el.scrollTop = away ? meAt() : 0;
+  }, []);
+  const go = (to: number) => {
+    until.current = Date.now() + 700;
+    box.current?.scrollTo({ top: to, behavior: calm() ? 'auto' : 'smooth' });
+  };
+  const toggle = () => {
+    go(top ? meAt() : 0);
+    setTop(!top);
+  };
+  const scrolled = () => {
+    const el = box.current;
+    if (!el || Date.now() < until.current) return;
+    setTop(el.scrollTop < 40);
+  };
+  return (
+    <>
+      <div ref={box} className={styles.raceBox} tabIndex={0} aria-label={t('Standings, scroll to see more')} onScroll={far ? scrolled : undefined}>
+        <ol className={styles.race} aria-label={t('This week')}>
+          {children}
+        </ol>
+      </div>
+      <div className={styles.calls}>
+        {far && (
+          <button type="button" className={styles.toggle} onClick={toggle} data-top={top || undefined}>
+            <Icon icon={ArrowUp} size={20} />
+            {top ? t('Back to me') : t('See the top')}
+          </button>
+        )}
+        <Link to={nextClueTo() ?? '/play'} className={styles.go} aria-label={t('Play a puzzle')}>
+          <Icon icon={Play} size={20} />
+        </Link>
+      </div>
+    </>
+  );
+}
+
 function LeagueBoard() {
   const [load, setLoad] = useState<LeagueLoad>({ status: 'loading' });
   const [busy, setBusy] = useState(false);
@@ -258,7 +314,7 @@ function LeagueBoard() {
       <h2 id="league-title" className={styles.raceTitle}>
         {t('This week in {tier}', { tier })}
       </h2>
-      <ol className={styles.race} aria-label={t('This week')}>
+      <Race>
         {league.rows.map((r, i) => (
           <Fragment key={r.handle}>
             <li className={styles.lane} data-mine={r.me || undefined} data-up={goesUp(r, league.tier) || undefined}>
@@ -279,7 +335,7 @@ function LeagueBoard() {
             )}
           </Fragment>
         ))}
-      </ol>
+      </Race>
       <p className={styles.leave}>
         <TextLink onClick={() => act(leaveLeague)}>{t('Leave the league')}</TextLink>
       </p>

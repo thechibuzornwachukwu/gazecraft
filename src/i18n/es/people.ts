@@ -264,4 +264,7 @@ export const people = {
   'Top {n} go up to {tier}': 'Los {n} primeros suben a {tier}',
   'You are in the top {n}. Keep it up and you go up to {tier}.': 'Estás entre los {n} primeros. Sigue así y subes a {tier}.',
   'Every word you find moves you along. The top {n} go up.': 'Cada palabra que encuentras te hace avanzar. Los {n} primeros suben.',
+  'See the top': 'Ver los primeros',
+  'Back to me': 'Volver a mí',
+  'Standings, scroll to see more': 'Clasificación, desliza para ver más',
 } as const;
